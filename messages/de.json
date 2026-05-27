@@ -1,0 +1,103 @@
+{
+  "Index": {
+    "title": "SnapLead - KI Lead Plattform",
+    "headline": "Finde und Gewinne Mehr Kunden",
+    "subheadline": "Globale KI-Leadgenerierung.",
+    "getStarted": "Loslegen",
+    "watchDemo": "Demo Ansehen"
+  },
+  "Navbar": {
+    "features": "Funktionen",
+    "workflow": "Wie es funktioniert",
+    "pricing": "Preise",
+    "faq": "FAQ",
+    "login": "Anmelden",
+    "getStarted": "Loslegen"
+  },
+  "Features": {
+    "title": "KI Funktionen",
+    "subtitle": "Verwandle kalte Leads in zahlende Kunden.",
+    "feature1Title": "Automatische Nachricht",
+    "feature1Desc": "Personalisierte E-Mails.",
+    "feature2Title": "Redesign Vorschau",
+    "feature2Desc": "Website Vorschauen erstellen.",
+    "feature3Title": "Angebotsgenerator",
+    "feature3Desc": "Erstelle Angebote in Sekunden.",
+    "feature4Title": "Verkaufsskript",
+    "feature4Desc": "Skripte für Kaltakquise."
+  },
+  "Workflow": {
+    "title": "Wie SnapLead Funktioniert",
+    "step1": "1. Finden",
+    "step1Desc": "Ort und Nische wählen.",
+    "step2": "2. Analysieren",
+    "step2Desc": "Bewertung der Website.",
+    "step3": "3. Generieren",
+    "step3Desc": "KI erstellt Inhalte.",
+    "step4": "4. Gewinnen",
+    "step4Desc": "Kunden abschließen."
+  },
+  "Pricing": {
+    "title": "Preise",
+    "monthly": "Monatlich",
+    "annual": "Jährlich",
+    "starter": "Starter",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "popular": "Beliebt",
+    "getStarted": "Jetzt Loslegen"
+  },
+  "FAQ": {
+    "title": "FAQ",
+    "q1": "Was ist besonders?",
+    "a1": "Wir kombinieren Daten mit KI.",
+    "q2": "Geht das überall?",
+    "a2": "Ja, weltweit.",
+    "q3": "Gibt es eine Testversion?",
+    "a3": "Ja, 7 Tage kostenlos."
+  },
+  "Footer": {
+    "product": "Produkt",
+    "company": "Unternehmen",
+    "legal": "Rechtliches",
+    "copyright": "© 2026 SnapLead."
+  },
+  "Dashboard": {
+    "hotLead": "Heißer Lead",
+    "generateMessage": "Nachricht Erstellen",
+    "generateProposal": "Angebot Erstellen",
+    "redesignPreview": "Redesign Vorschau",
+    "exportCsv": "CSV Export",
+    "filters": "Filter",
+    "country": "Land",
+    "city": "Stadt",
+    "niche": "Nische"
+  },
+  "Auth": {
+    "loginTitle": "Willkommen zurück",
+    "loginSubtitle": "Geben Sie Ihre E-Mail-Adresse ein, um sich anzumelden",
+    "signupTitle": "Konto erstellen",
+    "signupSubtitle": "Geben Sie Ihre E-Mail-Adresse ein, um ein Konto zu erstellen",
+    "forgotPasswordTitle": "Passwort vergessen?",
+    "forgotPasswordSubtitle": "Geben Sie Ihre E-Mail-Adresse ein.",
+    "resetPasswordTitle": "Passwort zurücksetzen",
+    "resetPasswordSubtitle": "Geben Sie Ihr neues Passwort ein.",
+    "email": "E-Mail",
+    "emailPlaceholder": "m@beispiel.de",
+    "password": "Passwort",
+    "passwordPlaceholder": "••••••••",
+    "confirmPassword": "Passwort bestätigen",
+    "loginButton": "Anmelden",
+    "signupButton": "Registrieren",
+    "sendResetLink": "Link senden",
+    "updatePassword": "Passwort aktualisieren",
+    "orContinueWith": "Oder weiter mit",
+    "dontHaveAccount": "Haben Sie kein Konto?",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "forgotPasswordLink": "Passwort vergessen?",
+    "backToLogin": "Zurück zur Anmeldung",
+    "invalidCredentials": "Ungültige Anmeldedaten",
+    "passwordsDontMatch": "Passwörter stimmen nicht überein",
+    "emailSent": "Überprüfen Sie Ihre E-Mails"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "Index": {
+    "title": "SnapLead - Yapay Zeka Müşteri Bulma",
+    "headline": "Daha Fazla Müşteri Kazanın",
+    "subheadline": "Web tasarımcıları ve ajanslar için saniyeler içinde otomatik mesajlar ve analizler.",
+    "getStarted": "Başla",
+    "watchDemo": "Demo İzle"
+  },
+  "Navbar": {
+    "features": "Özellikler",
+    "workflow": "Nasıl Çalışır",
+    "pricing": "Fiyatlar",
+    "faq": "SSS",
+    "login": "Giriş",
+    "getStarted": "Kayıt Ol"
+  },
+  "Features": {
+    "title": "Güçlü Yapay Zeka",
+    "subtitle": "Soğuk müşterileri satışa dönüştürün.",
+    "feature1Title": "Otomatik Satış Mesajı",
+    "feature1Desc": "Yapay zeka ile kişiselleştirilmiş mesajlar.",
+    "feature2Title": "Web Sitesi Önizleme",
+    "feature2Desc": "Müşterilerin dikkatini çekecek tasarım önizlemeleri.",
+    "feature3Title": "Teklif Oluşturucu",
+    "feature3Desc": "Saniyeler içinde teklif hazırlayın.",
+    "feature4Title": "Satış Senaryosu",
+    "feature4Desc": "İkna edici telefon görüşmesi metinleri."
+  },
+  "Workflow": {
+    "title": "Nasıl Çalışır?",
+    "step1": "1. Müşteri Bul",
+    "step1Desc": "Konum ve sektör seçin.",
+    "step2": "2. Analiz Et",
+    "step2Desc": "Dijital varlıklarını incele.",
+    "step3": "3. İçerik Üret",
+    "step3Desc": "Satış mesajlarını hazırla.",
+    "step4": "4. Müşteri Kazan",
+    "step4Desc": "Anlaşmaları kapat."
+  },
+  "Pricing": {
+    "title": "Fiyatlandırma",
+    "monthly": "Aylık",
+    "annual": "Yıllık",
+    "starter": "Başlangıç",
+    "pro": "Profesyonel",
+    "enterprise": "Kurumsal",
+    "popular": "Popüler",
+    "getStarted": "Başla"
+  },
+  "FAQ": {
+    "title": "Sıkça Sorulan Sorular",
+    "q1": "Farkı nedir?",
+    "a1": "Yapay zeka ile müşteri bulur ve analiz eder.",
+    "q2": "Her ülkede geçerli mi?",
+    "a2": "Evet, tüm dünyada.",
+    "q3": "Ücretsiz deneme var mı?",
+    "a3": "Evet, 7 gün ücretsiz."
+  },
+  "Footer": {
+    "product": "Ürün",
+    "company": "Şirket",
+    "legal": "Yasal",
+    "copyright": "© 2026 SnapLead."
+  },
+  "Dashboard": {
+    "hotLead": "Sıcak Fırsat",
+    "generateMessage": "Mesaj Üret",
+    "generateProposal": "Teklif Üret",
+    "redesignPreview": "Önizleme",
+    "exportCsv": "CSV İndir",
+    "filters": "Filtreler",
+    "country": "Ülke",
+    "city": "Şehir",
+    "niche": "Sektör"
+  },
+  "Auth": {
+    "loginTitle": "Tekrar hoş geldiniz",
+    "loginSubtitle": "Hesabınıza giriş yapmak için e-postanızı girin",
+    "signupTitle": "Hesap oluşturun",
+    "signupSubtitle": "Hesabınızı oluşturmak için bilgilerinizi girin",
+    "forgotPasswordTitle": "Şifrenizi mi unuttunuz?",
+    "forgotPasswordSubtitle": "E-posta adresinizi girin, size bir sıfırlama bağlantısı gönderelim.",
+    "resetPasswordTitle": "Şifre sıfırlama",
+    "resetPasswordSubtitle": "Aşağıya yeni şifrenizi girin.",
+    "email": "E-posta",
+    "emailPlaceholder": "isim@ornek.com",
+    "password": "Şifre",
+    "passwordPlaceholder": "••••••••",
+    "confirmPassword": "Şifreyi Onayla",
+    "loginButton": "Giriş Yap",
+    "signupButton": "Kayıt Ol",
+    "sendResetLink": "Sıfırlama linki gönder",
+    "updatePassword": "Şifreyi güncelle",
+    "orContinueWith": "Veya şununla devam edin",
+    "dontHaveAccount": "Hesabınız yok mu?",
+    "alreadyHaveAccount": "Zaten bir hesabınız var mı?",
+    "forgotPasswordLink": "Şifrenizi mi unuttunuz?",
+    "backToLogin": "Girişe dön",
+    "invalidCredentials": "Hatalı e-posta veya şifre",
+    "passwordsDontMatch": "Şifreler eşleşmiyor",
+    "emailSent": "Onay bağlantısı için e-postanızı kontrol edin"
+  }
+}
