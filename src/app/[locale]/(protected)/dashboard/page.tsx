@@ -1,10 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
-import { DashboardStats } from '@/components/dashboard/dashboard-stats';
-import { LeadsTable } from '@/components/dashboard/leads-table';
-import { CreateLeadDialog } from '@/components/dashboard/create-lead-dialog';
-import { ExportButton } from '@/components/dashboard/export-button';
-import { getLeads } from '@/app/actions/leads';
+import { BusinessDiscovery } from '@/components/dashboard/business-discovery';
 
 export default async function DashboardPage({ params }: { params: Promise<{locale: string}> }) {
   const { locale } = await params;
@@ -12,39 +8,28 @@ export default async function DashboardPage({ params }: { params: Promise<{local
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { leads, error } = await getLeads();
-
-  const stats = {
-    totalLeads: leads?.length || 0,
-    newLeads: leads?.filter(l => l.status === 'new').length || 0,
-    contactedLeads: leads?.filter(l => l.status === 'contacted').length || 0,
-    avgScore: leads?.length ? Math.round(leads.reduce((acc, curr) => acc + (curr.score || 0), 0) / leads.length) : 0
-  };
+  let currentCredits = 0;
+  if (user?.id) {
+    const { data: profile } = await supabase.from("profiles").select("credits").eq("id", user.id).single();
+    currentCredits = profile?.credits || 0;
+  }
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Welcome back, <span className="font-medium text-foreground">{user?.email}</span></p>
+          <h1 className="text-3xl font-bold tracking-tight">Business Intelligence</h1>
+          <p className="text-muted-foreground mt-1">Discover high-potential business opportunities.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <ExportButton leads={leads || []} />
-          <CreateLeadDialog />
+        <div className="flex items-center gap-4 bg-muted/30 px-4 py-2 rounded-lg border border-border/50">
+          <div className="text-sm font-medium">Internal Credits</div>
+          <div className="text-xl font-bold text-primary">{currentCredits}</div>
         </div>
       </div>
       
-      <DashboardStats stats={stats} />
-      
-      <div className="rounded-xl border border-border/50 bg-card shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-border/50 bg-muted/20">
-          <h2 className="text-lg font-semibold">Your Recent Leads</h2>
-          <p className="text-sm text-muted-foreground">Manage and track your potential customers.</p>
-        </div>
-        <div className="p-6">
-          <LeadsTable leads={leads || []} />
-        </div>
-      </div>
+      {/* Search and Results Section */}
+      <BusinessDiscovery />
+
     </div>
   );
 }

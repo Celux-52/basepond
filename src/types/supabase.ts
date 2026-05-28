@@ -15,6 +15,7 @@ export interface Database {
           email: string
           full_name: string | null
           company_name: string | null
+          credits: number
           created_at: string
         }
         Insert: {
@@ -22,6 +23,7 @@ export interface Database {
           email: string
           full_name?: string | null
           company_name?: string | null
+          credits?: number
           created_at?: string
         }
         Update: {
@@ -29,6 +31,7 @@ export interface Database {
           email?: string
           full_name?: string | null
           company_name?: string | null
+          credits?: number
           created_at?: string
         }
         Relationships: [
@@ -41,55 +44,176 @@ export interface Database {
           }
         ]
       }
-      leads: {
+      businesses: {
+        Row: {
+          id: string
+          business_name: string
+          category: string
+          city: string
+          country: string
+          phone: string | null
+          email: string | null
+          website: string | null
+          instagram: string | null
+          linkedin: string | null
+          facebook: string | null
+          twitter: string | null
+          tiktok: string | null
+          maps_url: string | null
+          rating: number | null
+          review_count: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          business_name: string
+          category: string
+          city: string
+          country?: string
+          phone?: string | null
+          email?: string | null
+          website?: string | null
+          instagram?: string | null
+          linkedin?: string | null
+          facebook?: string | null
+          twitter?: string | null
+          tiktok?: string | null
+          maps_url?: string | null
+          rating?: number | null
+          review_count?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          business_name?: string
+          category?: string
+          city?: string
+          country?: string
+          phone?: string | null
+          email?: string | null
+          website?: string | null
+          instagram?: string | null
+          linkedin?: string | null
+          facebook?: string | null
+          twitter?: string | null
+          tiktok?: string | null
+          maps_url?: string | null
+          rating?: number | null
+          review_count?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      business_analysis: {
+        Row: {
+          business_id: string
+          ai_score: number | null
+          seo_score: number | null
+          mobile_score: number | null
+          social_score: number | null
+          opportunity_reason: string | null
+          website_status: string | null
+          growth_potential: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          ai_score?: number | null
+          seo_score?: number | null
+          mobile_score?: number | null
+          social_score?: number | null
+          opportunity_reason?: string | null
+          website_status?: string | null
+          growth_potential?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          ai_score?: number | null
+          seo_score?: number | null
+          mobile_score?: number | null
+          social_score?: number | null
+          opportunity_reason?: string | null
+          website_status?: string | null
+          growth_potential?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_analysis_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      searches: {
         Row: {
           id: string
           user_id: string
-          first_name: string
-          last_name: string
-          email: string
-          company: string | null
-          job_title: string | null
-          industry: string | null
-          linkedin_url: string | null
-          score: number | null
-          status: 'new' | 'contacted' | 'qualified' | 'lost' | null
+          search_query: string | null
+          city: string
+          category: string
+          requested_amount: number | null
+          credits_used: number
           created_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          first_name: string
-          last_name: string
-          email: string
-          company?: string | null
-          job_title?: string | null
-          industry?: string | null
-          linkedin_url?: string | null
-          score?: number | null
-          status?: 'new' | 'contacted' | 'qualified' | 'lost' | null
+          search_query?: string | null
+          city: string
+          category: string
+          requested_amount?: number | null
+          credits_used?: number
           created_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          first_name?: string
-          last_name?: string
-          email?: string
-          company?: string | null
-          job_title?: string | null
-          industry?: string | null
-          linkedin_url?: string | null
-          score?: number | null
-          status?: 'new' | 'contacted' | 'qualified' | 'lost' | null
+          search_query?: string | null
+          city?: string
+          category?: string
+          requested_amount?: number | null
+          credits_used?: number
           created_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "leads_user_id_fkey"
+            foreignKeyName: "searches_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      cache_system: {
+        Row: {
+          business_id: string
+          last_checked_at: string
+          needs_update: boolean
+        }
+        Insert: {
+          business_id: string
+          last_checked_at?: string
+          needs_update?: boolean
+        }
+        Update: {
+          business_id?: string
+          last_checked_at?: string
+          needs_update?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cache_system_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           }
         ]
@@ -99,7 +223,13 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      decrement_credits: {
+        Args: {
+          user_id_param: string
+          amount: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
