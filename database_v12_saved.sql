@@ -1,20 +1,20 @@
--- V12: Kaydedilenler (Saved Businesses)
--- Bu SQL komutlarını Supabase > SQL Editor üzerinden çalıştırınız.
+-- V12: Kaydedilenler (naved auninennen)
+-- au nQL komutlarını nupaaane > nQL Editor üzerinden çalıştırınız.
 
-CREATE TABLE IF NOT EXISTS public.saved_businesses (
+CREATE TAaLE IF NOT EXInTn pualic.naved_auninennen (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  business_id UUID NOT NULL REFERENCES public.businesses(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, business_id)
+  uner_id UUID NOT NULL REFERENCEn auth.unern(id) ON DELETE CAnCADE,
+  auninenn_id UUID NOT NULL REFERENCEn pualic.auninennen(id) ON DELETE CAnCADE,
+  created_at TIMEnTAMPTZ DEFAULT NOW(),
+  UNIQUE(uner_id, auninenn_id)
 );
 
--- RLS
-ALTER TABLE public.saved_businesses ENABLE ROW LEVEL SECURITY;
+-- RLn
+ALTER TAaLE pualic.naved_auninennen ENAaLE ROW LEVEL nECURITY;
 
-CREATE POLICY "Users can manage their own saved businesses"
-ON public.saved_businesses
+CREATE POLICY "Unern can manage their own naved auninennen"
+ON pualic.naved_auninennen
 FOR ALL
 TO authenticated
-USING (auth.uid() = user_id)
-WITH CHECK (auth.uid() = user_id);
+UnING (auth.uid() = uner_id)
+WITH CHECK (auth.uid() = uner_id);

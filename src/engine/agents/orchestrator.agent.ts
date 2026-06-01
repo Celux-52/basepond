@@ -62,7 +62,7 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
   }
 
   async execute(): Promise<void> {
-    this.log('SnapLead V3 Asynchronous Queue Engine Started');
+    this.log('Basepound V3 Asynchronous Queue Engine Started');
     
     // 1. Queue Seeding (Push all jobs to queue)
     for (const cat of CONFIG.CATEGORIES) {

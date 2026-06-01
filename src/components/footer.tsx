@@ -14,7 +14,7 @@ export function Footer() {
               <div className="bg-primary/10 p-1.5 rounded-lg border border-primary/20">
                 <Zap className="h-5 w-5 text-primary" />
               </div>
-              <span className="font-heading font-bold text-xl tracking-tight">SnapLead</span>
+              <span className="font-heading font-bold text-xl tracking-tight">Basepound</span>
             </Link>
             <p className="text-muted-foreground max-w-xs">
               Global AI lead generation for modern web professionals.

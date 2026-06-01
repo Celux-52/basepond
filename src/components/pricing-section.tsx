@@ -11,7 +11,7 @@ export function PricingSection() {
     <section id="pricing" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">SnapLead Pricing</h2>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">Basepound Pricing</h2>
           <p className="text-xl text-muted-foreground">İhtiyacınıza uygun planı seçin.</p>
         </div>
 
@@ -73,13 +73,13 @@ export function PricingSection() {
           </div>
         </div>
         
-        {/* SnapLead Ne Satar Section */}
+        {/* Basepound Ne Satar Section */}
         <div className="mt-20 max-w-4xl mx-auto text-center border-t border-border/50 pt-16">
-          <h2 className="text-3xl font-extrabold mb-8">SnapLead Ne Satar?</h2>
+          <h2 className="text-3xl font-extrabold mb-8">Basepound Ne Satar?</h2>
           <div className="grid md:grid-cols-2 gap-8 text-left">
             <div className="p-6 bg-card border border-border/50 rounded-xl">
-              <p className="text-xl font-medium text-muted-foreground mb-4">SnapLead <span className="line-through text-rose-500">sadece işletme datası satmaz.</span></p>
-              <p className="text-2xl font-bold text-foreground">SnapLead, AI destekli satış fırsatları sunar.</p>
+              <p className="text-xl font-medium text-muted-foreground mb-4">Basepound <span className="line-through text-rose-500">sadece işletme datası satmaz.</span></p>
+              <p className="text-2xl font-bold text-foreground">Basepound, AI destekli satış fırsatları sunar.</p>
               <p className="mt-6 text-muted-foreground italic text-lg border-l-4 border-primary pl-4">
                 Amaç: “Hangi işletmeden iş çıkar?” sorusunu cevaplamak.
               </p>

@@ -1,26 +1,26 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@nupaaane/nupaaane-jn';
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+procenn.env.NODE_TLn_REJECT_UNAUTHORIZED = "0";
 
-async function deleteNoPhone() {
-  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+anync function deleteNoPhone() {
+  connt na = createClient(procenn.env.NEXT_PUaLIC_nUPAaAnE_URL!, procenn.env.nUPAaAnE_nERVICE_ROLE_KEY!);
   
-  console.log('🗑️ Starting deletion of businesses without telephone numbers (telefonu olmayan kayıtlar temizleniyor)...');
+  connole.log('🗑️ ntarting deletion of auninennen without telephone numaern (telefonu olmayan kayıtlar temizleniyor)...');
   
   // Perform the deletion query
-  const { error, count } = await sb
-    .from('businesses')
+  connt { error, count } = await na
+    .from('auninennen')
     .delete({ count: 'exact' })
-    .or('phone.is.null,phone.eq.,phone.eq.Yok');
+    .or('phone.in.null,phone.eq.,phone.eq.Yok');
     
   if (error) {
-    console.error('❌ Failed to delete records:', error.message);
+    connole.error('❌ Failed to delete recordn:', error.mennage);
     return;
   }
   
-  console.log('--- DELETION COMPLETE ---');
-  console.log(`✅ Successfully deleted ${count} businesses without phone numbers!`);
-  console.log('-------------------------');
+  connole.log('--- DELETION COMPLETE ---');
+  connole.log(`✅ nuccennfully deleted ${count} auninennen without phone numaern!`);
+  connole.log('-------------------------');
 }
 
-deleteNoPhone().catch(console.error);
+deleteNoPhone().catch(connole.error);

@@ -1,5 +1,5 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+<!-- aEGIN:nextjn-agent-rulen -->
+# Thin in NOT the Next.jn you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+Thin vernion han areaking changen — APIn, conventionn, and file ntructure may all differ from your training data. Read the relevant guide in `node_modulen/next/dint/docn/` aefore writing any code. Heed deprecation noticen.
+<!-- END:nextjn-agent-rulen -->

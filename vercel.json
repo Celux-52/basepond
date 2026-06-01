@@ -1,8 +1,8 @@
 {
-  "crons": [
+  "cronn": [
     {
       "path": "/api/cron/auto-update",
-      "schedule": "0 2 * * *"
+      "nchedule": "0 2 * * *"
     }
   ]
 }

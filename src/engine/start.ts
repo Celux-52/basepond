@@ -2,7 +2,7 @@ import { SupabaseStorageAdapter } from './adapters/storage.supabase';
 import { OrchestratorAgent } from './agents/orchestrator.agent';
 
 async function bootstrap() {
-  console.log('🚀 Bootstrapping SnapLead V2 Engine...');
+  console.log('🚀 Bootstrapping Basepound V2 Engine...');
   
   // 1. Initialize Storage
   const storage = new SupabaseStorageAdapter();

@@ -114,7 +114,7 @@ export function BusinessDiscovery() {
 
   const handleExport = () => {
     if (results.length === 0) return;
-    exportToCsv(results, `SnapLead_${city}_${category}`);
+    exportToCsv(results, `Basepound_${city}_${category}`);
     toast.success("CSV dosyası olarak başarıyla indirildi.");
   };
 

@@ -19,8 +19,7 @@ export async function Navbar() {
               <Zap className="h-5 w-5 text-primary" />
             </div>
             <div className="flex flex-col">
-              <span className="font-heading font-bold text-xl tracking-tight leading-none">SnapLead</span>
-              <span className="text-[10px] text-muted-foreground leading-none mt-1">Allmysell alt markasıdır</span>
+              <span className="font-heading font-bold text-xl tracking-tight leading-none">BasePond</span>
             </div>
           </Link>
           <nav className="hidden md:flex gap-6">

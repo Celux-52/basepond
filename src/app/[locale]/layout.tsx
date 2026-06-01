@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{locale: st
       title: t('title'),
       description: t('subheadline'),
       url: `https://basepond.com/${locale}`,
-      siteName: 'BasePond',
+      siteName: 'Basepound',
       locale: locale,
       type: 'website',
     },
@@ -64,7 +64,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
+      <head>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
             <Script
@@ -82,6 +82,8 @@ export default async function RootLayout({
             </Script>
           </>
         )}
+      </head>
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

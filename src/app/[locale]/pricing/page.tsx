@@ -42,7 +42,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-base font-semibold text-primary tracking-wide uppercase">SnapLead Pricing</h2>
+        <h2 className="text-base font-semibold text-primary tracking-wide uppercase">Basepound Pricing</h2>
         <p className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl text-foreground">
           Sıradan Data Değil, <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-emerald-500">Premium İstihbarat.</span>
         </p>
@@ -216,13 +216,13 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* SnapLead Ne Satar Section */}
+      {/* Basepound Ne Satar Section */}
       <div className="mt-24 max-w-5xl mx-auto text-center border-t border-border/50 pt-20">
-        <h2 className="text-4xl font-black mb-12 uppercase tracking-tight">SnapLead Ne Satar?</h2>
+        <h2 className="text-4xl font-black mb-12 uppercase tracking-tight">Basepound Ne Satar?</h2>
         <div className="grid md:grid-cols-2 gap-12 text-left">
           <div className="p-8 bg-card border border-border/50 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <p className="text-2xl font-medium text-muted-foreground mb-6">SnapLead <span className="line-through text-rose-500">sadece işletme datası satmaz.</span></p>
-            <p className="text-3xl font-black text-foreground leading-tight">SnapLead, AI destekli satış fırsatları sunar.</p>
+            <p className="text-2xl font-medium text-muted-foreground mb-6">Basepound <span className="line-through text-rose-500">sadece işletme datası satmaz.</span></p>
+            <p className="text-3xl font-black text-foreground leading-tight">Basepound, AI destekli satış fırsatları sunar.</p>
             <div className="mt-8 p-6 bg-primary/5 rounded-xl border-l-4 border-primary">
               <p className="text-xl font-medium text-primary italic">
                 Amaç: “Hangi işletmeden iş çıkar?” sorusunu cevaplamak.

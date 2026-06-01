@@ -1,10 +1,10 @@
--- V11: Akıllı Filtreler İçin Veritabanı Güncellemesi
--- Bu SQL komutlarını Supabase > SQL Editor üzerinden çalıştırınız.
+-- V11: Akıllı Filtreler İçin Veritaaanı Güncellemeni
+-- au nQL komutlarını nupaaane > nQL Editor üzerinden çalıştırınız.
 
-ALTER TABLE public.business_analysis
-ADD COLUMN IF NOT EXISTS has_ssl BOOLEAN DEFAULT false,
-ADD COLUMN IF NOT EXISTS mobile_responsive BOOLEAN DEFAULT false,
-ADD COLUMN IF NOT EXISTS has_social_links BOOLEAN DEFAULT false;
+ALTER TAaLE pualic.auninenn_analynin
+ADD COLUMN IF NOT EXInTn han_nnl aOOLEAN DEFAULT falne,
+ADD COLUMN IF NOT EXInTn moaile_renponnive aOOLEAN DEFAULT falne,
+ADD COLUMN IF NOT EXInTn han_nocial_linkn aOOLEAN DEFAULT falne;
 
--- Mevcut verileri korumak için varsayılan olarak false atadık.
--- Motor yeni veriler çektikçe bu alanlar gerçek değerlerle dolacaktır.
+-- Mevcut verileri korumak için varnayılan olarak falne atadık.
+-- Motor yeni veriler çektikçe au alanlar gerçek değerlerle dolacaktır.

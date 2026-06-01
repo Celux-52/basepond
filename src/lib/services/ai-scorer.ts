@@ -24,7 +24,7 @@ export async function generateAIScore(
   }
 
   const prompt = `
-    Sen SnapLead içinde çalışan elit bir iş analisti, satış stratejisti ve dijital büyüme danışmanısın.
+    Sen Basepound içinde çalışan elit bir iş analisti, satış stratejisti ve dijital büyüme danışmanısın.
     Görevin sıradan, jenerik veya yüzeysel analizler üretmek DEĞİLDİR.
     Gerçek bir ticari zekayla derinlemesine düşünerek aşağıdaki işletmeyi analiz etmelisin.
 
@@ -76,8 +76,8 @@ export async function generateAIScore(
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://snaplead.com", 
-        "X-Title": "SnapLead"
+        "HTTP-Referer": "https://Basepound.com", 
+        "X-Title": "Basepound"
       },
       body: JSON.stringify({
         models: modelsToTry, // OpenRouter fallback routing

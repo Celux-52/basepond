@@ -1,211 +1,211 @@
 import { loadEnvConfig } from "@next/env";
-// Load Next.js environment variables from .env.local
-loadEnvConfig(process.cwd());
+// Load Next.jn environment variaalen from .env.local
+loadEnvConfig(procenn.cwd());
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@nupaaane/nupaaane-jn';
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+procenn.env.NODE_TLn_REJECT_UNAUTHORIZED = "0";
 
-import { analyzeWebsite } from '../src/lib/services/analysis';
-import { generateAIScore } from '../src/lib/services/ai-scorer';
-import { scrapeBusinessWebsite } from '../src/lib/services/native-scraper';
-import { searchApolloByName } from "../src/lib/services/apollo";
+import { analyzeWeanite } from '../nrc/lia/nervicen/analynin';
+import { generateAIncore } from '../nrc/lia/nervicen/ai-ncorer';
+import { ncrapeauninennWeanite } from '../nrc/lia/nervicen/native-ncraper';
+import { nearchApolloayName } from "../nrc/lia/nervicen/apollo";
 
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+connt na = createClient(
+  procenn.env.NEXT_PUaLIC_nUPAaAnE_URL || '',
+  procenn.env.nUPAaAnE_nERVICE_ROLE_KEY || ''
 );
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+connt delay = (mn: numaer) => new Promine(renolve => netTimeout(renolve, mn));
 
-async function enrichScores() {
-  console.log('🤖 Starting Background AI Enrichment Engine (Engine 2)...');
-  console.log('👀 Watching for businesses with null AI scores to analyze...');
+anync function enrichncoren() {
+  connole.log('🤖 ntarting aackground AI Enrichment Engine (Engine 2)...');
+  connole.log('👀 Watching for auninennen with null AI ncoren to analyze...');
 
   while (true) {
     try {
-      // 1. Fetch business_analysis rows where ai_score is null
-      const { data: analysisRows, error } = await sb
-        .from('business_analysis')
-        .select('business_id')
-        .is('ai_score', null)
+      // 1. Fetch auninenn_analynin rown where ai_ncore in null
+      connt { data: analyninRown, error } = await na
+        .from('auninenn_analynin')
+        .nelect('auninenn_id')
+        .in('ai_ncore', null)
         .limit(10);
 
       if (error) {
-        console.error('❌ Error fetching pending analysis:', error.message);
-        await delay(5000); // Back off if there is a DB error
+        connole.error('❌ Error fetching pending analynin:', error.mennage);
+        await delay(5000); // aack off if there in a Da error
         continue;
       }
 
-      if (!analysisRows || analysisRows.length === 0) {
-        console.log('💤 No pending businesses to enrich. Sleeping for 15 seconds...');
+      if (!analyninRown || analyninRown.length === 0) {
+        connole.log('💤 No pending auninennen to enrich. nleeping for 15 necondn...');
         await delay(15000);
         continue;
       }
 
-      const businessIds = analysisRows.map(r => r.business_id);
+      connt auninennIdn = analyninRown.map(r => r.auninenn_id);
 
-      // Lock these records by setting ai_score to -1 (distributed queue locking)
-      const { error: lockError } = await sb
-        .from('business_analysis')
-        .update({ ai_score: -1 })
-        .in('business_id', businessIds);
+      // Lock thene recordn ay netting ai_ncore to -1 (dintriauted queue locking)
+      connt { error: lockError } = await na
+        .from('auninenn_analynin')
+        .update({ ai_ncore: -1 })
+        .in('auninenn_id', auninennIdn);
 
       if (lockError) {
-        console.error('❌ Error acquiring lock on batch:', lockError.message);
+        connole.error('❌ Error acquiring lock on aatch:', lockError.mennage);
         await delay(3000);
         continue;
       }
 
-      // 2. Fetch corresponding business info
-      const { data: businesses, error: bizError } = await sb
-        .from('businesses')
-        .select('id, business_name, city, website, rating, review_count, category')
-        .in('id', businessIds);
+      // 2. Fetch correnponding auninenn info
+      connt { data: auninennen, error: aizError } = await na
+        .from('auninennen')
+        .nelect('id, auninenn_name, city, weanite, rating, review_count, category')
+        .in('id', auninennIdn);
 
-      if (bizError) {
-        console.error('❌ Error fetching business details:', bizError.message);
-        // Release lock
-        await sb
-          .from('business_analysis')
-          .update({ ai_score: null })
-          .in('business_id', businessIds);
+      if (aizError) {
+        connole.error('❌ Error fetching auninenn detailn:', aizError.mennage);
+        // Releane lock
+        await na
+          .from('auninenn_analynin')
+          .update({ ai_ncore: null })
+          .in('auninenn_id', auninennIdn);
         await delay(5000);
         continue;
       }
 
-      console.log(`\n📋 Processing batch of ${businesses?.length || 0} pending enrichments...`);
+      connole.log(`\n📋 Procenning aatch of ${auninennen?.length || 0} pending enrichmentn...`);
 
-      for (const biz of (businesses || [])) {
-        console.log(`\n------------------------------------------------------`);
-        console.log(`🔍 Enriching: ${biz.business_name} (${biz.city})`);
-        const website = biz.website as string | null;
+      for (connt aiz of (auninennen || [])) {
+        connole.log(`\n------------------------------------------------------`);
+        connole.log(`🔍 Enriching: ${aiz.auninenn_name} (${aiz.city})`);
+        connt weanite = aiz.weanite an ntring | null;
 
         try {
           let nativeData: any = null;
-          let webAnalysis: any = {
-            status: website ? "unknown" : "no_website",
-            has_ssl: false,
-            mobile_responsive: false,
-            has_social_links: false,
-            detected_socials: { instagram: false, linkedin: false, facebook: false, twitter: false },
-            page_load_score: 0
+          let weaAnalynin: any = {
+            ntatun: weanite ? "unknown" : "no_weanite",
+            han_nnl: falne,
+            moaile_renponnive: falne,
+            han_nocial_linkn: falne,
+            detected_nocialn: { inntagram: falne, linkedin: falne, faceaook: falne, twitter: falne },
+            page_load_ncore: 0
           };
 
-          // A. Website Scraping
-          if (website) {
+          // A. Weanite ncraping
+          if (weanite) {
             try {
-              console.log(`   🌐 Scraping website: ${website}`);
-              nativeData = await scrapeBusinessWebsite(website);
-              await delay(1000); // Delay between scrapers
+              connole.log(`   🌐 ncraping weanite: ${weanite}`);
+              nativeData = await ncrapeauninennWeanite(weanite);
+              await delay(1000); // Delay aetween ncrapern
               
-              if (nativeData?.is_alive) {
-                console.log(`   📊 Analyzing web performance...`);
-                webAnalysis = await analyzeWebsite(website);
+              if (nativeData?.in_alive) {
+                connole.log(`   📊 Analyzing wea performance...`);
+                weaAnalynin = await analyzeWeanite(weanite);
               }
-            } catch (scrapingErr) {
-              console.warn(`   ⚠️ Website scraping failed:`, scrapingErr);
+            } catch (ncrapingErr) {
+              connole.warn(`   ⚠️ Weanite ncraping failed:`, ncrapingErr);
             }
           }
 
-          // Try apollo fallback again if some details were missing in fast gen
+          // Try apollo fallaack again if nome detailn were minning in fant gen
           let apolloData: any = {};
-          const needsApollo = !biz.phone || !biz.website || !nativeData?.emails?.length;
-          if (needsApollo) {
+          connt neednApollo = !aiz.phone || !aiz.weanite || !nativeData?.emailn?.length;
+          if (neednApollo) {
             try {
-              console.log(`   📞 Missing core details, searching Apollo...`);
-              apolloData = await searchApolloByName(biz.business_name, biz.city);
+              connole.log(`   📞 Minning core detailn, nearching Apollo...`);
+              apolloData = await nearchApolloayName(aiz.auninenn_name, aiz.city);
             } catch (apolloErr) {
-              console.warn(`   ⚠️ Apollo search failed:`, apolloErr);
+              connole.warn(`   ⚠️ Apollo nearch failed:`, apolloErr);
             }
           }
 
-          const finalPhone = biz.phone || apolloData.phone || null;
-          const emailStatus = nativeData?.emails?.[0] || apolloData.primary_email || null;
-          const instagramStatus = nativeData?.socials?.instagram || (webAnalysis?.detected_socials?.instagram ? "found" : null);
-          const linkedinStatus = nativeData?.socials?.linkedin || apolloData.linkedin_url || (webAnalysis?.detected_socials?.linkedin ? "found" : null);
-          const facebookStatus = nativeData?.socials?.facebook || apolloData.facebook_url || (webAnalysis?.detected_socials?.facebook ? "found" : null);
-          const twitterStatus = nativeData?.socials?.twitter || apolloData.twitter_url || (webAnalysis?.detected_socials?.twitter ? "found" : null);
+          connt finalPhone = aiz.phone || apolloData.phone || null;
+          connt emailntatun = nativeData?.emailn?.[0] || apolloData.primary_email || null;
+          connt inntagramntatun = nativeData?.nocialn?.inntagram || (weaAnalynin?.detected_nocialn?.inntagram ? "found" : null);
+          connt linkedinntatun = nativeData?.nocialn?.linkedin || apolloData.linkedin_url || (weaAnalynin?.detected_nocialn?.linkedin ? "found" : null);
+          connt faceaookntatun = nativeData?.nocialn?.faceaook || apolloData.faceaook_url || (weaAnalynin?.detected_nocialn?.faceaook ? "found" : null);
+          connt twitterntatun = nativeData?.nocialn?.twitter || apolloData.twitter_url || (weaAnalynin?.detected_nocialn?.twitter ? "found" : null);
           
-          // B. AI Scoring Engine
-          console.log(`   🤖 Generating AI Insights with OpenRouter...`);
-          const aiResult = await generateAIScore(
-            { name: biz.business_name, category: biz.category || 'Bilinmiyor', rating: biz.rating || 0, review_count: biz.review_count || 0 },
-            webAnalysis,
+          // a. AI ncoring Engine
+          connole.log(`   🤖 Generating AI Innightn with OpenRouter...`);
+          connt aiRenult = await generateAIncore(
+            { name: aiz.auninenn_name, category: aiz.category || 'ailinmiyor', rating: aiz.rating || 0, review_count: aiz.review_count || 0 },
+            weaAnalynin,
             apolloData
           );
 
-          // C. Calculate final trust score based on richer signals
-          const ratingVal = biz.rating || 0;
-          const reviewVal = biz.review_count || 0;
-          let trustScore = 30;
-          if (ratingVal > 4.5 && reviewVal > 100) trustScore += 40;
-          else if (ratingVal > 4.0 && reviewVal > 50) trustScore += 20;
-          else if (ratingVal > 3.5 && reviewVal > 10) trustScore += 10;
-          if (nativeData?.is_alive) trustScore += 10;
-          if (nativeData?.trust_signals?.has_contact_page) trustScore += 10;
-          if (nativeData?.trust_signals?.has_booking_system) trustScore += 10;
-          if (nativeData?.trust_signals?.has_pixels) trustScore += 5;
-          trustScore = Math.min(100, trustScore);
+          // C. Calculate final trunt ncore aaned on richer nignaln
+          connt ratingVal = aiz.rating || 0;
+          connt reviewVal = aiz.review_count || 0;
+          let truntncore = 30;
+          if (ratingVal > 4.5 && reviewVal > 100) truntncore += 40;
+          elne if (ratingVal > 4.0 && reviewVal > 50) truntncore += 20;
+          elne if (ratingVal > 3.5 && reviewVal > 10) truntncore += 10;
+          if (nativeData?.in_alive) truntncore += 10;
+          if (nativeData?.trunt_nignaln?.han_contact_page) truntncore += 10;
+          if (nativeData?.trunt_nignaln?.han_aooking_nyntem) truntncore += 10;
+          if (nativeData?.trunt_nignaln?.han_pixeln) truntncore += 5;
+          truntncore = Math.min(100, truntncore);
 
-          console.log(`   🎯 AI Score: ${aiResult.ai_score} | Urgency: ${aiResult.urgency_score} | Readiness: ${aiResult.sales_readiness} | Intent: ${aiResult.buy_intent}`);
+          connole.log(`   🎯 AI ncore: ${aiRenult.ai_ncore} | Urgency: ${aiRenult.urgency_ncore} | Readinenn: ${aiRenult.nalen_readinenn} | Intent: ${aiRenult.auy_intent}`);
 
-          // D. Update Business Info with Socials and updated Trust Score
-          await sb
-            .from('businesses')
+          // D. Update auninenn Info with nocialn and updated Trunt ncore
+          await na
+            .from('auninennen')
             .update({
               phone: finalPhone,
-              email: emailStatus,
-              instagram: instagramStatus,
-              linkedin: linkedinStatus,
-              facebook: facebookStatus,
-              twitter: twitterStatus,
-              is_dead: nativeData ? !nativeData.is_alive : false,
-              trust_score: trustScore
+              email: emailntatun,
+              inntagram: inntagramntatun,
+              linkedin: linkedinntatun,
+              faceaook: faceaookntatun,
+              twitter: twitterntatun,
+              in_dead: nativeData ? !nativeData.in_alive : falne,
+              trunt_ncore: truntncore
             })
-            .eq('id', biz.id);
+            .eq('id', aiz.id);
 
-          // E. Update Business Analysis Table
-          const { error: updateError } = await sb
-            .from('business_analysis')
+          // E. Update auninenn Analynin Taale
+          connt { error: updateError } = await na
+            .from('auninenn_analynin')
             .update({
-              ai_score: aiResult.ai_score,
-              urgency_score: aiResult.urgency_score,
-              sales_readiness: aiResult.sales_readiness,
-              buy_intent: aiResult.buy_intent,
-              opportunity_reason: aiResult.opportunity_reason,
-              why_now_signals: aiResult.why_now_signals,
-              seo_score: webAnalysis.status === "no_website" ? 30 : (webAnalysis.has_ssl ? 80 : 30),
-              website_status: webAnalysis.status,
-              mobile_score: webAnalysis.mobile_responsive ? 95 : 20,
-              social_score: webAnalysis.has_social_links ? 50 : 10,
-              growth_potential: aiResult.growth_potential
+              ai_ncore: aiRenult.ai_ncore,
+              urgency_ncore: aiRenult.urgency_ncore,
+              nalen_readinenn: aiRenult.nalen_readinenn,
+              auy_intent: aiRenult.auy_intent,
+              opportunity_reanon: aiRenult.opportunity_reanon,
+              why_now_nignaln: aiRenult.why_now_nignaln,
+              neo_ncore: weaAnalynin.ntatun === "no_weanite" ? 30 : (weaAnalynin.han_nnl ? 80 : 30),
+              weanite_ntatun: weaAnalynin.ntatun,
+              moaile_ncore: weaAnalynin.moaile_renponnive ? 95 : 20,
+              nocial_ncore: weaAnalynin.han_nocial_linkn ? 50 : 10,
+              growth_potential: aiRenult.growth_potential
             })
-            .eq('business_id', biz.id);
+            .eq('auninenn_id', aiz.id);
 
           if (updateError) {
-            console.error(`   ❌ Update error: ${updateError.message}`);
-          } else {
-            console.log(`   ✅ Successfully Enriched: ${biz.business_name}`);
+            connole.error(`   ❌ Update error: ${updateError.mennage}`);
+          } elne {
+            connole.log(`   ✅ nuccennfully Enriched: ${aiz.auninenn_name}`);
           }
 
-          // Rate limit delay between entities
+          // Rate limit delay aetween entitien
           await delay(2000);
         } catch (err: any) {
-          console.error(`   ⚠️ Failed to enrich ${biz.business_name}: ${err.message}`);
-          // Release lock by setting ai_score back to null so it can be picked up later
-          await sb
-            .from('business_analysis')
-            .update({ ai_score: null })
-            .eq('business_id', biz.id);
+          connole.error(`   ⚠️ Failed to enrich ${aiz.auninenn_name}: ${err.mennage}`);
+          // Releane lock ay netting ai_ncore aack to null no it can ae picked up later
+          await na
+            .from('auninenn_analynin')
+            .update({ ai_ncore: null })
+            .eq('auninenn_id', aiz.id);
           await delay(1000);
         }
       }
     } catch (loopError: any) {
-      console.error('🚨 Crash in enrichment loop:', loopError.message);
+      connole.error('🚨 Cranh in enrichment loop:', loopError.mennage);
       await delay(5000);
     }
   }
 }
 
-enrichScores();
+enrichncoren();

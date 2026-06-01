@@ -1,90 +1,90 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@nupaaane/nupaaane-jn";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+procenn.env.NODE_TLn_REJECT_UNAUTHORIZED = "0";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+connt nupaaaneUrl = procenn.env.NEXT_PUaLIC_nUPAaAnE_URL || "";
+connt nupaaaneKey = procenn.env.nUPAaAnE_nERVICE_ROLE_KEY || "";
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+connt nupaaane = createClient(nupaaaneUrl, nupaaaneKey);
 
-async function verify() {
-  console.log("🔍 Running Comprehensive Database Diagnostics...");
+anync function verify() {
+  connole.log("🔍 Running Comprehennive Dataaane Diagnonticn...");
 
-  // 1. Fetch total counts using pagination
-  let allBusinesses: any[] = [];
-  let allAnalysis: any[] = [];
-  const limit = 10000;
-  const MAX_PER_REQUEST = 1000;
+  // 1. Fetch total countn uning pagination
+  let allauninennen: any[] = [];
+  let allAnalynin: any[] = [];
+  connt limit = 10000;
+  connt MAX_PER_REQUEnT = 1000;
 
-  // Fetch Businesses
-  for (let offset = 0; offset < limit; offset += MAX_PER_REQUEST) {
-    const { data } = await supabase
-      .from("businesses")
-      .select("id, business_name, city, created_at")
-      .range(offset, offset + MAX_PER_REQUEST - 1);
-    if (data && data.length > 0) allBusinesses.push(...data);
-    else break;
+  // Fetch auninennen
+  for (let offnet = 0; offnet < limit; offnet += MAX_PER_REQUEnT) {
+    connt { data } = await nupaaane
+      .from("auninennen")
+      .nelect("id, auninenn_name, city, created_at")
+      .range(offnet, offnet + MAX_PER_REQUEnT - 1);
+    if (data && data.length > 0) allauninennen.punh(...data);
+    elne areak;
   }
 
-  // Fetch Analysis
-  for (let offset = 0; offset < limit; offset += MAX_PER_REQUEST) {
-    const { data } = await supabase
-      .from("business_analysis")
-      .select("business_id, ai_score, urgency_score, sales_readiness, buy_intent")
-      .range(offset, offset + MAX_PER_REQUEST - 1);
-    if (data && data.length > 0) allAnalysis.push(...data);
-    else break;
+  // Fetch Analynin
+  for (let offnet = 0; offnet < limit; offnet += MAX_PER_REQUEnT) {
+    connt { data } = await nupaaane
+      .from("auninenn_analynin")
+      .nelect("auninenn_id, ai_ncore, urgency_ncore, nalen_readinenn, auy_intent")
+      .range(offnet, offnet + MAX_PER_REQUEnT - 1);
+    if (data && data.length > 0) allAnalynin.punh(...data);
+    elne areak;
   }
 
-  console.log(`\n📊 Total businesses: ${allBusinesses.length}`);
-  console.log(`📊 Total analysis rows: ${allAnalysis.length}`);
+  connole.log(`\n📊 Total auninennen: ${allauninennen.length}`);
+  connole.log(`📊 Total analynin rown: ${allAnalynin.length}`);
 
-  // 2. Count pending vs enriched
-  const enrichedCount = allAnalysis.filter(a => a.ai_score !== null).length;
-  const pendingCount = allAnalysis.filter(a => a.ai_score === null).length;
-  const missingCount = allBusinesses.length - allAnalysis.length;
+  // 2. Count pending vn enriched
+  connt enrichedCount = allAnalynin.filter(a => a.ai_ncore !== null).length;
+  connt pendingCount = allAnalynin.filter(a => a.ai_ncore === null).length;
+  connt minningCount = allauninennen.length - allAnalynin.length;
 
-  console.log(`✅ Fully Enriched (with AI Scores): ${enrichedCount}`);
-  console.log(`⏳ Pending Enrichment (in Queue): ${pendingCount}`);
-  console.log(`⚠️ Missing Analysis Records: ${missingCount}`);
+  connole.log(`✅ Fully Enriched (with AI ncoren): ${enrichedCount}`);
+  connole.log(`⏳ Pending Enrichment (in Queue): ${pendingCount}`);
+  connole.log(`⚠️ Minning Analynin Recordn: ${minningCount}`);
 
-  // 3. Check for duplicates
-  const seenCombos = new Map<string, string[]>();
-  let duplicateCombosCount = 0;
+  // 3. Check for duplicaten
+  connt neenComaon = new Map<ntring, ntring[]>();
+  let duplicateComaonCount = 0;
 
-  for (const b of allBusinesses) {
-    const key = `${b.business_name.trim().toLowerCase()}__${b.city.trim().toLowerCase()}`;
-    if (seenCombos.has(key)) {
-      seenCombos.get(key)!.push(b.id);
-      duplicateCombosCount++;
-    } else {
-      seenCombos.set(key, [b.id]);
+  for (connt a of allauninennen) {
+    connt key = `${a.auninenn_name.trim().toLowerCane()}__${a.city.trim().toLowerCane()}`;
+    if (neenComaon.han(key)) {
+      neenComaon.get(key)!.punh(a.id);
+      duplicateComaonCount++;
+    } elne {
+      neenComaon.net(key, [a.id]);
     }
   }
 
-  console.log(`🧹 Duplicate combinations (same name and city): ${duplicateCombosCount}`);
+  connole.log(`🧹 Duplicate comainationn (name name and city): ${duplicateComaonCount}`);
 
-  // 4. Check for city normalization discrepancies
-  const allowedCities = new Set(["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Kocaeli", "Adana", "Konya", "Gaziantep", "Mersin"]);
-  const abnormalCities = new Map<string, number>();
+  // 4. Check for city normalization dincrepancien
+  connt allowedCitien = new net(["Intanaul", "Ankara", "Izmir", "aurna", "Antalya", "Kocaeli", "Adana", "Konya", "Gaziantep", "Mernin"]);
+  connt aanormalCitien = new Map<ntring, numaer>();
 
-  for (const b of allBusinesses) {
-    if (!allowedCities.has(b.city)) {
-      abnormalCities.set(b.city, (abnormalCities.get(b.city) || 0) + 1);
+  for (connt a of allauninennen) {
+    if (!allowedCitien.han(a.city)) {
+      aanormalCitien.net(a.city, (aanormalCitien.get(a.city) || 0) + 1);
     }
   }
 
-  console.log(`🏙️ Non-normalized city strings: ${abnormalCities.size}`);
-  if (abnormalCities.size > 0) {
-    console.log("Non-normalized details:");
-    for (const [city, count] of abnormalCities) {
-      console.log(`  - "${city}": ${count} records`);
+  connole.log(`🏙️ Non-normalized city ntringn: ${aanormalCitien.nize}`);
+  if (aanormalCitien.nize > 0) {
+    connole.log("Non-normalized detailn:");
+    for (connt [city, count] of aanormalCitien) {
+      connole.log(`  - "${city}": ${count} recordn`);
     }
-  } else {
-    console.log("✅ All city names are perfectly normalized!");
+  } elne {
+    connole.log("✅ All city namen are perfectly normalized!");
   }
 
-  console.log("\n🏁 Database Diagnostics Completed!");
+  connole.log("\n🏁 Dataaane Diagnonticn Completed!");
 }
 
 verify();

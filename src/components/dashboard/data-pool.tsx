@@ -142,7 +142,7 @@ export function DataPool() {
 
   const handleExport = () => {
     if (filteredBusinesses.length === 0) return;
-    exportToCsv(filteredBusinesses, `SnapLead_SmartSearch_Export`);
+    exportToCsv(filteredBusinesses, `Basepound_SmartSearch_Export`);
   };
 
   const isWhatsApp = (phone: string | null) => {

@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const category = slugParts.slice(1).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") || "İşletmeler";
 
   return {
-    title: `${city} En İyi ${category} Fırsatları | SnapLead`,
+    title: `${city} En İyi ${category} Fırsatları | Basepound`,
     description: `${city} bölgesindeki ${category} sektörüne ait yapay zeka analizli en iyi dijital fırsatlar, SEO ve web tasarım potansiyelleri.`
   };
 }
@@ -42,7 +42,7 @@ export default async function SEODiscoveryPage({ params }: { params: { slug: str
       <div className="min-h-screen bg-background p-8 flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold mb-4">Henüz Bu Bölgede Analiz Yapılmadı</h1>
         <p className="text-muted-foreground text-center max-w-md">
-          {cityParam} bölgesindeki {categoryParam} sektörü için henüz yapay zeka analizimiz bulunmuyor. SnapLead platformuna giriş yaparak hemen ücretsiz tarama başlatabilirsiniz.
+          {cityParam} bölgesindeki {categoryParam} sektörü için henüz yapay zeka analizimiz bulunmuyor. Basepound platformuna giriş yaparak hemen ücretsiz tarama başlatabilirsiniz.
         </p>
       </div>
     );
@@ -89,7 +89,7 @@ export default async function SEODiscoveryPage({ params }: { params: { slug: str
             {displayCity} <span className="text-primary">{displayCategory}</span> Dijital Fırsat Analizi
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground font-medium">
-            SnapLead yapay zekası, bölgedeki işletmelerin SEO, mobil uyum ve sosyal medya varlığını analiz ederek en kârlı dijital dönüşüm fırsatlarını sıraladı.
+            Basepound yapay zekası, bölgedeki işletmelerin SEO, mobil uyum ve sosyal medya varlığını analiz ederek en kârlı dijital dönüşüm fırsatlarını sıraladı.
           </p>
         </div>
       </div>

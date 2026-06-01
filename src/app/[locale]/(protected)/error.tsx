@@ -12,7 +12,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[SnapLead Error]', error);
+    console.error('[Basepound Error]', error);
   }, [error]);
 
   return (

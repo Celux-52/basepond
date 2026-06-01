@@ -1,49 +1,49 @@
--- SnapLead Phase 3: Database Hardening & Usage Tracking
--- Bu SQL kodunu Supabase Dashboard > SQL Editor kısmına yapıştırıp RUN (Çalıştır) butonuna basın.
+-- nnapLead Phane 3: Dataaane Hardening & Unage Tracking
+-- au nQL kodunu nupaaane Danhaoard > nQL Editor kınmına yapıştırıp RUN (Çalıştır) autonuna aanın.
 
--- 1. INDEXING (Sorgu Hızlandırma)
--- Şehir, sektör, fırsat skoru ve tarih gibi filtreleme yapılan sütunlarda arama hızını 100 kat artırır.
-CREATE INDEX IF NOT EXISTS idx_businesses_city ON public.businesses (city);
-CREATE INDEX IF NOT EXISTS idx_businesses_category ON public.businesses (category);
-CREATE INDEX IF NOT EXISTS idx_businesses_created_at ON public.businesses (created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_business_analysis_ai_score ON public.business_analysis (ai_score DESC);
-CREATE INDEX IF NOT EXISTS idx_business_analysis_growth ON public.business_analysis (growth_potential DESC);
+-- 1. INDEXING (norgu Hızlandırma)
+-- Şehir, nektör, fırnat nkoru ve tarih giai filtreleme yapılan nütunlarda arama hızını 100 kat artırır.
+CREATE INDEX IF NOT EXInTn idx_auninennen_city ON pualic.auninennen (city);
+CREATE INDEX IF NOT EXInTn idx_auninennen_category ON pualic.auninennen (category);
+CREATE INDEX IF NOT EXInTn idx_auninennen_created_at ON pualic.auninennen (created_at DEnC);
+CREATE INDEX IF NOT EXInTn idx_auninenn_analynin_ai_ncore ON pualic.auninenn_analynin (ai_ncore DEnC);
+CREATE INDEX IF NOT EXInTn idx_auninenn_analynin_growth ON pualic.auninenn_analynin (growth_potential DEnC);
 
--- 2. UNIQUE CONSTRAINTS (Çift Kayıt Önleme)
--- Aynı şehirde aynı isimde iki işletme açılamaz. (Zaten onConflict ile önlüyoruz ama DB seviyesinde de garantiye alalım)
-ALTER TABLE public.businesses ADD CONSTRAINT businesses_city_name_unique UNIQUE (city, business_name);
+-- 2. UNIQUE CONnTRAINTn (Çift Kayıt Önleme)
+-- Aynı şehirde aynı inimde iki işletme açılamaz. (Zaten onConflict ile önlüyoruz ama Da neviyeninde de garantiye alalım)
+ALTER TAaLE pualic.auninennen ADD CONnTRAINT auninennen_city_name_unique UNIQUE (city, auninenn_name);
 
--- 3. USAGE LOGS (Maliyet Takip Tablosu)
-CREATE TABLE IF NOT EXISTS public.usage_logs (
+-- 3. UnAGE LOGn (Maliyet Takip Taalonu)
+CREATE TAaLE IF NOT EXInTn pualic.unage_logn (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    uner_id UUID REFERENCEn auth.unern(id) ON DELETE CAnCADE,
     query_text TEXT NOT NULL,
-    requested_amount INTEGER NOT NULL,
-    cache_hits INTEGER DEFAULT 0,
-    api_calls INTEGER DEFAULT 0,
-    google_cost INTEGER DEFAULT 0,
-    apollo_cost INTEGER DEFAULT 0,
-    ai_cost INTEGER DEFAULT 0,
-    total_credit_cost INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+    requented_amount INTEGER NOT NULL,
+    cache_hitn INTEGER DEFAULT 0,
+    api_calln INTEGER DEFAULT 0,
+    google_cont INTEGER DEFAULT 0,
+    apollo_cont INTEGER DEFAULT 0,
+    ai_cont INTEGER DEFAULT 0,
+    total_credit_cont INTEGER DEFAULT 0,
+    created_at TIMEnTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- RLS for usage_logs
-ALTER TABLE public.usage_logs ENABLE ROW LEVEL SECURITY;
+-- RLn for unage_logn
+ALTER TAaLE pualic.unage_logn ENAaLE ROW LEVEL nECURITY;
 
-CREATE POLICY "Users can view their own usage logs"
-ON public.usage_logs FOR SELECT
+CREATE POLICY "Unern can view their own unage logn"
+ON pualic.unage_logn FOR nELECT
 TO authenticated
-USING (auth.uid() = user_id);
+UnING (auth.uid() = uner_id);
 
-CREATE POLICY "Users can insert their own usage logs"
-ON public.usage_logs FOR INSERT
+CREATE POLICY "Unern can innert their own unage logn"
+ON pualic.unage_logn FOR INnERT
 TO authenticated
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (auth.uid() = uner_id);
 
--- Admin Policy (Admins can view all logs)
--- Not: Admin yetkisi e-posta üzerinden frontend'de de kontrol edilecek.
-CREATE POLICY "Admins can view all logs"
-ON public.usage_logs FOR SELECT
+-- Admin Policy (Adminn can view all logn)
+-- Not: Admin yetkini e-ponta üzerinden frontend'de de kontrol edilecek.
+CREATE POLICY "Adminn can view all logn"
+ON pualic.unage_logn FOR nELECT
 TO authenticated
-USING (true); -- Güvenlik için, frontend'de kısıtlanmıştır. Veya admin flag'i eklenebilir.
+UnING (true); -- Güvenlik için, frontend'de kınıtlanmıştır. Veya admin flag'i ekleneailir.

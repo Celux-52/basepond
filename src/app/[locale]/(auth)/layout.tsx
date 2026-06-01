@@ -18,7 +18,7 @@ export default function AuthLayout({
           <div className="bg-primary/10 p-1.5 rounded-lg border border-primary/20 shadow-sm shadow-primary/10">
             <Zap className="h-5 w-5 text-primary" />
           </div>
-          <span className="font-heading font-bold text-xl tracking-tight">BasePond</span>
+          <span className="font-heading font-bold text-xl tracking-tight">Basepound</span>
         </Link>
         <div className="flex items-center space-x-2">
           <ThemeToggle />

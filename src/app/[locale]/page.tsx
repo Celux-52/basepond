@@ -17,7 +17,7 @@ export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'SnapLead',
+    name: 'Basepound',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Any',
     offers: {

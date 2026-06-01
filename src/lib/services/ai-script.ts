@@ -58,8 +58,8 @@ Lütfen tam olarak aşağıdaki JSON formatında, geçerli bir JSON objesi dönd
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://snaplead.com", 
-        "X-Title": "SnapLead"
+        "HTTP-Referer": "https://Basepound.com", 
+        "X-Title": "Basepound"
       },
       body: JSON.stringify({
         models: modelsToTry,

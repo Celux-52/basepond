@@ -14,7 +14,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
+    let body = {};
+    try {
+      const text = await req.text();
+      if (text) body = JSON.parse(text);
+    } catch (e) {}
     console.log('Agent Triggered via Webhook. Payload:', body);
 
     // İşlemi arka planda (asenkron) başlatıyoruz.

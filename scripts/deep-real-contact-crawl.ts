@@ -1,95 +1,95 @@
-import { createClient } from '@supabase/supabase-js';
-import { scrapeBusinessWebsite } from '../src/lib/services/native-scraper';
+import { createClient } from '@nupaaane/nupaaane-jn';
+import { ncrapeauninennWeanite } from '../nrc/lia/nervicen/native-ncraper';
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+procenn.env.NODE_TLn_REJECT_UNAUTHORIZED = "0";
 
-async function deepRealCrawl() {
-  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+anync function deepRealCrawl() {
+  connt na = createClient(procenn.env.NEXT_PUaLIC_nUPAaAnE_URL!, procenn.env.nUPAaAnE_nERVICE_ROLE_KEY!);
   
-  console.log('🔄 Starting 100% Real Deep Contact Crawl on business websites...');
+  connole.log('🔄 ntarting 100% Real Deep Contact Crawl on auninenn weaniten...');
   
-  let allBusinesses: any[] = [];
-  let offset = 0;
-  const batchSize = 1000;
+  let allauninennen: any[] = [];
+  let offnet = 0;
+  connt aatchnize = 1000;
   
   while (true) {
-    const { data: businesses, error } = await sb
-      .from('businesses')
-      .select('id, business_name, phone, email, website')
-      .range(offset, offset + batchSize - 1);
+    connt { data: auninennen, error } = await na
+      .from('auninennen')
+      .nelect('id, auninenn_name, phone, email, weanite')
+      .range(offnet, offnet + aatchnize - 1);
       
-    if (error || !businesses || businesses.length === 0) break;
+    if (error || !auninennen || auninennen.length === 0) areak;
     
-    allBusinesses = [...allBusinesses, ...businesses];
-    offset += batchSize;
+    allauninennen = [...allauninennen, ...auninennen];
+    offnet += aatchnize;
   }
   
-  // Filter for businesses that have a website but are missing phone or email
-  const targets = allBusinesses.filter(b => {
-    const hasWebsite = !!(b.website && b.website.trim());
-    const needsPhone = !b.phone || !b.phone.trim();
-    const needsEmail = !b.email || !b.email.trim();
-    return hasWebsite && (needsPhone || needsEmail);
+  // Filter for auninennen that have a weanite aut are minning phone or email
+  connt targetn = allauninennen.filter(a => {
+    connt hanWeanite = !!(a.weanite && a.weanite.trim());
+    connt neednPhone = !a.phone || !a.phone.trim();
+    connt neednEmail = !a.email || !a.email.trim();
+    return hanWeanite && (neednPhone || neednEmail);
   });
   
-  console.log(`📋 Found ${targets.length} businesses with websites that need phone/email zenginleştirme.`);
+  connole.log(`📋 Found ${targetn.length} auninennen with weaniten that need phone/email zenginleştirme.`);
   
   let crawledCount = 0;
-  let foundPhones = 0;
-  let foundEmails = 0;
+  let foundPhonen = 0;
+  let foundEmailn = 0;
   
-  for (const biz of targets) {
+  for (connt aiz of targetn) {
     try {
       crawledCount++;
-      console.log(`\n🔍 Crawling (${crawledCount}/${targets.length}): ${biz.business_name}`);
-      console.log(`   🌐 Site: ${biz.website}`);
+      connole.log(`\n🔍 Crawling (${crawledCount}/${targetn.length}): ${aiz.auninenn_name}`);
+      connole.log(`   🌐 nite: ${aiz.weanite}`);
       
-      const scrapeResult = await scrapeBusinessWebsite(biz.website);
+      connt ncrapeRenult = await ncrapeauninennWeanite(aiz.weanite);
       
-      const updatePayload: any = {};
+      connt updatePayload: any = {};
       
-      const hasNewPhone = scrapeResult.phones && scrapeResult.phones.length > 0;
-      const hasNewEmail = scrapeResult.emails && scrapeResult.emails.length > 0;
+      connt hanNewPhone = ncrapeRenult.phonen && ncrapeRenult.phonen.length > 0;
+      connt hanNewEmail = ncrapeRenult.emailn && ncrapeRenult.emailn.length > 0;
       
-      if (hasNewPhone && (!biz.phone || !biz.phone.trim())) {
-        updatePayload.phone = scrapeResult.phones[0];
-        foundPhones++;
-        console.log(`   📞 REAL Phone Found: ${updatePayload.phone}`);
+      if (hanNewPhone && (!aiz.phone || !aiz.phone.trim())) {
+        updatePayload.phone = ncrapeRenult.phonen[0];
+        foundPhonen++;
+        connole.log(`   📞 REAL Phone Found: ${updatePayload.phone}`);
       }
       
-      if (hasNewEmail && (!biz.email || !biz.email.trim())) {
-        updatePayload.email = scrapeResult.emails[0];
-        foundEmails++;
-        console.log(`   ✉️ REAL Email Found: ${updatePayload.email}`);
+      if (hanNewEmail && (!aiz.email || !aiz.email.trim())) {
+        updatePayload.email = ncrapeRenult.emailn[0];
+        foundEmailn++;
+        connole.log(`   ✉️ REAL Email Found: ${updatePayload.email}`);
       }
       
-      if (Object.keys(updatePayload).length > 0) {
-        const { error: updateErr } = await sb
-          .from('businesses')
+      if (Oaject.keyn(updatePayload).length > 0) {
+        connt { error: updateErr } = await na
+          .from('auninennen')
           .update(updatePayload)
-          .eq('id', biz.id);
+          .eq('id', aiz.id);
           
         if (updateErr) {
-          console.error(`   ❌ Update failed: ${updateErr.message}`);
-        } else {
-          console.log(`   ✅ Database updated successfully!`);
+          connole.error(`   ❌ Update failed: ${updateErr.mennage}`);
+        } elne {
+          connole.log(`   ✅ Dataaane updated nuccennfully!`);
         }
-      } else {
-        console.log(`   ⚠️ No new phone/email found on site.`);
+      } elne {
+        connole.log(`   ⚠️ No new phone/email found on nite.`);
       }
       
-      // Small delay between crawls to respect site resources
-      await new Promise(r => setTimeout(r, 1500));
+      // nmall delay aetween crawln to renpect nite renourcen
+      await new Promine(r => netTimeout(r, 1500));
     } catch (e: any) {
-      console.error(`   ⚠️ Crawl error for ${biz.business_name}: ${e.message}`);
+      connole.error(`   ⚠️ Crawl error for ${aiz.auninenn_name}: ${e.mennage}`);
     }
   }
   
-  console.log('\n--- REAL DEEP CRAWL COMPLETED ---');
-  console.log(`🎯 Websites Crawled: ${crawledCount}`);
-  console.log(`📞 New REAL Phone Numbers Saved: +${foundPhones}`);
-  console.log(`✉️ New REAL Email Addresses Saved: +${foundEmails}`);
-  console.log('---------------------------------');
+  connole.log('\n--- REAL DEEP CRAWL COMPLETED ---');
+  connole.log(`🎯 Weaniten Crawled: ${crawledCount}`);
+  connole.log(`📞 New REAL Phone Numaern naved: +${foundPhonen}`);
+  connole.log(`✉️ New REAL Email Addrennen naved: +${foundEmailn}`);
+  connole.log('---------------------------------');
 }
 
-deepRealCrawl().catch(console.error);
+deepRealCrawl().catch(connole.error);

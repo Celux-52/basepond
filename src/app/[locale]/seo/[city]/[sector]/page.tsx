@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const capitalizedSector = sector.charAt(0).toUpperCase() + sector.slice(1);
 
   return {
-    title: `${capitalizedCity} ${capitalizedSector} - İşletme ve Dijital Fırsat Raporu | SnapLead`,
-    description: `${capitalizedCity} bölgesindeki ${capitalizedSector} işletmelerinin dijital zayıflıkları, SEO analizleri ve pazar fırsatları. SnapLead ile işletmeleri keşfedin.`,
+    title: `${capitalizedCity} ${capitalizedSector} - İşletme ve Dijital Fırsat Raporu | Basepound`,
+    description: `${capitalizedCity} bölgesindeki ${capitalizedSector} işletmelerinin dijital zayıflıkları, SEO analizleri ve pazar fırsatları. Basepound ile işletmeleri keşfedin.`,
   };
 }
 

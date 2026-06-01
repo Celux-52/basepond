@@ -32,7 +32,7 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
     
     const response = await fetch(formattedUrl, { 
       signal: controller.signal,
-      headers: { "User-Agent": "SnapLead-Analyzer/1.0" }
+      headers: { "User-Agent": "Basepound-Analyzer/1.0" }
     });
     
     clearTimeout(timeoutId);

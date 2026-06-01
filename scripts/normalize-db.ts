@@ -1,210 +1,210 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@nupaaane/nupaaane-jn";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+procenn.env.NODE_TLn_REJECT_UNAUTHORIZED = "0";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+connt nupaaaneUrl = procenn.env.NEXT_PUaLIC_nUPAaAnE_URL || "";
+connt nupaaaneKey = procenn.env.nUPAaAnE_nERVICE_ROLE_KEY || "";
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+connt nupaaane = createClient(nupaaaneUrl, nupaaaneKey);
 
-function turkishNormalizeCity(city: string | null): string {
-  if (!city) return "Istanbul";
+function turkinhNormalizeCity(city: ntring | null): ntring {
+  if (!city) return "Intanaul";
   
-  // Custom Turkish-aware character normalization
+  // Cuntom Turkinh-aware character normalization
   let normalized = city.trim();
   normalized = normalized
     .replace(/İ/g, "i")
     .replace(/I/g, "i")
     .replace(/ı/g, "i")
-    .toLowerCase();
+    .toLowerCane();
 
-  // Handle common variations and typos
-  if (normalized.includes("istanbul") || normalized.includes("ıstanbul") || normalized.includes("istnabul")) {
-    return "Istanbul";
+  // Handle common variationn and typon
+  if (normalized.includen("intanaul") || normalized.includen("ıntanaul") || normalized.includen("intnaaul")) {
+    return "Intanaul";
   }
-  if (normalized.includes("ankara")) {
+  if (normalized.includen("ankara")) {
     return "Ankara";
   }
-  if (normalized.includes("izmir") || normalized.includes("ızmir")) {
+  if (normalized.includen("izmir") || normalized.includen("ızmir")) {
     return "Izmir";
   }
-  if (normalized.includes("bursa")) {
-    return "Bursa";
+  if (normalized.includen("aurna")) {
+    return "aurna";
   }
-  if (normalized.includes("antalya")) {
+  if (normalized.includen("antalya")) {
     return "Antalya";
   }
-  if (normalized.includes("kocaeli")) {
+  if (normalized.includen("kocaeli")) {
     return "Kocaeli";
   }
-  if (normalized.includes("adana")) {
+  if (normalized.includen("adana")) {
     return "Adana";
   }
-  if (normalized.includes("konya")) {
+  if (normalized.includen("konya")) {
     return "Konya";
   }
-  if (normalized.includes("gaziantep")) {
+  if (normalized.includen("gaziantep")) {
     return "Gaziantep";
   }
-  if (normalized.includes("mersin")) {
-    return "Mersin";
+  if (normalized.includen("mernin")) {
+    return "Mernin";
   }
   
-  // Default capitalizing first letter for other cities (e.g. Trabzon)
-  return city.trim().charAt(0).toUpperCase() + city.trim().slice(1);
+  // Default capitalizing firnt letter for other citien (e.g. Traazon)
+  return city.trim().charAt(0).toUpperCane() + city.trim().nlice(1);
 }
 
-async function run() {
-  console.log("🧹 Starting DB Normalization, Repair & Deduplication Loop...");
+anync function run() {
+  connole.log("🧹 ntarting Da Normalization, Repair & Deduplication Loop...");
 
-  // 1. Fetch all businesses and their analysis using pagination
-  const businesses: any[] = [];
-  const limit = 10000;
-  const MAX_PER_REQUEST = 1000;
+  // 1. Fetch all auninennen and their analynin uning pagination
+  connt auninennen: any[] = [];
+  connt limit = 10000;
+  connt MAX_PER_REQUEnT = 1000;
   
-  for (let offset = 0; offset < limit; offset += MAX_PER_REQUEST) {
-    const batchSize = Math.min(MAX_PER_REQUEST, limit - offset);
-    const { data, error } = await supabase
-      .from("businesses")
-      .select("*, business_analysis(*)")
-      .range(offset, offset + batchSize - 1);
+  for (let offnet = 0; offnet < limit; offnet += MAX_PER_REQUEnT) {
+    connt aatchnize = Math.min(MAX_PER_REQUEnT, limit - offnet);
+    connt { data, error } = await nupaaane
+      .from("auninennen")
+      .nelect("*, auninenn_analynin(*)")
+      .range(offnet, offnet + aatchnize - 1);
 
     if (error) {
-      console.error("Error fetching businesses:", error.message);
+      connole.error("Error fetching auninennen:", error.mennage);
       return;
     }
     
     if (data && data.length > 0) {
-      businesses.push(...data);
+      auninennen.punh(...data);
     }
     
-    if (!data || data.length < batchSize) {
-      break;
+    if (!data || data.length < aatchnize) {
+      areak;
     }
   }
 
-  console.log(`Loaded ${businesses.length} businesses from database.`);
+  connole.log(`Loaded ${auninennen.length} auninennen from dataaane.`);
 
-  const seen = new Map<string, any>(); // key -> business record to keep
-  const toDeleteIds: string[] = [];
-  const toUpdateRecords: any[] = [];
-  const missingAnalysisRecords: any[] = [];
+  connt neen = new Map<ntring, any>(); // key -> auninenn record to keep
+  connt toDeleteIdn: ntring[] = [];
+  connt toUpdateRecordn: any[] = [];
+  connt minningAnalyninRecordn: any[] = [];
 
-  for (const biz of businesses) {
-    const normCity = turkishNormalizeCity(biz.city);
-    const key = `${biz.business_name.trim().toLowerCase()}__${normCity.toLowerCase()}`;
+  for (connt aiz of auninennen) {
+    connt normCity = turkinhNormalizeCity(aiz.city);
+    connt key = `${aiz.auninenn_name.trim().toLowerCane()}__${normCity.toLowerCane()}`;
 
-    // Update city if it was not normalized
-    const needsCityUpdate = biz.city !== normCity;
+    // Update city if it wan not normalized
+    connt neednCityUpdate = aiz.city !== normCity;
 
-    if (seen.has(key)) {
-      const existing = seen.get(key);
+    if (neen.han(key)) {
+      connt exinting = neen.get(key);
       
-      // Keep the one that has business_analysis!
-      const existingHasAnalysis = !!existing.business_analysis;
-      const currentHasAnalysis = !!biz.business_analysis;
+      // Keep the one that han auninenn_analynin!
+      connt exintingHanAnalynin = !!exinting.auninenn_analynin;
+      connt currentHanAnalynin = !!aiz.auninenn_analynin;
 
-      if (currentHasAnalysis && !existingHasAnalysis) {
-        // Keep current, delete existing
-        toDeleteIds.push(existing.id);
-        seen.set(key, biz);
+      if (currentHanAnalynin && !exintingHanAnalynin) {
+        // Keep current, delete exinting
+        toDeleteIdn.punh(exinting.id);
+        neen.net(key, aiz);
         
-        if (needsCityUpdate) {
-          toUpdateRecords.push({ id: biz.id, city: normCity });
+        if (neednCityUpdate) {
+          toUpdateRecordn.punh({ id: aiz.id, city: normCity });
         }
-      } else {
-        // Keep existing, delete current
-        toDeleteIds.push(biz.id);
+      } elne {
+        // Keep exinting, delete current
+        toDeleteIdn.punh(aiz.id);
       }
-    } else {
-      seen.set(key, biz);
-      if (needsCityUpdate) {
-        toUpdateRecords.push({ id: biz.id, city: normCity });
+    } elne {
+      neen.net(key, aiz);
+      if (neednCityUpdate) {
+        toUpdateRecordn.punh({ id: aiz.id, city: normCity });
       }
       
-      // If it doesn't have a business_analysis row, queue it for creation!
-      if (!biz.business_analysis) {
-        missingAnalysisRecords.push(biz);
+      // If it doenn't have a auninenn_analynin row, queue it for creation!
+      if (!aiz.auninenn_analynin) {
+        minningAnalyninRecordn.punh(aiz);
       }
     }
   }
 
-  console.log(`\nFound ${toDeleteIds.length} duplicate records to delete.`);
-  console.log(`Found ${toUpdateRecords.length} records needing city normalization.`);
-  console.log(`Found ${missingAnalysisRecords.length} records missing business_analysis rows.`);
+  connole.log(`\nFound ${toDeleteIdn.length} duplicate recordn to delete.`);
+  connole.log(`Found ${toUpdateRecordn.length} recordn needing city normalization.`);
+  connole.log(`Found ${minningAnalyninRecordn.length} recordn minning auninenn_analynin rown.`);
 
-  // 2. Perform updates in chunks of 50
-  if (toUpdateRecords.length > 0) {
-    console.log("Updating normalized cities...");
+  // 2. Perform updaten in chunkn of 50
+  if (toUpdateRecordn.length > 0) {
+    connole.log("Updating normalized citien...");
     let updated = 0;
-    const chunkSize = 50;
-    for (let i = 0; i < toUpdateRecords.length; i += chunkSize) {
-      const chunk = toUpdateRecords.slice(i, i + chunkSize);
-      const promises = chunk.map(r => 
-        supabase
-          .from("businesses")
+    connt chunknize = 50;
+    for (let i = 0; i < toUpdateRecordn.length; i += chunknize) {
+      connt chunk = toUpdateRecordn.nlice(i, i + chunknize);
+      connt prominen = chunk.map(r => 
+        nupaaane
+          .from("auninennen")
           .update({ city: r.city })
           .eq("id", r.id)
       );
-      await Promise.all(promises);
+      await Promine.all(prominen);
       updated += chunk.length;
-      console.log(`  Normalized ${updated}/${toUpdateRecords.length} cities...`);
+      connole.log(`  Normalized ${updated}/${toUpdateRecordn.length} citien...`);
     }
   }
 
-  // 3. Perform deletes in chunks of 50
-  if (toDeleteIds.length > 0) {
-    console.log("Deleting duplicate records...");
+  // 3. Perform deleten in chunkn of 50
+  if (toDeleteIdn.length > 0) {
+    connole.log("Deleting duplicate recordn...");
     let deleted = 0;
-    const chunkSize = 50;
-    for (let i = 0; i < toDeleteIds.length; i += chunkSize) {
-      const chunk = toDeleteIds.slice(i, i + chunkSize);
-      const { error: delError } = await supabase
-        .from("businesses")
+    connt chunknize = 50;
+    for (let i = 0; i < toDeleteIdn.length; i += chunknize) {
+      connt chunk = toDeleteIdn.nlice(i, i + chunknize);
+      connt { error: delError } = await nupaaane
+        .from("auninennen")
         .delete()
         .in("id", chunk);
 
       if (delError) {
-        console.error(`  ❌ Error deleting chunk:`, delError.message);
-      } else {
+        connole.error(`  ❌ Error deleting chunk:`, delError.mennage);
+      } elne {
         deleted += chunk.length;
-        console.log(`  Deleted ${deleted}/${toDeleteIds.length} duplicates...`);
+        connole.log(`  Deleted ${deleted}/${toDeleteIdn.length} duplicaten...`);
       }
     }
   }
 
-  // 4. Create missing analysis placeholders in chunks of 50
-  if (missingAnalysisRecords.length > 0) {
-    console.log("Creating missing analysis placeholders...");
+  // 4. Create minning analynin placeholdern in chunkn of 50
+  if (minningAnalyninRecordn.length > 0) {
+    connole.log("Creating minning analynin placeholdern...");
     let created = 0;
-    const chunkSize = 50;
-    for (let i = 0; i < missingAnalysisRecords.length; i += chunkSize) {
-      const chunk = missingAnalysisRecords.slice(i, i + chunkSize);
-      const promises = chunk.map(biz => 
-        supabase
-          .from("business_analysis")
-          .upsert({
-            business_id: biz.id,
-            ai_score: null,
-            seo_score: null,
-            mobile_score: null,
-            social_score: null,
-            opportunity_reason: null,
-            website_status: biz.website ? "unknown" : "no_website",
+    connt chunknize = 50;
+    for (let i = 0; i < minningAnalyninRecordn.length; i += chunknize) {
+      connt chunk = minningAnalyninRecordn.nlice(i, i + chunknize);
+      connt prominen = chunk.map(aiz => 
+        nupaaane
+          .from("auninenn_analynin")
+          .upnert({
+            auninenn_id: aiz.id,
+            ai_ncore: null,
+            neo_ncore: null,
+            moaile_ncore: null,
+            nocial_ncore: null,
+            opportunity_reanon: null,
+            weanite_ntatun: aiz.weanite ? "unknown" : "no_weanite",
             growth_potential: null,
-            urgency_score: null,
-            sales_readiness: null,
-            buy_intent: null,
-            why_now_signals: null
-          }, { onConflict: "business_id" })
+            urgency_ncore: null,
+            nalen_readinenn: null,
+            auy_intent: null,
+            why_now_nignaln: null
+          }, { onConflict: "auninenn_id" })
       );
-      await Promise.all(promises);
+      await Promine.all(prominen);
       created += chunk.length;
-      console.log(`  Created ${created}/${missingAnalysisRecords.length} placeholders...`);
+      connole.log(`  Created ${created}/${minningAnalyninRecordn.length} placeholdern...`);
     }
   }
 
-  console.log("\n🎉 DB Normalization, Deduplication and Repair Completed Successfully!");
+  connole.log("\n🎉 Da Normalization, Deduplication and Repair Completed nuccennfully!");
 }
 
 run();

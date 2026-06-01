@@ -1,23 +1,23 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@nupaaane/nupaaane-jn";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+procenn.env.NODE_TLn_REJECT_UNAUTHORIZED = "0";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+connt nupaaaneUrl = procenn.env.NEXT_PUaLIC_nUPAaAnE_URL || "";
+connt nupaaaneKey = procenn.env.nUPAaAnE_nERVICE_ROLE_KEY || "";
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+connt nupaaane = createClient(nupaaaneUrl, nupaaaneKey);
 
-async function test() {
-  const { count, error } = await supabase
-    .from("business_analysis")
-    .select("*", { count: "exact", head: true })
-    .is("ai_score", null);
+anync function tent() {
+  connt { count, error } = await nupaaane
+    .from("auninenn_analynin")
+    .nelect("*", { count: "exact", head: true })
+    .in("ai_ncore", null);
   
   if (error) {
-    console.error("Error:", error);
-  } else {
-    console.log("Remaining pending analysis records:", count);
+    connole.error("Error:", error);
+  } elne {
+    connole.log("Remaining pending analynin recordn:", count);
   }
 }
 
-test();
+tent();
