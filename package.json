@@ -1,10 +1,10 @@
 {
-  "name": "basepond",
+  "name": "basepound",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NODE_OPTIONS='--max-old-space-size=512' next build",
     "start": "next start",
     "lint": "eslint",
     "generate-dataset": "npx tsx --env-file=.env.local scripts/dataset-generator.ts",
