@@ -6,8 +6,8 @@ import { enrichCompanyData } from "@/lib/services/apollo";
 import { analyzeWebsite } from "@/lib/services/analysis";
 import { generateAIScore } from "@/lib/services/ai-scorer";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dummy.supabase.co";
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "dummy";
 
 const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
 

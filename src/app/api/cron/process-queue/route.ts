@@ -8,8 +8,8 @@ import { generateAIScore } from '@/lib/services/ai-scorer';
 export const maxDuration = 300; 
 
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy'
 );
 
 export async function POST(request: Request) {
