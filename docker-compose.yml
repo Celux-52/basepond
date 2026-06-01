@@ -26,7 +26,11 @@ services:
     # Eğer aynı sunucuda başka servisler çalıştıracaksan network ayarı yapabilirsin.
     networks:
       - snaplead-network
+      - caddy-network
 
 networks:
   snaplead-network:
     driver: bridge
+  caddy-network:
+    external: true
+    name: n8n-docker-caddy_default
