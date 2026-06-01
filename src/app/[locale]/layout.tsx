@@ -64,7 +64,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
             <Script
@@ -82,8 +82,6 @@ export default async function RootLayout({
             </Script>
           </>
         )}
-      </head>
-      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"
