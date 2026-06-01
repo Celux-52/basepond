@@ -18,6 +18,11 @@ services:
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - MCP_API_KEY=${MCP_API_KEY}
       - ADMIN_EMAILS=${ADMIN_EMAILS}
+      - APOLLO_API_KEY=${APOLLO_API_KEY}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - CRON_SECRET=${CRON_SECRET}
+
     # Eğer aynı sunucuda başka servisler çalıştıracaksan network ayarı yapabilirsin.
     networks:
       - snaplead-network
