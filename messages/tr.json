@@ -1,6 +1,6 @@
 {
   "Index": {
-    "title": "SnapLead | Türkiye'nin Yapay Zeka Destekli Fırsat Motoru",
+    "title": "BasePond | Türkiye'nin Yapay Zeka Destekli Fırsat Motoru",
     "headline": "İşletmeleri Analiz Edin, Gerçek Satış Fırsatlarını Keşfedin.",
     "subheadline": "Sıradan data değil, satılmaya hazır fırsat skoru. Türkiye pazarındaki kuaförlerden kliniklere kadar binlerce işletmeyi saniyeler içinde analiz edin.",
     "getStarted": "Fırsatları Keşfet",
@@ -49,10 +49,10 @@
   },
   "FAQ": {
     "title": "Sıkça Sorulan Sorular",
-    "q1": "SnapLead'in farkı nedir?",
-    "a1": "Geleneksel platformlar size sadece işletme numarası verir. SnapLead ise Türkiye pazarındaki işletmeleri analiz eder, dijital zayıflıklarını bulur ve size hazır satış fırsatları (Opportunity Score) sunar.",
+    "q1": "BasePond'un farkı nedir?",
+    "a1": "Geleneksel platformlar size sadece işletme numarası verir. BasePond ise Türkiye pazarındaki işletmeleri analiz eder, dijital zayıflıklarını bulur ve size hazır satış fırsatları (Opportunity Score) sunar.",
     "q2": "Türkiye'de kullanılabilir mi?",
-    "a2": "Evet. SnapLead motoru, İstanbul'dan Anadolu'nun her köşesine kadar Türkiye pazarındaki tüm işletmelerin verilerini anlık olarak analiz edecek şekilde optimize edilmiştir.",
+    "a2": "Evet. BasePond motoru, İstanbul'dan Anadolu'nun her köşesine kadar Türkiye pazarındaki tüm işletmelerin verilerini anlık olarak analiz edecek şekilde optimize edilmiştir.",
     "q3": "Hangi işletmeler için uygundur?",
     "a3": "Türkiye'deki tüm KOBİ'ler, klinikler, restoranlar, kuaförler, avukatlar ve dijitalleşmeye ihtiyaç duyan tüm yerel işletmeler için veri ve analiz sağlar.",
     "q4": "Ne tür fırsatlar gösterir?",
@@ -62,7 +62,7 @@
     "product": "Ürün",
     "company": "Şirket",
     "legal": "Yasal",
-    "copyright": "© 2026 SnapLead. Tüm Hakları Saklıdır."
+    "copyright": "© 2026 BasePond. Tüm Hakları Saklıdır."
   },
   "Dashboard": {
     "hotLead": "Sıcak Fırsat",

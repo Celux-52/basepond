@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
 
   // Base URL
-  const baseUrl = "https://snaplead.com"
+  const baseUrl = "https://basepond.com"
 
   // Core static routes
   const routes: MetadataRoute.Sitemap = [

@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{locale: st
     openGraph: {
       title: t('title'),
       description: t('subheadline'),
-      url: `https://snaplead.com/${locale}`,
-      siteName: 'SnapLead',
+      url: `https://basepond.com/${locale}`,
+      siteName: 'BasePond',
       locale: locale,
       type: 'website',
     },

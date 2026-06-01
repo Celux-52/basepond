@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  snaplead-web:
+  basepond-web:
     build:
       context: .
       dockerfile: Dockerfile
-    image: snaplead:latest
-    container_name: snaplead-web
+    image: basepond:latest
+    container_name: basepond-web
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -26,11 +26,11 @@ services:
 
     # Eğer aynı sunucuda başka servisler çalıştıracaksan network ayarı yapabilirsin.
     networks:
-      - snaplead-network
+      - basepond-network
       - caddy-network
 
 networks:
-  snaplead-network:
+  basepond-network:
     driver: bridge
   caddy-network:
     external: true

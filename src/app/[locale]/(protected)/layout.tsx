@@ -42,7 +42,7 @@ export default async function ProtectedLayout({
               <Zap className="h-4 w-4 text-primary" />
             </div>
             <div className="flex flex-col">
-              <span className="font-heading font-bold tracking-tight hidden sm:inline-block leading-none">SnapLead</span>
+              <span className="font-heading font-bold tracking-tight hidden sm:inline-block leading-none">BasePond</span>
               <span className="text-[10px] text-muted-foreground hidden sm:inline-block leading-none mt-1">Allmysell alt markasıdır</span>
             </div>
           </Link>
