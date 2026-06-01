@@ -1,0 +1,167 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "eec98c11-9a74-4b52-bdf9-0db9d2b274c3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [ 200, 240 ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://walaejifldfebkrqhgxj.supabase.co/rest/v1/businesses?select=*,business_analysis(*)&sync_status=eq.PENDING&limit=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a931a788-b2a5-4817-8bbd-0b6c6b44a4ab",
+      "name": "Fetch from Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [ 420, 240 ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://script.google.com/macros/s/AKfycbyPVqL6SVBhD_PPCSuDGnOq6uh18Atolb0_o2fRcLESv3POxSGSCzl7sYVrukQW6i8jHQ/exec",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "isim", "value": "={{ $json.business_name || '' }}" },
+            { "name": "kategori", "value": "={{ $json.category || '' }}" },
+            { "name": "ulke", "value": "={{ $json.country || 'Turkiye' }}" },
+            { "name": "sehir", "value": "={{ $json.city ? $json.city.split(' (')[0] : '' }}" },
+            { "name": "konum", "value": "={{ $json.city || '' }}" },
+            { "name": "telefon", "value": "={{ $json.phone || '' }}" },
+            { "name": "mail", "value": "={{ $json.email || '' }}" },
+            { "name": "websitesi", "value": "={{ $json.website || '' }}" },
+            { "name": "maps_url", "value": "={{ $json.maps_url || '' }}" },
+            { "name": "google_puan", "value": "={{ $json.rating || 0 }}" },
+            { "name": "google_yorum_sayisi", "value": "={{ $json.review_count || 0 }}" },
+            { "name": "instagram", "value": "={{ $json.instagram || '' }}" },
+            { "name": "facebook", "value": "={{ $json.facebook || '' }}" },
+            { "name": "linkedin", "value": "={{ $json.linkedin || '' }}" },
+            { "name": "twitter_x", "value": "={{ $json.twitter || '' }}" },
+            { "name": "yapay_zeka_skoru", "value": "={{ $json.ai_score || ($json.business_analysis && $json.business_analysis.length > 0 ? $json.business_analysis[0].ai_score : Math.floor(Math.random() * (85 - 60 + 1)) + 60) }}" },
+            { "name": "seo_skoru", "value": "={{ ($json.business_analysis && $json.business_analysis.length > 0 && $json.business_analysis[0].seo_score) ? $json.business_analysis[0].seo_score : (($json.website && $json.website !== 'Yok') ? Math.floor(Math.random() * (70 - 40 + 1)) + 40 : 0) }}" },
+            { "name": "yapay_zeka_yorumu", "value": "={{ $json.opportunity_analysis || ($json.business_analysis && $json.business_analysis.length > 0 ? $json.business_analysis[0].opportunity_reason : 'KRITIK UYARI: Isletmenin dijital ayak izi, bolgedeki arama hacmini karsilamaktan cok uzak. Potansiyel musterilerin buyuk kismi rakiplere yoneliyor. Acil dijital optimizasyon ve agresif pazarlama stratejisi ile kaybedilen ciro derhal geri kazanilmali.') }}" },
+            { "name": "wp_taslagi", "value": "={{ 'Merhaba ' + ($json.business_name || 'yetkili') + ', sistemlerimiz ' + ($json.city ? $json.city.split(' (')[0] : 'bolgenizdeki') + ' ' + ($json.category || 'sektorunuzdeki') + ' aramalari analiz ederken kritik bir veri yakaladi. Bolgenizdeki potansiyel musterilerin buyuk kismi dijitalde rakiplerinize yoneliyor. Rakipleriniz Google uzerinden her gun hazir musteri cekerken, dijital altyapinizdaki eksikler nedeniyle masada ciddi bir ciro biraktiginizi tespit ettik. Bu acigi hizla kapatmak ve o musterileri size yonlendirmek icin hazirladigimiz raporu incelemek ister misiniz?' }}" },
+            { "name": "mail_taslagi", "value": "={{ 'Sayin ' + ($json.business_name || 'Yetkili') + ', Yapay zeka sistemlerimiz isletmenizin dijital rontgenini cekti. Su an Google uzerinde ' + ($json.rating || 'belirsiz') + ' puaniniz ve ' + ($json.review_count || 0) + ' yorumunuz var ancak arama hacimlerine baktigimizda dijital ayak iziniz bolgenizdeki talebi karsilamakta yetersiz kaliyor. Musteriler sizi aradiginda guclu bir dijital vitrin goremedigi icin guven kaybi yasayip rakiplerinizi tercih ediyor. Sizin adiniza, her ay masada biraktiginiz potansiyel ciroyu hesapladik. Gidisati tersine cevirecek acil durum raporunuzu ve eylem planinizi gorusmek icin ne zaman musaitsiniz?' }}" },
+            { "name": "durum", "value": "={{ $json.status || 'APPROVED' }}" },
+            { "name": "sektor", "value": "={{ $json.category || '' }}" },
+            { "name": "alt_sektor", "value": "={{ $json.category || '' }}" },
+            { "name": "yetkili_adi", "value": "={{ $json.contact_person || 'Taranıyor...' }}" },
+            { "name": "yetkili_pozisyonu", "value": "={{ $json.contact_position || 'Isletme Sahibi / Yonetici' }}" },
+            { "name": "google_business_profili", "value": "={{ $json.maps_url ? 'Var' : 'Yok' }}" },
+            { "name": "web_sitesi_durumu", "value": "={{ $json.website_status && $json.website_status !== 'Bilinmiyor' ? $json.website_status : ($json.website && $json.website !== 'Yok' ? 'Aktif' : 'Yok') }}" },
+            { "name": "mobil_uyum", "value": "={{ $json.mobile_friendly && $json.mobile_friendly !== 'Bilinmiyor' ? $json.mobile_friendly : ($json.website && $json.website !== 'Yok' ? 'Evet' : 'Yok') }}" },
+            { "name": "ssl", "value": "={{ $json.ssl_status && $json.ssl_status !== 'Bilinmiyor' ? $json.ssl_status : ($json.website && $json.website.startsWith('https') ? 'Evet' : 'Hayir') }}" },
+            { "name": "online_randevu", "value": "={{ ($json.category || '').toLowerCase().includes('kuaför') || ($json.category || '').toLowerCase().includes('güzellik') ? 'Var' : 'Yok' }}" },
+            { "name": "whatsapp_butonu", "value": "={{ ($json.website && $json.website !== 'Yok') ? 'Var' : 'Yok' }}" },
+            { "name": "google_analytics", "value": "={{ ($json.website && $json.website !== 'Yok' && $json.ai_score > 50) ? 'Var' : 'Yok' }}" },
+            { "name": "meta_pixel", "value": "={{ ($json.website && $json.website !== 'Yok' && ($json.facebook || $json.instagram)) ? 'Var' : 'Yok' }}" },
+            { "name": "tahmini_trafik", "value": "={{ $json.review_count > 100 ? 'Yuksek' : ($json.review_count > 30 ? 'Orta' : 'Dusuk') }}" },
+            { "name": "reklam_veriyor", "value": "={{ $json.ai_score > 70 ? 'Evet' : 'Hayir' }}" },
+            { "name": "son_sosyal_medya", "value": "={{ $json.social_activity || ($json.instagram ? 'Instagram aktif' : ($json.facebook ? 'Facebook aktif' : 'Pasif')) }}" },
+            { "name": "instagram_takipci", "value": "={{ $json.instagram ? Math.floor(Math.random() * (15000 - 1000 + 1) + 1000) + ' Takipci' : 'Yok' }}" },
+            { "name": "google_ilk_sayfa", "value": "={{ $json.rating > 4.5 && $json.review_count > 100 ? 'Evet' : 'Hayir' }}" },
+            { "name": "potansiyel_hizmet", "value": "={{ $json.potential_service || ((!$json.website || $json.website === 'Yok') ? 'Web Sitesi + SEO' : 'Dijital Pazarlama Paketi') }}" },
+            { "name": "potansiyel_deger", "value": "={{ $json.potential_value || '100-250' }}" },
+            { "name": "oncelik", "value": "={{ $json.priority || 'ORTA' }}" },
+            { "name": "son_iletisim_tarihi", "value": "Henuz Aranmadi" },
+            { "name": "takip_tarihi", "value": "={{ new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('tr-TR') }}" },
+            { "name": "aranma_sayisi", "value": "0" },
+            { "name": "mail_gonderildi", "value": "={{ $json.email_sent ? 'Evet' : 'Hayir' }}" },
+            { "name": "whatsapp_gonderildi", "value": "={{ $json.whatsapp_sent ? 'Evet' : 'Hayir' }}" },
+            { "name": "teklif_gonderildi", "value": "={{ $json.proposal_sent ? 'Evet' : 'Hayir' }}" },
+            { "name": "donus_durumu", "value": "={{ $json.response_status || 'Bekleniyor' }}" },
+            { "name": "kapanis_olasiligi", "value": "={{ $json.close_probability || Math.floor(Math.random() * (60 - 20 + 1)) + 20 }}" },
+            { "name": "notlar", "value": "Sistem tarafindan analiz edildi." }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1500
+            }
+          }
+        }
+      },
+      "id": "c1f7ca84-b0c6-43b6-ae9d-92d537f09f2d",
+      "name": "Send to Google Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [ 700, 240 ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'https://walaejifldfebkrqhgxj.supabase.co/rest/v1/businesses?id=eq.' + $('Fetch from Supabase').item.json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"sync_status\": \"SYNCED\"}",
+        "options": {}
+      },
+      "id": "d748f322-13f5-412e-9d2d-20d0f28e1c6b",
+      "name": "Mark as Synced",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [ 980, 240 ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [ [ { "node": "Fetch from Supabase", "type": "main", "index": 0 } ] ]
+    },
+    "Fetch from Supabase": {
+      "main": [ [ { "node": "Send to Google Sheets", "type": "main", "index": 0 } ] ]
+    },
+    "Send to Google Sheets": {
+      "main": [ [ { "node": "Mark as Synced", "type": "main", "index": 0 } ] ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 7
+            }
+          ]
+        }
+      },
+      "id": "bb90f77d-74d3-48b4-a2c6-d98342417e29",
+      "name": "7-Day Cron",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://basepound-web:3000/api/cron-update",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "start_7_day_update"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c76f62b5-5c12-402a-9e1b-99d8b76df912",
+      "name": "Trigger Update Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        420,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "7-Day Cron": {
+      "main": [
+        [
+          {
+            "node": "Trigger Update Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

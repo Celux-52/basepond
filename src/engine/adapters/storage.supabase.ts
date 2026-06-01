@@ -20,11 +20,20 @@ export class SupabaseStorageAdapter implements IStorageAdapter {
   }
 
   async upsertBusiness(business: BusinessRecord): Promise<void> {
-    // 1. Insert into businesses table
+    // Oncelik hesapla
+    const priority = business.ai_score >= 75 ? 'YUKSEK' : (business.ai_score >= 50 ? 'ORTA' : 'DUSUK');
+    const potentialService = (!business.website || business.website === 'Yok') ? 'Web Sitesi + SEO' : 'Dijital Pazarlama Paketi';
+    const potentialValue = business.ai_score >= 75 ? '500-1000' : (business.ai_score >= 50 ? '250-500' : '100-250');
+    const sslStatus = (business.website && business.website.startsWith('https')) ? 'Evet' : 'Hayir';
+    const websiteStatus = (business.website && business.website !== 'Yok') ? 'Aktif' : 'Yok';
+
+    // 1. Insert into businesses table - TUM SUTUNLAR
     const { data: newBiz, error: insertError } = await this.sb.from('businesses').insert({
       business_name: business.business_name,
       category: business.category,
+      country: business.country || 'TR',
       city: `${business.city} (${business.district})`,
+      district: business.district,
       phone: business.phone,
       email: business.email,
       website: business.website || "Yok",
@@ -33,8 +42,34 @@ export class SupabaseStorageAdapter implements IStorageAdapter {
       facebook: business.facebook,
       linkedin: business.linkedin,
       twitter: business.twitter_x,
+      tiktok: business.tiktok,
       rating: business.rating,
-      review_count: business.review_count
+      review_count: business.review_count,
+      trust_score: business.trust_score,
+      ai_score: business.ai_score,
+      opportunity_analysis: business.opportunity_analysis,
+      ai_activity: business.ai_activity,
+      sales_readiness: business.sales_readiness,
+      purchase_intent: business.purchase_intent,
+      why_now: business.why_now,
+      recommended_services: Array.isArray(business.recommended_services) ? business.recommended_services.join(', ') : null,
+      confidence_score: business.confidence_score,
+      is_premium: business.is_premium,
+      status: business.status || 'APPROVED',
+      sync_status: 'PENDING',
+      website_status: websiteStatus,
+      ssl_status: sslStatus,
+      mobile_friendly: 'Bilinmiyor',
+      social_score: 0,
+      social_activity: business.ai_activity || 'Pasif',
+      primary_social_network: business.instagram ? 'Instagram' : (business.facebook ? 'Facebook' : null),
+      priority: priority,
+      potential_service: potentialService,
+      potential_value: potentialValue,
+      close_probability: Math.min(business.ai_score || 0, 95),
+      contact_person: null,
+      contact_position: null,
+      notes: null
     }).select().single();
 
     if (insertError) {
@@ -42,14 +77,20 @@ export class SupabaseStorageAdapter implements IStorageAdapter {
       return;
     }
 
-    // 2. Insert into business_analysis
+    // 2. Insert into business_analysis - TUM ANALIZ VERILERI
     const { error: analysisError } = await this.sb.from('business_analysis').insert({
       business_id: newBiz.id,
       ai_score: business.ai_score,
       opportunity_reason: business.opportunity_analysis,
       seo_score: 50,
       mobile_score: 50,
-      social_score: 50
+      social_score: 50,
+      sales_readiness: business.sales_readiness,
+      purchase_intent: business.purchase_intent,
+      why_now: business.why_now,
+      recommended_services: Array.isArray(business.recommended_services) ? business.recommended_services.join(', ') : null,
+      confidence_score: business.confidence_score,
+      website_status: websiteStatus
     });
 
     if (analysisError) {

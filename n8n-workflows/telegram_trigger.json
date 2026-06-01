@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "2d1a3f08-b2a5-4817-8bbd-0b6c6b44a4ab",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        240
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram_bot_credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message.text }}",
+              "operation": "contains",
+              "value2": "arama yap"
+            }
+          ]
+        }
+      },
+      "id": "ab65c63d-4c57-418e-afb8-4d57c742e9db",
+      "name": "Check Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        440,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://basepound-web:3000/api/trigger-agent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer my-secret-token"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f86d63cb-13f5-412e-9d2d-20d0f28e1c6b",
+      "name": "Trigger Next.js Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        680,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "✅ Arama motoru (Orchestrator Agent) TR dışı klinikler için başlatıldı. Sonuçlar Supabase'e ve Google E-Tablo'ya gönderilecek!",
+        "additionalFields": {}
+      },
+      "id": "cf1c57ea-628b-4b13-9118-2c2e0b5779c1",
+      "name": "Telegram Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        140
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram_bot_credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Command": {
+      "main": [
+        [
+          {
+            "node": "Trigger Next.js Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Next.js Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "eec98c11-9a74-4b52-bdf9-0db9d2b274c3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [ 200, 240 ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://walaejifldfebkrqhgxj.supabase.co/rest/v1/businesses?select=*,business_analysis(*)&sync_status=eq.PENDING&limit=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a931a788-b2a5-4817-8bbd-0b6c6b44a4ab",
+      "name": "Fetch from Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [ 420, 240 ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://script.google.com/macros/s/AKfycbzL4jnd2k2RFKdT03Ujc32CvWN23J2SIaeyy_-HtLbt1AQhL37cPKUA-kjdaNtcl7dhqw/exec",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "isim", "value": "={{ $json.business_name }}" },
+            { "name": "kategori", "value": "={{ $json.category }}" },
+            { "name": "ulke", "value": "Turkiye" },
+            { "name": "sehir", "value": "={{ $json.city.split(' (')[0] }}" },
+            { "name": "konum", "value": "={{ $json.city }}" },
+            { "name": "telefon", "value": "={{ $json.phone }}" },
+            { "name": "mail", "value": "={{ $json.email }}" },
+            { "name": "websitesi", "value": "={{ $json.website }}" },
+            { "name": "maps_url", "value": "={{ $json.maps_url }}" },
+            { "name": "google_puan", "value": "={{ $json.rating }}" },
+            { "name": "google_yorum_sayisi", "value": "={{ $json.review_count }}" },
+            { "name": "instagram", "value": "={{ $json.instagram }}" },
+            { "name": "facebook", "value": "={{ $json.facebook }}" },
+            { "name": "linkedin", "value": "={{ $json.linkedin }}" },
+            { "name": "twitter_x", "value": "={{ $json.twitter }}" },
+            { "name": "yapay_zeka_skoru", "value": "={{ $json.business_analysis && $json.business_analysis.length > 0 ? $json.business_analysis[0].ai_score : '' }}" },
+            { "name": "analik_seo_skoru", "value": "={{ $json.business_analysis && $json.business_analysis.length > 0 ? $json.business_analysis[0].seo_score : '' }}" },
+            { "name": "yapay_zeka_yorumu", "value": "={{ $json.business_analysis && $json.business_analysis.length > 0 ? $json.business_analysis[0].opportunity_reason : '' }}" },
+            { "name": "wp_mesaj_taslagi", "value": "={{ $json.business_name }} isimli işletmeniz için hazırladığımız özel satış ve büyüme teklifimizi iletmek istedik. Detayları görüşmek isterseniz buradayız!" },
+            { "name": "mail_taslagi", "value": "Merhaba {{ $json.business_name }} ekibi,\n\nYapay zeka sistemlerimizin yaptığı analizde {{ $json.city }} bölgesinde dijital varlığınızı çok daha iyi konumlandırabileceğimizi tespit ettik.\n\nEğer ilgilenirseniz detaylı raporunuzu sunmak isteriz." },
+            { "name": "durum", "value": "={{ $json.status }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c1f7ca84-b0c6-43b6-ae9d-92d537f09f2d",
+      "name": "Send to Google Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [ 700, 240 ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'https://walaejifldfebkrqhgxj.supabase.co/rest/v1/businesses?id=eq.' + $('Fetch from Supabase').item.json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGFlamlmbGRmZWJrcnFoZ3hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgxNTQ2NSwiZXhwIjoyMDk1MzkxNDY1fQ.FNfExXrWjAW2K-lhNoWJNvi4O29a9w04FfE7900_vM4"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"sync_status\": \"SYNCED\"}",
+        "options": {}
+      },
+      "id": "d748f322-13f5-412e-9d2d-20d0f28e1c6b",
+      "name": "Mark as Synced",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [ 980, 240 ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [ [ { "node": "Fetch from Supabase", "type": "main", "index": 0 } ] ]
+    },
+    "Fetch from Supabase": {
+      "main": [ [ { "node": "Send to Google Sheets", "type": "main", "index": 0 } ] ]
+    },
+    "Send to Google Sheets": {
+      "main": [ [ { "node": "Mark as Synced", "type": "main", "index": 0 } ] ]
+    }
+  }
+}

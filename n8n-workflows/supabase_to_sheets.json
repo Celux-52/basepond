@@ -1,0 +1,132 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "eec98c11-9a74-4b52-bdf9-0db9d2b274c3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM businesses WHERE sync_status = 'PENDING' LIMIT 50;"
+      },
+      "id": "a931a788-b2a5-4817-8bbd-0b6c6b44a4ab",
+      "name": "Fetch from Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.2,
+      "position": [
+        420,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase Database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        },
+        "options": {}
+      },
+      "id": "c1f7ca84-b0c6-43b6-ae9d-92d537f09f2d",
+      "name": "Append to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.1,
+      "position": [
+        640,
+        240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets_credentials",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE businesses SET sync_status = 'SYNCED' WHERE id = '{{ $json.id }}';"
+      },
+      "id": "d748f322-13f5-412e-9d2d-20d0f28e1c6b",
+      "name": "Mark as Synced",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_credentials",
+          "name": "Supabase Database"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch from Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch from Supabase": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Mark as Synced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "eec98c11-9a74-4b52-bdf9-0db9d2b274c3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "getAll",
+        "table": "businesses",
+        "returnAll": false,
+        "limit": 50,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "sync_status",
+              "condition": "eq",
+              "keyValue": "PENDING"
+            }
+          ]
+        }
+      },
+      "id": "a931a788-b2a5-4817-8bbd-0b6c6b44a4ab",
+      "name": "Fetch from Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        420,
+        240
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase_credentials",
+          "name": "Supabase API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://script.google.com/macros/s/AKfycbzL4jnd2k2RFKdT03Ujc32CvWN23J2SIaeyy_-HtLbt1AQhL37cPKUA-kjdaNtcl7dhqw/exec",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "isim",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "telefon",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "websitesi",
+              "value": "={{ $json.website }}"
+            },
+            {
+              "name": "ulke",
+              "value": "={{ $json.country }}"
+            },
+            {
+              "name": "durum",
+              "value": "={{ $json.status }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c1f7ca84-b0c6-43b6-ae9d-92d537f09f2d",
+      "name": "Send to Google Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        640,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "update",
+        "table": "businesses",
+        "columns": "sync_status",
+        "matchColumns": "id",
+        "updateData": {
+          "values": [
+            {
+              "columnName": "id",
+              "columnValue": "={{ $json.id }}"
+            },
+            {
+              "columnName": "sync_status",
+              "columnValue": "SYNCED"
+            }
+          ]
+        }
+      },
+      "id": "d748f322-13f5-412e-9d2d-20d0f28e1c6b",
+      "name": "Mark as Synced",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        860,
+        240
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase_credentials",
+          "name": "Supabase API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch from Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch from Supabase": {
+      "main": [
+        [
+          {
+            "node": "Send to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Mark as Synced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
