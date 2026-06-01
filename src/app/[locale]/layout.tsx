@@ -17,6 +17,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 import { getTranslations } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 export async function generateMetadata({ params }: { params: Promise<{locale: string}> }): Promise<Metadata> {
   const { locale } = await params;
@@ -62,7 +63,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"
@@ -72,6 +73,7 @@ export default async function RootLayout({
           >
             {children}
             <Toaster position="top-center" richColors />
+            <WhatsAppButton />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

@@ -1,6 +1,12 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { Database } from '@/types/supabase'
+import dns from 'node:dns'
+
+// Windows ve bazı ISP'lerde yaşanan Node.js fetch (IPv6) hatalarını çözmek için:
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first')
+}
 
 export async function createClient() {
   const cookieStore = await cookies()

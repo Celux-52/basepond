@@ -1,66 +1,68 @@
 {
   "Index": {
-    "title": "SnapLead - Yapay Zeka Müşteri Bulma",
-    "headline": "Daha Fazla Müşteri Kazanın",
-    "subheadline": "Web tasarımcıları ve ajanslar için saniyeler içinde otomatik mesajlar ve analizler.",
-    "getStarted": "Başla",
+    "title": "SnapLead | Türkiye'nin Yapay Zeka Destekli Fırsat Motoru",
+    "headline": "İşletmeleri Analiz Edin, Gerçek Satış Fırsatlarını Keşfedin.",
+    "subheadline": "Sıradan data değil, satılmaya hazır fırsat skoru. Türkiye pazarındaki kuaförlerden kliniklere kadar binlerce işletmeyi saniyeler içinde analiz edin.",
+    "getStarted": "Fırsatları Keşfet",
     "watchDemo": "Demo İzle"
   },
   "Navbar": {
     "features": "Özellikler",
-    "workflow": "Nasıl Çalışır",
+    "workflow": "Nasıl Çalışır?",
     "pricing": "Fiyatlar",
     "faq": "SSS",
     "login": "Giriş",
-    "getStarted": "Kayıt Ol"
+    "getStarted": "Hemen Başla"
   },
   "Features": {
-    "title": "Güçlü Yapay Zeka",
-    "subtitle": "Soğuk müşterileri satışa dönüştürün.",
-    "feature1Title": "Otomatik Satış Mesajı",
-    "feature1Desc": "Yapay zeka ile kişiselleştirilmiş mesajlar.",
-    "feature2Title": "Web Sitesi Önizleme",
-    "feature2Desc": "Müşterilerin dikkatini çekecek tasarım önizlemeleri.",
-    "feature3Title": "Teklif Oluşturucu",
-    "feature3Desc": "Saniyeler içinde teklif hazırlayın.",
-    "feature4Title": "Satış Senaryosu",
-    "feature4Desc": "İkna edici telefon görüşmesi metinleri."
+    "title": "Fırsat Analizi ve Dijital Güç",
+    "subtitle": "Yerel işletmelerin dijital ayak izini tarayın, doğrudan 'Ne satabilirsiniz?' sorusunun cevabını bulun.",
+    "feature1Title": "Büyüme Potansiyeli",
+    "feature1Desc": "Sektördeki dijital açıklıklar ve anlık büyüme marjı haritalandırması.",
+    "feature2Title": "Güven Skoru Analizi",
+    "feature2Desc": "İşletmenin müşteri gözündeki itibarı ve yerel pazar gücü.",
+    "feature3Title": "SEO ve Mobil Uyum Durumu",
+    "feature3Desc": "Arama motorlarındaki engellerin tespiti ve mobil cihaz erişilebilirliği.",
+    "feature4Title": "Otomatik Satış Senaryosu",
+    "feature4Desc": "Yapay zeka ile işletmeye özel üretilen anlık teklif metinleri."
   },
   "Workflow": {
     "title": "Nasıl Çalışır?",
-    "step1": "1. Müşteri Bul",
-    "step1Desc": "Konum ve sektör seçin.",
-    "step2": "2. Analiz Et",
-    "step2Desc": "Dijital varlıklarını incele.",
-    "step3": "3. İçerik Üret",
-    "step3Desc": "Satış mesajlarını hazırla.",
-    "step4": "4. Müşteri Kazan",
-    "step4Desc": "Anlaşmaları kapat."
+    "step1": "1. Sektör ve Şehir Seç",
+    "step1Desc": "Türkiye genelinde hedefinizi belirleyin.",
+    "step2": "2. AI Analizini Başlat",
+    "step2Desc": "Dijital zayıflıkları saniyeler içinde tespit et.",
+    "step3": "3. Fırsatları İncele",
+    "step3Desc": "Sıcak satış potansiyeli taşıyanları ayır.",
+    "step4": "4. Satışı Kapat",
+    "step4Desc": "Özel senaryolarla direkt olarak işletmeye ulaş."
   },
   "Pricing": {
-    "title": "Fiyatlandırma",
+    "title": "Premium İstihbarat, Şeffaf Fiyatlandırma.",
     "monthly": "Aylık",
     "annual": "Yıllık",
-    "starter": "Başlangıç",
-    "pro": "Profesyonel",
-    "enterprise": "Kurumsal",
-    "popular": "Popüler",
-    "getStarted": "Başla"
+    "starter": "Starter",
+    "pro": "Growth",
+    "enterprise": "Pro",
+    "popular": "Önerilen",
+    "getStarted": "Planı Seç"
   },
   "FAQ": {
     "title": "Sıkça Sorulan Sorular",
-    "q1": "Farkı nedir?",
-    "a1": "Yapay zeka ile müşteri bulur ve analiz eder.",
-    "q2": "Her ülkede geçerli mi?",
-    "a2": "Evet, tüm dünyada.",
-    "q3": "Ücretsiz deneme var mı?",
-    "a3": "Evet, 7 gün ücretsiz."
+    "q1": "SnapLead'in farkı nedir?",
+    "a1": "Geleneksel platformlar size sadece işletme numarası verir. SnapLead ise Türkiye pazarındaki işletmeleri analiz eder, dijital zayıflıklarını bulur ve size hazır satış fırsatları (Opportunity Score) sunar.",
+    "q2": "Türkiye'de kullanılabilir mi?",
+    "a2": "Evet. SnapLead motoru, İstanbul'dan Anadolu'nun her köşesine kadar Türkiye pazarındaki tüm işletmelerin verilerini anlık olarak analiz edecek şekilde optimize edilmiştir.",
+    "q3": "Hangi işletmeler için uygundur?",
+    "a3": "Türkiye'deki tüm KOBİ'ler, klinikler, restoranlar, kuaförler, avukatlar ve dijitalleşmeye ihtiyaç duyan tüm yerel işletmeler için veri ve analiz sağlar.",
+    "q4": "Ne tür fırsatlar gösterir?",
+    "a4": "İşletmenin SEO eksikleri, mobil uyum sorunları, kötü web sitesi tasarımları veya eksik sosyal medya stratejileri gibi doğrudan satışa çevirebileceğiniz zayıflıkları listeler."
   },
   "Footer": {
     "product": "Ürün",
     "company": "Şirket",
     "legal": "Yasal",
-    "copyright": "© 2026 SnapLead."
+    "copyright": "© 2026 SnapLead. Tüm Hakları Saklıdır."
   },
   "Dashboard": {
     "hotLead": "Sıcak Fırsat",
@@ -73,9 +75,20 @@
     "city": "Şehir",
     "niche": "Sektör"
   },
+  "Errors": {
+    "connectionError": "İşletme verilerine ulaşılırken bir hata oluştu. Lütfen bağlantınızı kontrol edip tekrar deneyin.",
+    "quotaExceeded": "Aylık tarama kotanızı doldurdunuz. İşletme analizine devam etmek için ek kota alabilir veya planınızı yükseltebilirsiniz.",
+    "noResults": "Girdiğiniz kriterlerde bir işletme bulamadık. Lütfen farklı bir şehir veya sektör ile Türkiye genelinde yeniden arama yapın.",
+    "missingInfo": "Lütfen şehir ve sektör alanlarını eksiksiz doldurun."
+  },
+  "EmptyStates": {
+    "poolEmpty": "Henüz bir analiz gerçekleştirmediniz. Sol menüden bir şehir ve sektör seçerek Türkiye'deki işletme fırsatlarını hemen keşfetmeye başlayın.",
+    "noSavedOpportunities": "Takibe aldığınız bir işletme bulunmuyor. Analiz ettiğiniz sıcak fırsatları buraya kaydedebilirsiniz.",
+    "noMessageTemplate": "Bu işletme için henüz bir yapay zeka satış senaryosu üretilmedi. Hemen 'Analizi Başlat' butonuna tıklayarak ilk teklifinizi oluşturun."
+  },
   "Auth": {
-    "loginTitle": "Tekrar hoş geldiniz",
-    "loginSubtitle": "Hesabınıza giriş yapmak için e-postanızı girin",
+    "loginTitle": "Sisteme Giriş Yapın",
+    "loginSubtitle": "Fırsat motoruna erişmek için e-postanızı girin",
     "signupTitle": "Hesap oluşturun",
     "signupSubtitle": "Hesabınızı oluşturmak için bilgilerinizi girin",
     "forgotPasswordTitle": "Şifrenizi mi unuttunuz?",
@@ -83,7 +96,7 @@
     "resetPasswordTitle": "Şifre sıfırlama",
     "resetPasswordSubtitle": "Aşağıya yeni şifrenizi girin.",
     "email": "E-posta",
-    "emailPlaceholder": "isim@ornek.com",
+    "emailPlaceholder": "isim@sirket.com",
     "password": "Şifre",
     "passwordPlaceholder": "••••••••",
     "confirmPassword": "Şifreyi Onayla",

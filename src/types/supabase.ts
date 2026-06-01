@@ -44,6 +44,42 @@ export interface Database {
           }
         ]
       }
+      saved_businesses: {
+        Row: {
+          id: string
+          user_id: string
+          business_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          business_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          business_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_businesses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_businesses_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       businesses: {
         Row: {
           id: string
@@ -117,6 +153,9 @@ export interface Database {
           opportunity_reason: string | null
           website_status: string | null
           growth_potential: string | null
+          has_ssl: boolean | null
+          mobile_responsive: boolean | null
+          has_social_links: boolean | null
           updated_at: string
         }
         Insert: {
@@ -128,6 +167,9 @@ export interface Database {
           opportunity_reason?: string | null
           website_status?: string | null
           growth_potential?: string | null
+          has_ssl?: boolean | null
+          mobile_responsive?: boolean | null
+          has_social_links?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -139,6 +181,9 @@ export interface Database {
           opportunity_reason?: string | null
           website_status?: string | null
           growth_potential?: string | null
+          has_ssl?: boolean | null
+          mobile_responsive?: boolean | null
+          has_social_links?: boolean | null
           updated_at?: string
         }
         Relationships: [

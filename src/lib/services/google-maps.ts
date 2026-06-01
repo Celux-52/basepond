@@ -28,22 +28,70 @@ export async function searchPlaces(query: string, maxResults: number = 20): Prom
     return mockPlacesSearch(query, maxResults);
   }
 
-  const encodedQuery = encodeURIComponent(query);
-  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodedQuery}&key=${GOOGLE_API_KEY}`;
+  const allResults: GooglePlaceResult[] = [];
+  const seenPlaceIds = new Set<string>();
   
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    if (data.status !== "OK") {
-      throw new Error(`Google Maps API error: ${data.status}`);
-    }
+  // Google'ın 60 limitini aşmak için kelime varyasyonları (Modifiers)
+  // Kullanıcı "İstanbul Kuaför" dediğinde 100 istiyorsa, önce sade arar (60 çeker),
+  // Sonra yetmezse "İstanbul Kuaför Merkez" diye arar (Kalan 40'ı çeker).
+  const queryModifiers = ["", " Merkez", " En İyi", " Yakın", " Popüler", " Premium"];
 
-    return data.results.slice(0, maxResults) as GooglePlaceResult[];
-  } catch (error) {
-    console.error("Error searching places:", error);
-    return [];
+  for (const modifier of queryModifiers) {
+    if (allResults.length >= maxResults) break;
+
+    const currentQuery = query + modifier;
+    let url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(currentQuery)}&key=${GOOGLE_API_KEY}`;
+    let nextPageToken: string | null = null;
+    let hasMorePages = true;
+
+    while (hasMorePages && allResults.length < maxResults) {
+      if (nextPageToken) {
+        url = `https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken=${nextPageToken}&key=${GOOGLE_API_KEY}`;
+        // Google, next_page_token üretildikten sonra aktifleşmesi için 2 saniye beklemeyi zorunlu tutar.
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Token bazen geç aktifleşir ve INVALID_REQUEST döner. 
+        if (data.status === "INVALID_REQUEST" && nextPageToken) {
+          // Biraz daha bekleyip tekrar denemek daha sağlıklı ama döngüyü bozmamak için şimdilik bir sonraki modifier'a geçiyoruz.
+          break;
+        }
+
+        if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
+          console.warn(`Google Maps API warning: ${data.status}`);
+          break;
+        }
+
+        if (data.results && Array.isArray(data.results)) {
+          for (const place of data.results) {
+            // Çift veri gelmesini Set ile engelliyoruz
+            if (!seenPlaceIds.has(place.place_id)) {
+              seenPlaceIds.add(place.place_id);
+              allResults.push(place);
+            }
+          }
+        }
+
+        if (data.next_page_token) {
+          nextPageToken = data.next_page_token;
+        } else {
+          hasMorePages = false;
+          nextPageToken = null;
+        }
+
+      } catch (error) {
+        console.error("Error searching places:", error);
+        break;
+      }
+    }
   }
+
+  // Kullanıcının tam istediği sayıda (Fazla çekildiyse kırparak) veriyi döndür
+  return allResults.slice(0, maxResults);
 }
 
 export async function getPlaceDetails(placeId: string): Promise<GooglePlaceDetails | null> {

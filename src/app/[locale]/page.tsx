@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl';
 import { Navbar } from '@/components/navbar';
-import { DashboardMockup } from '@/components/dashboard-mockup';
 import { TrustSection } from '@/components/trust-section';
 import { FeaturesSection } from '@/components/features-section';
 import { WorkflowSection } from '@/components/workflow-section';
@@ -52,17 +51,34 @@ export default function Home() {
               {t('subheadline')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 sm:mb-20">
-              <Link href="#" className={buttonVariants({ size: "lg", className: "h-12 px-8 text-base gap-2 rounded-full w-full sm:w-auto shadow-lg shadow-primary/20 hover:scale-105 transition-transform" })}>
+              <Link href="/signup" className={buttonVariants({ size: "lg", className: "h-12 px-8 text-base gap-2 rounded-full w-full sm:w-auto shadow-lg shadow-primary/20 hover:scale-105 transition-transform" })}>
                 {t('getStarted')} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="#" className={buttonVariants({ variant: "outline", size: "lg", className: "h-12 px-8 text-base gap-2 rounded-full w-full sm:w-auto hover:bg-secondary transition-colors" })}>
+              <Link href="#demo-video" className={buttonVariants({ variant: "outline", size: "lg", className: "h-12 px-8 text-base gap-2 rounded-full w-full sm:w-auto hover:bg-secondary transition-colors" })}>
                 <PlayCircle className="h-5 w-5" /> {t('watchDemo')}
               </Link>
             </div>
             
-            <div className="relative mx-auto max-w-5xl rounded-2xl p-1.5 sm:p-2 bg-gradient-to-b from-primary/20 via-border/10 to-transparent shadow-2xl">
+            <div id="demo-video" className="relative mx-auto max-w-5xl aspect-video rounded-2xl p-1.5 sm:p-2 bg-gradient-to-b from-primary/20 via-border/10 to-transparent shadow-2xl overflow-hidden scroll-mt-24">
               <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-border/50" />
-              <DashboardMockup />
+              <div className="relative w-full h-full rounded-xl overflow-hidden z-10 bg-background/50">
+                {/* 
+                  Video alanını buraya ekledik.
+                  1. Eğer elinizde bir .mp4 dosyası varsa, 'public' klasörüne atıp src="/video-adi.mp4" olarak değiştirebilirsiniz.
+                  2. Eğer YouTube videosu eklemek isterseniz, bu <video> etiketini silip yerine <iframe> ekleyebiliriz.
+                */}
+                <video 
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                >
+                  <source src="/dashboard-preview.mp4" type="video/mp4" />
+                  Tarayıcınız video etiketini desteklemiyor.
+                </video>
+              </div>
             </div>
           </div>
         </section>

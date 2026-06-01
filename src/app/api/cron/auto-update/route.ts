@@ -64,15 +64,27 @@ export async function GET(req: Request) {
         { linkedin_url: business.linkedin || undefined, primary_email: business.email || undefined }
       );
 
+      // Data Cleaning & Verification
+      const calculatedSeoScore = webAnalysis.has_ssl ? 80 : 30;
+      const calculatedMobileScore = webAnalysis.mobile_responsive ? 95 : 20;
+      const calculatedSocialScore = webAnalysis.has_social_links ? 85 : 10;
+      
+      const ratingVal = business.rating || 0;
+      const reviewVal = business.review_count || 0;
+      let calculatedTrustScore = 30;
+      if (ratingVal > 4.5 && reviewVal > 100) calculatedTrustScore = 95;
+      else if (ratingVal > 4.0 && reviewVal > 50) calculatedTrustScore = 75;
+      else if (ratingVal > 3.5 && reviewVal > 10) calculatedTrustScore = 50;
+
       // Update Analysis
       await supabase.from("business_analysis").upsert({
         business_id: business.id,
         ai_score: aiScore.ai_score,
-        seo_score: webAnalysis.has_ssl ? 50 : 0,
-        mobile_score: webAnalysis.mobile_responsive ? 100 : 0,
-        social_score: webAnalysis.has_social_links ? 100 : 0,
+        seo_score: calculatedSeoScore,
+        mobile_score: calculatedMobileScore,
+        social_score: calculatedSocialScore,
         opportunity_reason: aiScore.opportunity_reason,
-        website_status: webAnalysis.status,
+        website_status: webAnalysis.status === "error" ? "broken" : webAnalysis.status,
         growth_potential: aiScore.growth_potential,
         updated_at: new Date().toISOString()
       });

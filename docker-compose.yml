@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  snaplead-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: snaplead:latest
+    container_name: snaplead-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Prod ortam değişkenleri buraya veya .env dosyasına eklenecek
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - MCP_API_KEY=${MCP_API_KEY}
+      - ADMIN_EMAILS=${ADMIN_EMAILS}
+    # Eğer aynı sunucuda başka servisler çalıştıracaksan network ayarı yapabilirsin.
+    networks:
+      - snaplead-network
+
+networks:
+  snaplead-network:
+    driver: bridge

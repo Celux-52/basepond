@@ -1,7 +1,6 @@
 import { Link } from "@/i18n/routing";
 import { Zap } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function AuthLayout({
   children,
@@ -22,7 +21,6 @@ export default function AuthLayout({
           <span className="font-heading font-bold text-xl tracking-tight">SnapLead</span>
         </Link>
         <div className="flex items-center space-x-2">
-          <LanguageSwitcher />
           <ThemeToggle />
         </div>
       </header>

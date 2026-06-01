@@ -1,35 +1,22 @@
-import { getTranslations } from 'next-intl/server';
+import { getDashboardLeads, getUserWallet } from '@/app/actions/lead';
+import { DashboardClient } from '@/components/dashboard/dashboard-client';
 import { createClient } from '@/lib/supabase/server';
-import { BusinessDiscovery } from '@/components/dashboard/business-discovery';
+
+const ADMIN_EMAILS = ['melih20052005gs@gmail.com'];
 
 export default async function DashboardPage({ params }: { params: Promise<{locale: string}> }) {
   const { locale } = await params;
-  const t = await getTranslations({locale, namespace: 'Dashboard'});
+  
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  const isAdmin = ADMIN_EMAILS.includes(user?.email || '');
 
-  let currentCredits = 0;
-  if (user?.id) {
-    const { data: profile } = await supabase.from("profiles").select("credits").eq("id", user.id).single();
-    currentCredits = profile?.credits || 0;
-  }
+  const initialLeads = await getDashboardLeads('PREMIUM');
+  const wallet = await getUserWallet();
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Business Intelligence</h1>
-          <p className="text-muted-foreground mt-1">Discover high-potential business opportunities.</p>
-        </div>
-        <div className="flex items-center gap-4 bg-muted/30 px-4 py-2 rounded-lg border border-border/50">
-          <div className="text-sm font-medium">Internal Credits</div>
-          <div className="text-xl font-bold text-primary">{currentCredits}</div>
-        </div>
-      </div>
-      
-      {/* Search and Results Section */}
-      <BusinessDiscovery />
-
+    <div className="min-h-screen bg-neutral-50/50">
+       <DashboardClient initialLeads={initialLeads} initialBalance={wallet.balance} isAdmin={isAdmin} />
     </div>
   );
 }
