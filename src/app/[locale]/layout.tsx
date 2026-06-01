@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from "@/components/theme-provider";
+import Script from "next/script";
 import "../globals.css";
 
 const inter = Inter({
@@ -63,6 +64,25 @@ export default async function RootLayout({
       className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
+      </head>
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
