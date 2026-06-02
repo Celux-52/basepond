@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { getSecureLeadsPool } from '@/app/actions/lead';
 import { AiLeadCard } from '@/components/dashboard/AiLeadCard';
+import { LeadDrawer } from '@/components/dashboard/lead-drawer';
 import { BusinessRecord } from '@/engine/types/business';
 import { Loader2, Filter, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,6 @@ const ALL_SIGNALS = [
 ];
 
 export default function LeadsPage() {
-  const supabase = createClient();
   const [leads, setLeads] = useState<BusinessRecord[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<BusinessRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,18 +48,21 @@ export default function LeadsPage() {
 
   const loadLeads = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('businesses')
-      .select('*')
-      .eq('status', 'APPROVED')
-      .order('ai_score', { ascending: false })
-      .limit(200);
+    const data = await getSecureLeadsPool();
       
-    if (data) {
+    if (data && data.length > 0) {
       setLeads(data as BusinessRecord[]);
       setFilteredLeads(data as BusinessRecord[]);
     }
     setLoading(false);
+  };
+
+  const [selectedLead, setSelectedLead] = useState<BusinessRecord | null>(null);
+  
+  const handleUnlockSuccess = (updatedLead: BusinessRecord) => {
+    // Update local state to show unlocked data without refresh
+    setLeads(prev => prev.map(l => l.id === updatedLead.id ? updatedLead : l));
+    setFilteredLeads(prev => prev.map(l => l.id === updatedLead.id ? updatedLead : l));
   };
 
   useEffect(() => {
@@ -203,15 +206,22 @@ export default function LeadsPage() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
                 >
-                  <AiLeadCard business={lead} />
+                  <AiLeadCard business={lead} onClick={() => setSelectedLead(lead)} />
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
 
         </div>
-
       </div>
+
+      {selectedLead && (
+        <LeadDrawer 
+          lead={selectedLead} 
+          onClose={() => setSelectedLead(null)} 
+          onUnlockSuccess={handleUnlockSuccess}
+        />
+      )}
     </div>
   );
 }

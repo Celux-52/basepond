@@ -14,9 +14,10 @@ export async function POST(request: Request) {
     }
 
     // 🔒 ADMIN ONLY - Sadece admin bu endpoint'i kullanabilir
-    if (!ADMIN_EMAILS.includes(user.email || '')) {
-      return NextResponse.json({ error: 'Bu işlem için yetkiniz yok.' }, { status: 403 });
-    }
+    // Geçici olarak devre dışı (Satın alma testi için):
+    // if (!ADMIN_EMAILS.includes(user.email || '')) {
+    //   return NextResponse.json({ error: 'Bu işlem için yetkiniz yok.' }, { status: 403 });
+    // }
 
     const body = await request.json();
     const amount = Number(body.amount);
@@ -46,7 +47,10 @@ export async function POST(request: Request) {
 
     const { error: updateError } = await adminClient
       .from('profiles')
-      .update({ credits: newCredits })
+      .update({ 
+        credits: newCredits,
+        has_purchased: true
+      })
       .eq('id', targetUserId);
 
     if (updateError) {

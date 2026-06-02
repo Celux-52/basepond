@@ -196,6 +196,78 @@ export async function getDashboardLeads(
     };
   });
 }
+export async function getSecureLeadsPool() {
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return [];
+
+  const { data, error } = await supabase
+    .from('businesses')
+    .select(`
+      *,
+      business_analysis (
+        ai_score,
+        opportunity_reasons,
+        opportunity_reason,
+        recommended_services,
+        quality_tier
+      ),
+      user_lead_status (
+        status,
+        is_unlocked,
+        user_id
+      )
+    `)
+    .eq('status', 'APPROVED')
+    .order('created_at', { ascending: false })
+    .limit(200);
+
+  if (error) {
+    console.error('getSecureLeadsPool Error:', error);
+    return [];
+  }
+
+  // Güvenlik Maskelemesi (İsim Gizleme)
+  const maskName = (name: string) => {
+    if (!name) return 'Gizli Kayıt';
+    const words = name.split(' ');
+    return words.map(w => w.charAt(0) + '••••').join(' ');
+  };
+
+  return data.map((d: any) => {
+    const analysis = Array.isArray(d.business_analysis) ? d.business_analysis[0] : d.business_analysis;
+    const statusRecord = Array.isArray(d.user_lead_status) ? d.user_lead_status.find((s:any) => s.user_id === userData.user.id) : d.user_lead_status;
+    
+    let parsedReasons = analysis?.opportunity_reasons || [];
+    let parsedServices = analysis?.recommended_services || [];
+    if (parsedReasons.length === 0 && analysis?.opportunity_reason) {
+      try {
+        const parsed = JSON.parse(analysis.opportunity_reason);
+        parsedReasons = parsed.summary || [];
+        parsedServices = parsed.services || [];
+      } catch (e) {}
+    }
+
+    const isUnlocked = statusRecord?.is_unlocked || false;
+
+    // Sinyalleri belirle (eski sayfa front-end'de yapıyordu, burada doğrudan datada maskeleyeceğiz)
+    // d.signals varsa olduğu gibi bırakıyoruz, ancak tel, websitesi ve mail null yapılacak eğer unlock edilmemişse
+    return {
+      ...d,
+      business_name: isUnlocked ? d.business_name : maskName(d.business_name),
+      phone: isUnlocked ? d.phone : null,
+      website: isUnlocked ? d.website : null,
+      email: isUnlocked ? d.email : null,
+      maps_url: isUnlocked ? d.maps_url : null,
+      instagram_url: isUnlocked ? d.instagram_url : null,
+      facebook_url: isUnlocked ? d.facebook_url : null,
+      ai_score: analysis?.ai_score || 0,
+      opportunity_reasons: parsedReasons,
+      recommended_services: parsedServices,
+      is_unlocked: isUnlocked,
+    };
+  });
+}
 
 export async function getDashboardStats() {
   const supabase = await createClient();

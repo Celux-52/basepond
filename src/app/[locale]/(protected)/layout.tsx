@@ -20,9 +20,21 @@ export default async function ProtectedLayout({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('credits, full_name')
+    .select('credits, full_name, created_at, has_purchased')
     .eq('id', user.id)
     .single();
+
+  if (profile) {
+    const trialDays = 3;
+    const trialTime = trialDays * 24 * 60 * 60 * 1000;
+    const createdAtTime = new Date(profile.created_at || user.created_at).getTime();
+    const isTrialExpired = Date.now() > createdAtTime + trialTime;
+
+    if (isTrialExpired && !profile.has_purchased) {
+      // Deneme süresi bitmiş ve paket almamış, fiyatlandırmaya at
+      redirect('/pricing');
+    }
+  }
 
   const navItems = [
     { href: '/dashboard', label: 'Kontrol Paneli', icon: LayoutDashboard },
