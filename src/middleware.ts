@@ -8,7 +8,7 @@ const intlMiddleware = createMiddleware(routing);
 const protectedRoutes = ['/dashboard', '/admin'];
 const authRoutes = ['/login', '/signup', '/forgot-password', '/reset-password'];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // 1. Update Supabase Session
   const { supabaseResponse, user } = await updateSession(request);
   
