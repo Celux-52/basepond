@@ -59,25 +59,89 @@ export default function Home() {
               </Link>
             </div>
             
-            <div id="demo-video" className="relative mx-auto max-w-5xl aspect-video rounded-2xl p-1.5 sm:p-2 bg-gradient-to-b from-primary/20 via-border/10 to-transparent shadow-2xl overflow-hidden scroll-mt-24">
+            <div id="demo-video" className="relative mx-auto max-w-5xl aspect-[16/9] md:aspect-[21/9] rounded-2xl p-1.5 sm:p-2 bg-gradient-to-b from-primary/30 via-border/20 to-transparent shadow-2xl shadow-primary/10 overflow-hidden scroll-mt-24">
               <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-border/50" />
-              <div className="relative w-full h-full rounded-xl overflow-hidden z-10 bg-background/50">
-                {/* 
-                  Video alanını buraya ekledik.
-                  1. Eğer elinizde bir .mp4 dosyası varsa, 'public' klasörüne atıp src="/video-adi.mp4" olarak değiştirebilirsiniz.
-                  2. Eğer YouTube videosu eklemek isterseniz, bu <video> etiketini silip yerine <iframe> ekleyebiliriz.
-                */}
-                <video 
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  controls
-                >
-                  <source src="/dashboard-preview.mp4" type="video/mp4" />
-                  Tarayıcınız video etiketini desteklemiyor.
-                </video>
+              <div className="relative w-full h-full rounded-xl overflow-hidden z-10 bg-zinc-950/90 flex flex-col font-sans">
+                
+                {/* Mockup Window Header */}
+                <div className="h-10 border-b border-white/10 flex items-center px-4 gap-2 bg-white/5">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-amber-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                  </div>
+                  <div className="mx-auto bg-black/40 px-3 py-1 rounded-md text-[10px] text-zinc-400 border border-white/5 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    AI İstihbarat Motoru Çalışıyor...
+                  </div>
+                </div>
+
+                {/* Mockup Body */}
+                <div className="flex-1 flex overflow-hidden">
+                  {/* Left Sidebar Mockup */}
+                  <div className="w-48 border-r border-white/10 hidden md:flex flex-col p-4 gap-3 bg-white/[0.02]">
+                    <div className="h-8 w-full bg-white/10 rounded-md" />
+                    <div className="h-4 w-3/4 bg-white/5 rounded-md mt-4" />
+                    <div className="h-4 w-2/3 bg-white/5 rounded-md" />
+                    <div className="h-4 w-5/6 bg-white/5 rounded-md" />
+                  </div>
+
+                  {/* Main Content Area Mockup */}
+                  <div className="flex-1 p-6 relative overflow-hidden flex flex-col gap-4">
+                    {/* Header */}
+                    <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                      <div>
+                        <div className="h-6 w-48 bg-white/20 rounded-md mb-2" />
+                        <div className="h-3 w-64 bg-white/10 rounded-md" />
+                      </div>
+                      <div className="h-10 w-32 bg-primary/80 rounded-full" />
+                    </div>
+
+                    {/* Cards Animation */}
+                    <div className="flex-1 flex gap-4 mt-2">
+                      <div className="flex-1 bg-white/5 border border-white/10 rounded-xl p-5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/40 transition-colors duration-1000" />
+                        
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="h-5 w-1/3 bg-white/20 rounded-md" />
+                          <div className="h-6 w-16 bg-emerald-500/20 border border-emerald-500/30 rounded-full flex items-center justify-center">
+                            <div className="h-2 w-8 bg-emerald-400/80 rounded-full" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-white/10" />
+                            <div className="h-3 w-1/2 bg-white/10 rounded-md" />
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-white/10" />
+                            <div className="h-3 w-2/3 bg-white/10 rounded-md" />
+                          </div>
+                        </div>
+
+                        {/* Scanner Effect */}
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-primary/50 shadow-[0_0_15px_rgba(var(--primary),0.8)] animate-[scan_3s_ease-in-out_infinite]" />
+                      </div>
+
+                      <div className="flex-1 bg-white/5 border border-white/10 rounded-xl p-5 relative overflow-hidden hidden sm:block opacity-50">
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="h-5 w-1/2 bg-white/20 rounded-md" />
+                          <div className="h-6 w-16 bg-blue-500/20 border border-blue-500/30 rounded-full flex items-center justify-center">
+                            <div className="h-2 w-8 bg-blue-400/80 rounded-full" />
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-white/10" />
+                            <div className="h-3 w-1/3 bg-white/10 rounded-md" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { LeadDrawer } from './lead-drawer';
 import { CreditIndicator } from './credit-indicator';
 import { getDashboardLeads, getDashboardStats, getSectorsWithCounts } from '@/app/actions/lead';
 import { initiateOnDemandCrawl, checkCrawlJobStatus } from '@/app/actions/crawl';
-import { Search, Star, Target, Clock, Unlock, Zap, TrendingUp, Phone, Activity, SearchX, Loader2, Bot, Filter, MapPin, Briefcase, Map, Flame, Check } from 'lucide-react';
+import { Search, Star, Target, Clock, Unlock, Zap, TrendingUp, Phone, Activity, SearchX, Loader2, Bot, Filter, MapPin, Briefcase, Map, Flame, Check, Sparkles, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -96,6 +96,27 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
   const [crawlStatus, setCrawlStatus] = useState<string>('');
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [isAddingCredits, setIsAddingCredits] = useState(false);
+
+  // Onboarding State
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeStep, setWelcomeStep] = useState(1);
+
+  useEffect(() => {
+    // Check if user has seen welcome tour
+    if (typeof window !== 'undefined') {
+      const hasSeen = localStorage.getItem('hasSeenWelcomeTour');
+      if (!hasSeen) {
+        setShowWelcome(true);
+      }
+    }
+  }, []);
+
+  const closeWelcome = () => {
+    setShowWelcome(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hasSeenWelcomeTour', 'true');
+    }
+  };
 
   const handleAddCredits = async (amount: number) => {
     setIsAddingCredits(true);
@@ -523,6 +544,73 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
         onClose={() => setSelectedLead(null)}
         onUnlocked={handleUnlocked}
       />
+
+      {/* Onboarding Welcome Modal */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-black mb-2">Sisteme Hoş Geldiniz!</h2>
+              <p className="text-blue-100 font-medium">Satışları 10'a katlayacak yapay zeka gücü elinizde.</p>
+            </div>
+            
+            <div className="p-6">
+              {welcomeStep === 1 && (
+                <div className="space-y-4 animate-in slide-in-from-right-8">
+                  <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+                    <Search className="w-5 h-5 text-blue-500" /> 1. Yeni Fırsatlar Bulun
+                  </h3>
+                  <p className="text-neutral-600 text-sm leading-relaxed">
+                    Sol üstteki <strong>"Yeni İstihbarat Başlat"</strong> butonuna tıklayarak hedeflediğiniz şehir ve sektörü yazın. Yapay zeka sizin için internetin altını üstüne getirip potansiyel müşterileri bulsun.
+                  </p>
+                </div>
+              )}
+              {welcomeStep === 2 && (
+                <div className="space-y-4 animate-in slide-in-from-right-8">
+                  <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-amber-500" /> 2. Sihirli Satış Mesajları
+                  </h3>
+                  <p className="text-neutral-600 text-sm leading-relaxed">
+                    İşletme kartlarında yer alan <strong>"Sihirli Satış Mesajı Üret"</strong> butonuna basarak, o firmanın web sitesindeki eksiklere özel vurucu bir WhatsApp mesajı veya E-posta şablonu oluşturun.
+                  </p>
+                </div>
+              )}
+              {welcomeStep === 3 && (
+                <div className="space-y-4 animate-in slide-in-from-right-8">
+                  <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+                    <Bookmark className="w-5 h-5 text-emerald-500" /> 3. Kanban Panosu
+                  </h3>
+                  <p className="text-neutral-600 text-sm leading-relaxed">
+                    Sol menüden <strong>"Satış Hunisi"</strong>ne girerek görüştüğünüz müşterileri Trello gibi sürükleyip bırakarak harika bir düzende takip edin.
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-8 flex items-center justify-between">
+                <div className="flex gap-1.5">
+                  {[1,2,3].map(step => (
+                    <div key={step} className={`w-2 h-2 rounded-full transition-colors ${welcomeStep === step ? 'bg-blue-600' : 'bg-neutral-200'}`} />
+                  ))}
+                </div>
+                <div className="flex gap-3">
+                  {welcomeStep < 3 ? (
+                    <button onClick={() => setWelcomeStep(w => w + 1)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-colors">
+                      Sonraki
+                    </button>
+                  ) : (
+                    <button onClick={closeWelcome} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-xl transition-colors flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Başlayalım!
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

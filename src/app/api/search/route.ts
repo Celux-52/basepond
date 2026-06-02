@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     // 1. Check Quota
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('scans_remaining')
+      .select('credits')
       .eq('id', user.id)
       .single();
 
@@ -45,8 +45,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Could not fetch user profile' }, { status: 500 });
     }
 
-    const requiredScans = limit / 10; // 1 scan per 10 items
-    if (!isAdmin && profile.scans_remaining < requiredScans) {
+    const requiredScans = limit / 10; // 1 scan per 10 items. e.g. 10 limit = 1 credit, 50 limit = 5 credits.
+    if (!isAdmin && profile.credits < requiredScans) {
       return NextResponse.json({ error: 'Insufficient scans remaining' }, { status: 403 });
     }
 
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
 
     // 5. Decrement Quota (skip for admin)
     if (!isAdmin) {
-      const { error: rpcError } = await supabase.rpc('decrement_scans', {
+      const { error: rpcError } = await supabase.rpc('decrement_credits', {
         user_id_param: user.id,
         amount: requiredScans
       });
