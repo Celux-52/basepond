@@ -8,12 +8,6 @@ export const maxDuration = 300;
 
 export async function POST(req: Request) {
   try {
-    // Güvenlik için basit bir API key kontrolü yapılabilir (n8n'den gönderilecek)
-    const authHeader = req.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     let body = {};
     try {
       const text = await req.text();

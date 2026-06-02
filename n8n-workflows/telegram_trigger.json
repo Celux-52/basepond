@@ -46,13 +46,13 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://basepound-web:3000/api/trigger-agent",
+        "url": "https://basepond.com/api/trigger-agent",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer my-secret-token"
+              "value": "Bearer undefined"
             }
           ]
         },
