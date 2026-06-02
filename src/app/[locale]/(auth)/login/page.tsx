@@ -19,6 +19,16 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check URL for email confirmation message
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('message') === 'check-email') {
+        toast.success(t('checkEmail') || 'Lütfen e-posta adresinizi doğrulayın. Size bir doğrulama linki gönderdik.');
+      }
+    }
+  }, [t]);
+
   const loginSchema = z.object({
     email: z.string().email({ message: t('invalidCredentials') }),
     password: z.string().min(6, { message: t('invalidCredentials') }),

@@ -31,10 +31,15 @@ export async function signup(formData: FormData, locale: string = routing.defaul
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { data: authData, error } = await supabase.auth.signUp(data)
 
   if (error) {
     return { error: error.message }
+  }
+
+  // If email confirmation is required, session will be null
+  if (!authData.session) {
+    redirect(`/${locale}/login?message=check-email`)
   }
 
   revalidatePath('/', 'layout')
