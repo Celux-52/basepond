@@ -28,8 +28,8 @@
           "string": [
             {
               "value1": "={{ $json.message.text }}",
-              "operation": "contains",
-              "value2": "arama yap"
+              "operation": "notEqual",
+              "value2": "/start"
             }
           ]
         }
@@ -58,7 +58,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \"query\": \"{{ $('Telegram Trigger').item.json.message.text.replace('arama yap', '').trim() }}\" }",
+        "jsonBody": "={ \"query\": \"{{ $('Telegram Trigger').item.json.message.text.trim() }}\" }",
         "options": {}
       },
       "id": "f86d63cb-13f5-412e-9d2d-20d0f28e1c6b",
@@ -73,7 +73,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "✅ Arama başlatıldı! Hedef: *{{ $('Telegram Trigger').item.json.message.text.replace('arama yap', '').trim() }}*\n\nYapay zeka ajanları çalışıyor, sonuçlar kısa süre içinde E-Tablo'ya akmaya başlayacak! 🚀",
+        "text": "=✅ Arama başlatıldı! Hedef: *{{ $('Telegram Trigger').item.json.message.text.trim() }}*\n\nYapay zeka ajanları çalışıyor, sonuçlar kısa süre içinde E-Tablo'ya akmaya başlayacak! 🚀",
         "additionalFields": {}
       },
       "id": "cf1c57ea-628b-4b13-9118-2c2e0b5779c1",

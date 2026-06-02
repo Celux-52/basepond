@@ -35,6 +35,7 @@ export interface BusinessRecord {
   recommended_services: string[];
   source_used: string[];
   confidence_score: number;
+  signals?: string[];
   
   // Metadata
   is_premium: boolean;
@@ -73,6 +74,7 @@ export interface BusinessAnalysis {
   sales_readiness?: string; // e.g. "Yüksek"
   buy_intent?: string; // e.g. "High"
   why_now_signals?: string[];
+  signals?: string[];
   urgency_score?: number;
   growth_potential?: string;
   website_status?: string;

@@ -18,6 +18,7 @@ import { SupplierMatchingAgent } from './supplier_matching.agent';
 import { AIOpportunityAgent } from './ai_opportunity.agent';
 import { QualityControlAgent } from './quality_control.agent';
 import { MasterPoolAgent } from './master_pool.agent';
+import { QueryParserAgent } from './query_parser.agent';
 
 export interface ProcessJob {
   place: any;
@@ -41,7 +42,10 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
   private aiOpportunity: AIOpportunityAgent;
   private qualityControl: QualityControlAgent;
   private masterPool: MasterPoolAgent;
+  private queryParser: QueryParserAgent;
 
+  private savedCount = 0;
+  
   constructor(storage: IStorageAdapter) {
     super('OrchestratorAgent');
     this.storage = storage;
@@ -59,26 +63,46 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
     this.aiOpportunity = new AIOpportunityAgent();
     this.qualityControl = new QualityControlAgent();
     this.masterPool = new MasterPoolAgent(storage);
+    this.queryParser = new QueryParserAgent();
   }
 
   async execute(customQuery?: string): Promise<void> {
     this.log('Basepound V3 Asynchronous Queue Engine Started');
+    this.savedCount = 0;
+    let targetCount = 100;
     
     // 1. Queue Seeding (Push all jobs to queue)
     if (customQuery) {
-      this.log(`\n\n📌 TARGET (CUSTOM): ${customQuery}`);
+      this.log(`\n\n📌 PARSING CUSTOM QUERY: ${customQuery}`);
+      let queries = [customQuery];
+      let category = customQuery;
+
       try {
-        const places = await this.collector.execute(customQuery);
-        for (const place of places) {
-          await this.queue.push({
-            place,
-            city: "Bilinmiyor", // API'den gelen serbest metin
-            district: "Bilinmiyor",
-            category: customQuery
-          });
-        }
+        const parsed = await this.queryParser.execute(customQuery);
+        this.log(`🎯 Parsed successfully! Target Count: ${parsed.targetCount}, Sub-queries: ${parsed.queries.join(', ')}`);
+        targetCount = parsed.targetCount;
+        queries = parsed.queries;
+        category = parsed.category;
       } catch (e: any) {
-        this.error(`Target loop failed: ${customQuery}`, e.message);
+        this.error('Failed to parse query, using fallback', e.message);
+      }
+
+      for (const q of queries) {
+        if (this.savedCount >= targetCount) break;
+        this.log(`\n\n📌 TARGET SUB-QUERY: ${q}`);
+        try {
+          const places = await this.collector.execute(q);
+          for (const place of places) {
+            await this.queue.push({
+              place,
+              city: "Bilinmiyor", // API'den gelen serbest metin
+              district: "Bilinmiyor",
+              category: category
+            });
+          }
+        } catch (e: any) {
+          this.error(`Target loop failed for: ${q}`, e.message);
+        }
       }
     } else {
       for (const cat of CONFIG.CATEGORIES) {
@@ -110,6 +134,11 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
 
     // 2. Queue Processing
     while ((await this.queue.size()) > 0) {
+      if (this.savedCount >= targetCount) {
+        this.log(`🎯 TARGET REACHED (${this.savedCount}/${targetCount}). Stopping crawl execution.`);
+        break;
+      }
+
       const job = await this.queue.pop();
       if (!job) continue;
       
@@ -123,7 +152,7 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
       await new Promise(r => setTimeout(r, CONFIG.REQUEST_DELAY_MS));
     }
     
-    this.log('🏁 --- ORCHESTRATOR COMPLETED ---');
+    this.log(`🏁 --- ORCHESTRATOR COMPLETED (Saved: ${this.savedCount}/${targetCount}) ---`);
   }
 
   private async processJob(job: ProcessJob): Promise<void> {
@@ -182,7 +211,11 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
       rating: place.rating || 0,
       hasWebsite: webIntel.website_status === 'Active',
       hasSocial: socialIntel.is_active,
-      hasEmail: !!validEmail
+      hasEmail: !!validEmail,
+      hasPhone: !!validPhone,
+      reviewCount: place.user_ratings_total || 0,
+      websiteSignals: webIntel.signals || [],
+      htmlSnippet: webIntel.html_text_snippet || ""
     });
 
     // 9. Build Record & Quality Control
@@ -221,6 +254,7 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
       recommended_services: aiData.recommended_services.concat([supplierIntel.primary_supplier_type]),
       source_used: [place.source_provider || "Google Maps", "AI", "Web Scraper"],
       confidence_score: aiData.confidence_score,
+      signals: aiData.signals,
       is_premium: trustScore >= CONFIG.PREMIUM_TRUST_SCORE_MIN && aiData.ai_score >= CONFIG.PREMIUM_AI_SCORE_MIN,
       status: 'PENDING',
       created_at: new Date(),
@@ -237,5 +271,7 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
 
     // 10. Master Pool Agent
     await this.masterPool.execute(businessRecord);
+    this.savedCount++;
+    this.log(`📈 Saved count updated: ${this.savedCount}`);
   }
 }
