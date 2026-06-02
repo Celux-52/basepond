@@ -54,7 +54,8 @@ export async function getDashboardLeads(
       )
     `);
 
-  // Sadece analizi bitmiş olanları göster kısıtlaması KALDIRILDI (Herkes görünsün)
+  // Sadece analizi bitmiş ve çöp olmayan (AI skoru > 0) olanları göster
+  query = query.gt('business_analysis.ai_score', 0);
 
   if (filterMode === 'PREMIUM') {
     query = query.gte('business_analysis.ai_score', 70);

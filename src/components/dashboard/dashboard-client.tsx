@@ -161,6 +161,40 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
   // Fetch Logic
   useEffect(() => {
     loadLeads(true);
+
+    // Otomatik Anlık Yenileme (Real-time background polling)
+    const interval = setInterval(async () => {
+      try {
+        const activeSmartFiltersArray = Array.from(smartFilters);
+        const data = await getDashboardLeads(
+          filterMode, 
+          debouncedSearch, 
+          0,
+          activeSmartFiltersArray,
+          debouncedCity,
+          debouncedSector,
+          debouncedDistrict
+        );
+        // Sadece yeni veri geldiyse veya state'i sessizce güncelle (React DOM'u otomatik halleder)
+        setLeads(prev => {
+          // Sayfa 1'den ilerideyse arkaplan yenilemesini şimdilik ezme (kullanıcı aşağı kaydırmış olabilir)
+          if (prev.length > 50) return prev;
+          
+          const prevStr = JSON.stringify(prev);
+          const dataStr = JSON.stringify(data);
+          
+          if (prevStr !== dataStr) {
+            return data;
+          }
+          
+          return prev;
+        });
+      } catch (e) {
+        // Sessiz hata yönetimi
+      }
+    }, 5000); // 5 saniyede bir kontrol et
+
+    return () => clearInterval(interval);
   }, [filterMode, debouncedSearch, debouncedCity, debouncedDistrict, debouncedSector, smartFilters]);
 
   const loadLeads = async (reset = false) => {
