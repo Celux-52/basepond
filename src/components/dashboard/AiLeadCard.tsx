@@ -22,9 +22,15 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
   const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
   const [generatedPitch, setGeneratedPitch] = useState<{whatsapp: string, emailSubject: string, emailBody: string} | null>(null);
   
+  if (!business) return null;
+
   const score = business.ai_score || 0;
   const isHot = business.sales_readiness === 'Sıcak';
   const signals = business.signals || [];
+  
+  const recServices = typeof business.recommended_services === 'string' 
+    ? business.recommended_services.split(',').map(s => s.trim()).filter(Boolean)
+    : (Array.isArray(business.recommended_services) ? business.recommended_services : []);
 
   return (
     <Card 
@@ -175,11 +181,11 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
                 </div>
 
                 {/* Recommended Services */}
-                {business.recommended_services && business.recommended_services.length > 0 && (
+                {recServices && recServices.length > 0 && (
                   <div>
                     <h4 className="font-bold text-muted-foreground dark:text-zinc-500 text-xs mb-2 uppercase">Önerilen Hizmetler</h4>
                     <div className="flex flex-wrap gap-2">
-                      {business.recommended_services.map((srv, idx) => (
+                      {recServices.map((srv, idx) => (
                         <Badge key={idx} variant="outline" className="border-primary/30 text-primary bg-primary/5">
                           {srv}
                         </Badge>
