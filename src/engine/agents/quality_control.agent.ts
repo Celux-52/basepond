@@ -32,6 +32,31 @@ export class QualityControlAgent extends BaseAgent<BusinessRecord, boolean> {
       business.instagram = null; // Clean it up instead of rejecting
     }
 
+    // 5. STRICT AI QUALITY CONTROL: Reject if AI failed to find a valid reason or service
+    const isAiFailStr = (str: string | null | undefined) => {
+      if (!str) return true;
+      const lower = str.toLowerCase();
+      if (lower.includes('veri yetersiz') || lower.includes('bulunamadı') || lower.includes('bilgi yok') || str.length < 5) {
+        return true;
+      }
+      return false;
+    };
+
+    if (isAiFailStr(business.opportunity_analysis)) {
+      this.log('QA Failed: Empty or invalid opportunity_analysis');
+      return false;
+    }
+
+    if (isAiFailStr(business.why_now)) {
+      this.log('QA Failed: Empty or invalid why_now');
+      return false;
+    }
+
+    if (!business.recommended_services || business.recommended_services.length === 0 || business.recommended_services[0] === 'Genel Analiz') {
+      this.log('QA Failed: No valid recommended_services found');
+      return false;
+    }
+
     this.log('QA Passed.');
     return true;
   }

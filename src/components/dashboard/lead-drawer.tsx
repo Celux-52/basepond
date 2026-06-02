@@ -17,7 +17,11 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
 
   if (!isOpen || !lead) return null;
 
-  const reasons = Array.isArray(lead.opportunity_reasons) ? lead.opportunity_reasons : [];
+  const reasons: string[] = [];
+  if (lead.opportunity_analysis) reasons.push(lead.opportunity_analysis);
+  if (lead.why_now) reasons.push(lead.why_now);
+  if (reasons.length === 0 && Array.isArray(lead.opportunity_reasons)) reasons.push(...lead.opportunity_reasons);
+  
   const services = Array.isArray(lead.recommended_services) ? lead.recommended_services : [];
 
   const handleUnlock = async () => {
