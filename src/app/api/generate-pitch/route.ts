@@ -18,13 +18,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'API key is not configured' }, { status: 500 });
     }
 
+    const safeSignals = Array.isArray(signals) ? signals : [];
+
     const prompt = `Sen kıdemli bir B2B Satış Temsilcisisin. Mükemmel derecede ikna edici, kısa ve net satış mesajları yazarsın.
 
-Hedef Müşteri: ${businessName}
-Sektör: ${category}
-Yapay Zeka Fırsat Analizi: ${opportunityAnalysis}
-Neden Şimdi Ulaşmalı?: ${whyNow}
-Eksiklikleri (Sinyaller): ${signals.join(', ')}
+Hedef Müşteri: ${businessName || 'Belirtilmemiş'}
+Sektör: ${category || 'Belirtilmemiş'}
+Yapay Zeka Fırsat Analizi: ${opportunityAnalysis || 'Belirtilmemiş'}
+Neden Şimdi Ulaşmalı?: ${whyNow || 'Belirtilmemiş'}
+Eksiklikleri (Sinyaller): ${safeSignals.join(', ')}
 
 GÖREV:
 Yukarıdaki verilere dayanarak, bu müşteriye göndermek üzere iki parça içerik üret:
@@ -63,7 +65,20 @@ Yukarıdaki verilere dayanarak, bu müşteriye göndermek üzere iki parça içe
     let text = data.choices?.[0]?.message?.content || "";
     text = text.replace(/```json/g, '').replace(/```/g, '').trim();
 
-    return NextResponse.json(JSON.parse(text));
+    let parsedContent;
+    try {
+      parsedContent = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', text);
+      // Fallback response if the model didn't return valid JSON
+      parsedContent = {
+        whatsapp: "Merhaba, " + (businessName || 'işletme sahibi') + " olarak dijital varlıklarınızı inceledik. Size özel hazırladığımız fırsat raporunu iletmek istedik.",
+        emailSubject: "Dijital Büyüme Fırsatlarınız Hakkında",
+        emailBody: text // Put the raw text here so the user can at least see it
+      };
+    }
+
+    return NextResponse.json(parsedContent);
   } catch (error: any) {
     console.error('Pitch generation error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
