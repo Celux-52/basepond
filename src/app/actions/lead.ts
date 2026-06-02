@@ -16,6 +16,14 @@ export async function getDashboardLeads(
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) throw new Error('Unauthorized');
 
+  const analysisFilters = ["website_down", "mobile_unfriendly", "no_ssl", "missing_socials", "high_potential", "seo_issues", "old_website"];
+  const readyAnalysisFilters = ['r_website_down', 'r_mobile_unfriendly', 'r_no_ssl', 'r_seo_issues', 'r_call_now', 'r_high_potential', 'r_website_renewal'];
+  
+  const hasAnalysisFilter = 
+    filterMode === 'PREMIUM' || 
+    readyAnalysisFilters.includes(filterMode) || 
+    smartFilters.some(f => analysisFilters.includes(f));
+
   let query = supabase
     .from('businesses')
     .select(`
@@ -27,7 +35,7 @@ export async function getDashboardLeads(
       rating,
       review_count,
       website,
-      business_analysis!inner (
+      business_analysis${hasAnalysisFilter ? '!inner' : ''} (
         ai_score,
         quality_tier,
         opportunity_reasons,
@@ -46,9 +54,7 @@ export async function getDashboardLeads(
       )
     `);
 
-  // Simple filtering logic
-  // Sadece analizi bitmiş ve çöp olmayan (AI skoru > 0) olanları göster
-  query = query.gt('business_analysis.ai_score', 0);
+  // Sadece analizi bitmiş olanları göster kısıtlaması KALDIRILDI (Herkes görünsün)
 
   if (filterMode === 'PREMIUM') {
     query = query.gte('business_analysis.ai_score', 70);
