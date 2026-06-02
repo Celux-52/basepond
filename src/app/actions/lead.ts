@@ -396,7 +396,25 @@ export async function getLeadDetails(businessId: string) {
     quality_tier: analysis?.quality_tier || 'C',
     opportunity_reasons: parsedReasons,
     recommended_services: parsedServices,
-    is_unlocked: isUnlocked,
-    status: statusRecord?.status || 'NEW'
+    status: statusRecord?.status || 'NEW',
+    pipeline_stage: data.pipeline_stage || 'YENİ'
   };
+}
+
+export async function updatePipelineStage(businessId: string, newStage: string) {
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) throw new Error('Unauthorized');
+
+  const { error } = await supabase
+    .from('businesses')
+    .update({ pipeline_stage: newStage })
+    .eq('id', businessId);
+
+  if (error) {
+    console.error('Update Pipeline Stage Error:', error);
+    throw new Error('Could not update pipeline stage');
+  }
+
+  return { success: true };
 }

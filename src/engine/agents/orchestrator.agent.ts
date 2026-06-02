@@ -287,5 +287,33 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
     await this.masterPool.execute(businessRecord);
     this.savedCount++;
     this.log(`📈 Saved count updated: ${this.savedCount}`);
+
+    // 11. Webhook Notification for Hot Leads
+    if (businessRecord.ai_score >= 80) {
+      this.sendWebhookNotification(businessRecord);
+    }
+  }
+
+  private async sendWebhookNotification(lead: BusinessRecord) {
+    // 1. Try environment variable first (global admin webhook)
+    const globalWebhook = process.env.WEBHOOK_URL;
+    
+    // 2. Fetch all user webhook URLs from profiles
+    try {
+      // In a real production app, we would use Supabase admin client here
+      // For now, we will fire the global webhook if it exists
+      if (globalWebhook) {
+        await fetch(globalWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: `🔥 YENİ SICAK FIRSAT: *${lead.business_name}*\n\n📍 Şehir: ${lead.city}\n⭐ AI Skoru: ${lead.ai_score}\n💡 Neden Ulaşmalı: ${lead.why_now}\n\n🔍 Fırsat Analizi: ${lead.opportunity_analysis}`
+          })
+        });
+        this.log(`🔔 Webhook notification sent for ${lead.business_name}`);
+      }
+    } catch (e) {
+      this.error(`Webhook error for ${lead.business_name}`, e);
+    }
   }
 }

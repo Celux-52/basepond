@@ -19,6 +19,8 @@ interface AiLeadCardProps {
 
 export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
+  const [generatedPitch, setGeneratedPitch] = useState<{whatsapp: string, emailSubject: string, emailBody: string} | null>(null);
   
   const score = business.ai_score || 0;
   const isHot = business.sales_readiness === 'Sıcak';
@@ -185,6 +187,73 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
                     </div>
                   </div>
                 )}
+
+                {/* AI Pitch Generator Section */}
+                <div className="pt-2">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-bold shadow-lg shadow-primary/25 border-0"
+                    disabled={isGeneratingPitch}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      setIsGeneratingPitch(true);
+                      try {
+                        const res = await fetch('/api/generate-pitch', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            businessName: business.business_name,
+                            category: business.category,
+                            signals: business.signals || [],
+                            whyNow: business.why_now || '',
+                            opportunityAnalysis: business.opportunity_analysis || ''
+                          })
+                        });
+                        const data = await res.json();
+                        if (data.whatsapp) {
+                          setGeneratedPitch(data);
+                        }
+                      } catch (err) {
+                        console.error(err);
+                      } finally {
+                        setIsGeneratingPitch(false);
+                      }
+                    }}
+                  >
+                    {isGeneratingPitch ? (
+                      <span className="flex items-center gap-2"><Zap className="w-4 h-4 animate-pulse" /> Üretiliyor...</span>
+                    ) : (
+                      <span className="flex items-center gap-2"><Zap className="w-4 h-4" /> Sihirli Satış Mesajı Üret (AI)</span>
+                    )}
+                  </Button>
+
+                  {/* Generated Pitch Display */}
+                  {generatedPitch && (
+                    <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-bold text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1.5"><Phone className="w-4 h-4" /> WhatsApp Mesajı</h4>
+                          <Button size="icon" variant="ghost" className="h-6 w-6 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(generatedPitch.whatsapp); }}>
+                            <span className="text-xs">Kopyala</span>
+                          </Button>
+                        </div>
+                        <p className="text-sm text-foreground/80 dark:text-zinc-300 whitespace-pre-wrap">{generatedPitch.whatsapp}</p>
+                      </div>
+
+                      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-bold text-blue-600 dark:text-blue-400 text-sm flex items-center gap-1.5"><Mail className="w-4 h-4" /> Soğuk E-Posta</h4>
+                          <Button size="icon" variant="ghost" className="h-6 w-6 text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`Konu: ${generatedPitch.emailSubject}\n\n${generatedPitch.emailBody}`); }}>
+                            <span className="text-xs">Kopyala</span>
+                          </Button>
+                        </div>
+                        <div className="mb-2 pb-2 border-b border-blue-500/20">
+                          <span className="text-xs font-bold text-blue-500/70">Konu:</span> <span className="text-sm font-semibold text-foreground/90 dark:text-zinc-200">{generatedPitch.emailSubject}</span>
+                        </div>
+                        <p className="text-sm text-foreground/80 dark:text-zinc-300 whitespace-pre-wrap">{generatedPitch.emailBody}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
               </div>
             </motion.div>
