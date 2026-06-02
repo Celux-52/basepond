@@ -97,10 +97,10 @@ export default function LeadsPage() {
       
       {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-black text-white flex items-center gap-3">
+        <h1 className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white flex items-center gap-3">
           Satış İstihbarat Havuzu
         </h1>
-        <p className="text-zinc-400 mt-2">
+        <p className="text-zinc-500 dark:text-zinc-400 mt-2">
           Yapay zekanın analiz edip onayladığı hedefler. Satış kozlarına göre filtreleyin.
         </p>
       </div>
@@ -109,13 +109,13 @@ export default function LeadsPage() {
         
         {/* LEFT SIDEBAR: FILTERS */}
         <div className={`lg:w-1/4 flex-shrink-0 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
-          <div className="sticky top-24 bg-zinc-950/80 border border-zinc-800 rounded-2xl p-5 backdrop-blur-xl">
+          <div className="sticky top-24 bg-white/80 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 backdrop-blur-xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-white flex items-center gap-2">
+              <h3 className="font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                 <Filter className="w-4 h-4 text-primary" /> Satış Kozları
               </h3>
               {selectedSignals.length > 0 && (
-                <button onClick={() => setSelectedSignals([])} className="text-xs text-red-400 hover:underline">
+                <button onClick={() => setSelectedSignals([])} className="text-xs text-red-500 dark:text-red-400 hover:underline">
                   Temizle
                 </button>
               )}
@@ -131,7 +131,7 @@ export default function LeadsPage() {
                     className={`text-sm px-3 py-2 rounded-lg cursor-pointer transition-all border ${
                       isActive 
                         ? 'bg-primary/20 border-primary/50 text-primary font-medium' 
-                        : 'bg-zinc-900/50 border-zinc-800/50 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-300'
+                        : 'bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800/50 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-300'
                     }`}
                   >
                     {signal}
@@ -148,12 +148,12 @@ export default function LeadsPage() {
           {/* Search Bar & Export */}
           <div className="flex gap-3 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-3.5 w-5 h-5 text-zinc-500" />
+              <Search className="absolute left-3.5 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-500" />
               <Input 
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="İşletme adı, sektör veya ilçe ara..." 
-                className="pl-11 h-12 bg-zinc-900/50 border-zinc-800 focus:border-primary/50"
+                className="pl-11 h-12 bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus:border-primary/50 text-zinc-900 dark:text-white"
               />
             </div>
             <Button 
@@ -166,7 +166,7 @@ export default function LeadsPage() {
               Excel'e Aktar
             </Button>
             <Button 
-              className="lg:hidden h-12 bg-zinc-800" 
+              className="lg:hidden h-12 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700" 
               onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
               <Filter className="w-5 h-5" />
@@ -179,17 +179,17 @@ export default function LeadsPage() {
               <Loader2 className="w-10 h-10 animate-spin text-primary" />
             </div>
           ) : filteredLeads.length === 0 ? (
-            <div className="text-center py-20 bg-zinc-900/20 border border-zinc-800/50 rounded-2xl">
-              <Filter className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">Eşleşen Hedef Bulunamadı</h3>
+            <div className="text-center py-20 bg-zinc-50 dark:bg-zinc-900/20 border border-zinc-200 dark:border-zinc-800/50 rounded-2xl">
+              <Filter className="w-12 h-12 text-zinc-400 dark:text-zinc-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">Eşleşen Hedef Bulunamadı</h3>
               <p className="text-zinc-500">Seçtiğiniz sinyallere uygun bir işletme havuzda yok.</p>
               <Button variant="outline" className="mt-4" onClick={() => setSelectedSignals([])}>
                 Filtreleri Temizle
               </Button>
             </div>
           ) : (
-            <div className="mb-4 text-sm text-zinc-400 font-medium">
-              Toplam <span className="text-white">{filteredLeads.length}</span> fırsat bulundu.
+            <div className="mb-4 text-sm text-zinc-500 dark:text-zinc-400 font-medium">
+              Toplam <span className="text-zinc-900 dark:text-white">{filteredLeads.length}</span> fırsat bulundu.
             </div>
           )}
 

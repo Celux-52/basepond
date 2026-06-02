@@ -46,11 +46,11 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       
       {/* Drawer */}
-      <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+      <div className="relative w-full max-w-md bg-white dark:bg-zinc-950 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-neutral-100">
-          <h2 className="text-lg font-bold text-neutral-900 truncate pr-4">{lead.business_name}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-500">
+        <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white truncate pr-4">{lead.business_name}</h2>
+          <button onClick={onClose} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500 dark:text-zinc-400">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -59,7 +59,7 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
           
           {/* Unlock Section */}
-          <div className="bg-neutral-900 rounded-2xl p-6 text-white text-center relative overflow-hidden">
+          <div className="bg-zinc-900 dark:bg-neutral-900 rounded-2xl p-6 text-white text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-[80px] opacity-20" />
             
             {!lead.is_unlocked ? (

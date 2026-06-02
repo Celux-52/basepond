@@ -586,7 +586,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
       {/* Onboarding Welcome Modal */}
       {showWelcome && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+          <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300">
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
                 <Sparkles className="w-8 h-8 text-white" />
@@ -598,30 +598,30 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
             <div className="p-6">
               {welcomeStep === 1 && (
                 <div className="space-y-4 animate-in slide-in-from-right-8">
-                  <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Search className="w-5 h-5 text-blue-500" /> 1. Yeni Fırsatlar Bulun
                   </h3>
-                  <p className="text-neutral-600 text-sm leading-relaxed">
+                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
                     Sol üstteki <strong>"Yeni İstihbarat Başlat"</strong> butonuna tıklayarak hedeflediğiniz şehir ve sektörü yazın. Yapay zeka sizin için internetin altını üstüne getirip potansiyel müşterileri bulsun.
                   </p>
                 </div>
               )}
               {welcomeStep === 2 && (
                 <div className="space-y-4 animate-in slide-in-from-right-8">
-                  <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Zap className="w-5 h-5 text-amber-500" /> 2. Sihirli Satış Mesajları
                   </h3>
-                  <p className="text-neutral-600 text-sm leading-relaxed">
+                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
                     İşletme kartlarında yer alan <strong>"Sihirli Satış Mesajı Üret"</strong> butonuna basarak, o firmanın web sitesindeki eksiklere özel vurucu bir WhatsApp mesajı veya E-posta şablonu oluşturun.
                   </p>
                 </div>
               )}
               {welcomeStep === 3 && (
                 <div className="space-y-4 animate-in slide-in-from-right-8">
-                  <h3 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Bookmark className="w-5 h-5 text-emerald-500" /> 3. Kanban Panosu
                   </h3>
-                  <p className="text-neutral-600 text-sm leading-relaxed">
+                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
                     Sol menüden <strong>"Satış Hunisi"</strong>ne girerek görüştüğünüz müşterileri Trello gibi sürükleyip bırakarak harika bir düzende takip edin.
                   </p>
                 </div>
