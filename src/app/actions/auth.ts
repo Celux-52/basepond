@@ -91,12 +91,16 @@ export async function updatePassword(formData: FormData, locale: string = routin
   redirect(`/${locale}/dashboard`)
 }
 
+import { headers } from 'next/headers'
+
 export async function signInWithProvider(provider: 'google' | 'github') {
   const supabase = await createClient()
+  const origin = headers().get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.basepond.com'
+  
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   })
 
