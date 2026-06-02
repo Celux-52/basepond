@@ -70,70 +70,25 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <div className="mt-16 max-w-lg mx-auto grid gap-8 lg:grid-cols-3 lg:max-w-none">
-        {/* Starter Plan */}
-        <Card className="flex flex-col justify-between border-border/50 bg-card hover:border-primary/30 transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Zap className="w-6 h-6 text-blue-500" /> Starter
-            </CardTitle>
-            <CardDescription className="text-sm">Küçük ajanslar, freelancerlar ve bireysel kullanıcılar için.</CardDescription>
-            <div className="mt-4 flex items-baseline text-5xl font-extrabold">
-              $19
-              <span className="ml-2 text-xl font-medium text-muted-foreground">/ ay</span>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4 flex-1">
-            <ul className="space-y-3">
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>500 Business Scan</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Temel İşletme Analizi</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Fırsat Skoru</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>SEO ve Dijital Görünürlük Analizi</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>CSV Export</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Temel Filtreleme</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Cache Destekli Hızlı Sonuçlar</span></li>
-            </ul>
-            <div className="mt-6 pt-6 border-t border-border/50">
-              <p className="text-sm font-semibold mb-2">Kimler İçin?</p>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Freelancer</li>
-                <li>• Web Tasarımcı</li>
-                <li>• Küçük Ajans</li>
-                <li>• Yeni Başlayan Satış Ekibi</li>
-              </ul>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              className="w-full" 
-              variant="outline"
-              onClick={() => handleBuyCredits(50, 'Starter')}
-              disabled={loadingPlan === 'Starter'}
-            >
-              {loadingPlan === 'Starter' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Hemen Başla
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {/* Growth Plan (Highlighted) */}
-        <Card className="flex flex-col justify-between border-primary bg-primary/5 shadow-lg shadow-primary/20 relative transform md:-translate-y-4">
+      <div className="mt-16 max-w-md mx-auto flex justify-center">
+        {/* Single Premium Plan */}
+        <Card className="flex flex-col justify-between border-primary bg-primary/5 shadow-lg shadow-primary/20 relative transform w-full transition-all duration-300 hover:shadow-primary/30">
           <div className="absolute top-0 right-0 -mt-4 mr-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
-            Önerilen
+            Tek Paket
           </div>
           <CardHeader>
             <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Rocket className="w-6 h-6 text-primary" /> Growth
+              <Star className="w-6 h-6 text-primary" /> Premium
             </CardTitle>
-            <CardDescription className="text-sm">Daha fazla işletme keşfetmek isteyen ajanslar ve satış ekipleri için.</CardDescription>
+            <CardDescription className="text-sm">Tüm özellikleri sınırları zorlayarak kullanın.</CardDescription>
             <div className="mt-4 flex items-baseline text-5xl font-extrabold">
-              $49
+              $44.99
               <span className="ml-2 text-xl font-medium text-muted-foreground">/ ay</span>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 flex-1">
             <ul className="space-y-3">
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span className="font-medium text-primary">2000 Business Scan</span></li>
+              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span className="font-medium text-primary">3000 Business Scan</span></li>
               <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Gelişmiş Fırsat Analizi</span></li>
               <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Premium İşletme Verileri</span></li>
               <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Sosyal Medya Analizi</span></li>
@@ -143,69 +98,20 @@ export default function PricingPage() {
               <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Güçlü Opportunity Scoring</span></li>
             </ul>
             <div className="mt-6 pt-6 border-t border-primary/20">
-              <p className="text-sm font-semibold mb-2">Kimler İçin?</p>
+              <p className="text-sm font-semibold mb-2">Sınırsız Özgürlük</p>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Dijital Ajanslar</li>
-                <li>• Satış Ekipleri</li>
-                <li>• Lead Generation Şirketleri</li>
-                <li>• Growth Takımları</li>
+                <li>• Dijital Ajanslar & Satış Ekipleri için en ideali</li>
               </ul>
             </div>
           </CardContent>
           <CardFooter>
             <Button 
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={() => handleBuyCredits(200, 'Growth')}
-              disabled={loadingPlan === 'Growth'}
+              onClick={() => handleBuyCredits(3000, 'Premium')}
+              disabled={loadingPlan === 'Premium'}
             >
-              {loadingPlan === 'Growth' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Growth Planı Seç
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {/* Pro Plan */}
-        <Card className="flex flex-col justify-between border-border/50 bg-card hover:border-primary/30 transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Star className="w-6 h-6 text-rose-500" /> Pro
-            </CardTitle>
-            <CardDescription className="text-sm">Yoğun veri kullanan profesyonel ekipler için.</CardDescription>
-            <div className="mt-4 flex items-baseline text-5xl font-extrabold">
-              $99
-              <span className="ml-2 text-xl font-medium text-muted-foreground">/ ay</span>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4 flex-1">
-            <ul className="space-y-3">
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>5000+ Business Scan</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Tam Opportunity Intelligence Engine</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Premium İşletme Verileri</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Gelişmiş Yapay Zeka Analizi</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Bulk Export</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>API Access</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Öncelikli İşlem Gücü</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Enterprise Hız ve Performans</span></li>
-            </ul>
-            <div className="mt-6 pt-6 border-t border-border/50">
-              <p className="text-sm font-semibold mb-2">Kimler İçin?</p>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Büyük Ajanslar</li>
-                <li>• Enterprise Takımlar</li>
-                <li>• Data Odaklı Şirketler</li>
-                <li>• Yoğun Lead Operasyonları</li>
-              </ul>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              className="w-full" 
-              variant="outline"
-              onClick={() => handleBuyCredits(500, 'Pro')}
-              disabled={loadingPlan === 'Pro'}
-            >
-              {loadingPlan === 'Pro' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Pro Planı Seç
+              {loadingPlan === 'Premium' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Premium Planı Seç
             </Button>
           </CardFooter>
         </Card>
