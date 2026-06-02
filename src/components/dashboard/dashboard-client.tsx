@@ -189,6 +189,10 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
           
           return prev;
         });
+
+        // Eğer bekleyen AI analiz işi varsa onu da arka planda tetikle (Telegram vs. dışarıdan gelen veriler için)
+        fetch('/api/cron/process-queue', { method: 'POST' }).catch(() => {});
+        
       } catch (e) {
         // Sessiz hata yönetimi
       }
