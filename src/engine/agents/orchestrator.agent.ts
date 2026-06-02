@@ -132,23 +132,37 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
     const totalJobs = await this.queue.size();
     this.log(`📦 Seeded ${totalJobs} jobs into the queue. Starting workers...`);
 
-    // 2. Queue Processing
+    // 2. Queue Processing (Concurrent Batch Processing)
+    const CONCURRENCY_LIMIT = 5; // Process 5 jobs at a time
+
     while ((await this.queue.size()) > 0) {
       if (this.savedCount >= targetCount) {
         this.log(`🎯 TARGET REACHED (${this.savedCount}/${targetCount}). Stopping crawl execution.`);
         break;
       }
 
-      const job = await this.queue.pop();
-      if (!job) continue;
-      
-      try {
-        await this.processJob(job);
-      } catch(e: any) {
-        this.error(`Job failed for ${job.place.name}`, e.message);
+      const batch: ProcessJob[] = [];
+      for (let i = 0; i < CONCURRENCY_LIMIT; i++) {
+        if ((await this.queue.size()) === 0) break;
+        const job = await this.queue.pop();
+        if (job) batch.push(job);
       }
+
+      if (batch.length === 0) break;
+
+      this.log(`🚀 Processing batch of ${batch.length} jobs concurrently...`);
       
-      // Rate limiting
+      const promises = batch.map(async (job) => {
+        try {
+          await this.processJob(job);
+        } catch(e: any) {
+          this.error(`Job failed for ${job.place.name}`, e.message);
+        }
+      });
+
+      await Promise.allSettled(promises);
+      
+      // Rate limiting between batches
       await new Promise(r => setTimeout(r, CONFIG.REQUEST_DELAY_MS));
     }
     

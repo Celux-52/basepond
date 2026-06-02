@@ -20,7 +20,9 @@ export async function POST(req: Request) {
     // İşlemi arka planda (asenkron) başlatıyoruz.
     // Next.js API Routes (serverless) uzun süren işlemleri beklemeden response dönebilmeli.
     // Coolify (Node server) üzerinde bu arka planda çalışmaya devam edecektir.
-    startAgentEngine(query).catch(console.error);
+    startAgentEngine(query).catch((err) => {
+      console.error('💥 FATAL ERROR in Background Agent Engine:', err);
+    });
 
     return NextResponse.json({ 
       success: true, 

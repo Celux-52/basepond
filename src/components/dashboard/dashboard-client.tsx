@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LeadCard } from './lead-card';
+import { AiLeadCard as LeadCard } from './AiLeadCard';
 import { LeadDrawer } from './lead-drawer';
 import { CreditIndicator } from './credit-indicator';
 import { getDashboardLeads, getDashboardStats, getSectorsWithCounts } from '@/app/actions/lead';
