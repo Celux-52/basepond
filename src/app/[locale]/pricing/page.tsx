@@ -8,11 +8,30 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
+import { createClient } from '@/lib/supabase/client';
+import { useEffect } from "react";
 
 export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [hasPurchased, setHasPurchased] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState(true);
   const router = useRouter();
   const locale = useLocale();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkPurchaseStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('has_purchased').eq('id', user.id).single();
+        if (data && data.has_purchased) {
+          setHasPurchased(true);
+        }
+      }
+      setIsChecking(false);
+    };
+    checkPurchaseStatus();
+  }, []);
 
   const handleBuyCredits = async (amount: number, planName: string) => {
     setLoadingPlan(planName);
@@ -206,11 +225,14 @@ export default function PricingPage() {
             <span className="mt-2 block text-4xl font-extrabold text-foreground">$15</span>
             <Button 
               className="mt-4 w-full flex items-center justify-center gap-2" 
-              variant="default"
+              variant={hasPurchased ? "default" : "secondary"}
               onClick={() => handleBuyCredits(100, 'Ekstra Paket')}
-              disabled={loadingPlan === 'Ekstra Paket'}
+              disabled={loadingPlan === 'Ekstra Paket' || (!hasPurchased && !isChecking)}
             >
-              {loadingPlan === 'Ekstra Paket' ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Anında Yükle <ArrowRight className="w-4 h-4" /></>}
+              {isChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+               loadingPlan === 'Ekstra Paket' ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+               !hasPurchased ? "Önce Paket Almalısınız" :
+               <>Anında Yükle <ArrowRight className="w-4 h-4" /></>}
             </Button>
           </div>
         </div>
