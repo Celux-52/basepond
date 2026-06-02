@@ -31,7 +31,13 @@ export async function getDashboardLeads(
         ai_score,
         quality_tier,
         opportunity_reasons,
-        opportunity_reason
+        opportunity_reason,
+        website_status,
+        mobile_score,
+        seo_score,
+        has_ssl,
+        mobile_responsive,
+        has_social_links
       ),
       user_lead_status${filterMode === 'UNLOCKED' ? '!inner' : ''} (
         status,
@@ -54,36 +60,36 @@ export async function getDashboardLeads(
 
   // --- SMART FILTERS (Checkboxes) ---
   if (smartFilters.includes("no_website")) query = query.is('website', null);
-  if (smartFilters.includes("website_down")) query = query.eq('business_analysis.website_status', 'down');
-  if (smartFilters.includes("mobile_unfriendly")) query = query.lt('business_analysis.mobile_score', 50);
-  if (smartFilters.includes("no_ssl")) query = query.lt('business_analysis.seo_score', 40);
+  if (smartFilters.includes("website_down")) query = query.ilike('business_analysis.website_status', '%broken%');
+  if (smartFilters.includes("mobile_unfriendly")) query = query.eq('business_analysis.mobile_responsive', false);
+  if (smartFilters.includes("no_ssl")) query = query.eq('business_analysis.has_ssl', false);
   if (smartFilters.includes("no_instagram")) query = query.is('instagram', null);
   if (smartFilters.includes("no_facebook")) query = query.is('facebook', null);
   if (smartFilters.includes("rating_below_4")) query = query.lt('rating', 4);
-  if (smartFilters.includes("recent_reviews")) query = query.gte('data_freshness', 80);
+  // recent_reviews veritabanında sütun olmadığı için şimdilik kaldırıldı
   if (smartFilters.includes("has_phone")) query = query.not('phone', 'is', null);
   if (smartFilters.includes("has_email")) query = query.not('email', 'is', null);
-  if (smartFilters.includes("has_whatsapp")) query = query.ilike('phone', '%5%'); // Simplified regex alternative for ilike
+  if (smartFilters.includes("has_whatsapp")) query = query.ilike('phone', '%5%'); 
   if (smartFilters.includes("has_maps")) query = query.not('maps_url', 'is', null);
   if (smartFilters.includes("reviews_below_50")) query = query.lt('review_count', 50);
   if (smartFilters.includes("reviews_below_10")) query = query.lt('review_count', 10);
   if (smartFilters.includes("old_website")) query = query.lt('business_analysis.seo_score', 30);
   if (smartFilters.includes("seo_issues")) query = query.lt('business_analysis.seo_score', 50);
   if (smartFilters.includes("no_contact_form")) query = query.is('email', null).not('website', 'is', null);
-  if (smartFilters.includes("missing_socials")) query = query.is('instagram', null).is('facebook', null);
+  if (smartFilters.includes("missing_socials")) query = query.eq('business_analysis.has_social_links', false);
   if (smartFilters.includes("high_potential")) query = query.gte('business_analysis.ai_score', 80);
 
   // --- READY FILTERS (Quick actions) ---
   if (filterMode === 'r_no_website') query = query.is('website', null);
-  if (filterMode === 'r_website_down') query = query.eq('business_analysis.website_status', 'down');
-  if (filterMode === 'r_mobile_unfriendly') query = query.lt('business_analysis.mobile_score', 50);
-  if (filterMode === 'r_no_ssl') query = query.lt('business_analysis.seo_score', 40);
+  if (filterMode === 'r_website_down') query = query.ilike('business_analysis.website_status', '%broken%');
+  if (filterMode === 'r_mobile_unfriendly') query = query.eq('business_analysis.mobile_responsive', false);
+  if (filterMode === 'r_no_ssl') query = query.eq('business_analysis.has_ssl', false);
   if (filterMode === 'r_seo_issues') query = query.lt('business_analysis.seo_score', 50);
   if (filterMode === 'r_weak_digital') query = query.is('website', null).is('instagram', null);
   if (filterMode === 'r_low_rating') query = query.lt('rating', 4);
-  if (filterMode === 'r_call_now') query = query.not('phone', 'is', null).gte('business_analysis.urgency_score', 80);
+  if (filterMode === 'r_call_now') query = query.not('phone', 'is', null).gte('business_analysis.ai_score', 80);
   if (filterMode === 'r_high_potential') query = query.gte('business_analysis.ai_score', 90);
-  if (filterMode === 'r_website_renewal') query = query.not('website', 'is', null).lt('business_analysis.mobile_score', 50);
+  if (filterMode === 'r_website_renewal') query = query.not('website', 'is', null).eq('business_analysis.mobile_responsive', false);
   if (filterMode === 'r_social_media') query = query.is('instagram', null).is('facebook', null);
   if (filterMode === 'r_google_ads') query = query.is('website', null).lt('rating', 4);
 
