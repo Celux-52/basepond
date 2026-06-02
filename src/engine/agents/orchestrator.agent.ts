@@ -61,28 +61,45 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
     this.masterPool = new MasterPoolAgent(storage);
   }
 
-  async execute(): Promise<void> {
+  async execute(customQuery?: string): Promise<void> {
     this.log('Basepound V3 Asynchronous Queue Engine Started');
     
     // 1. Queue Seeding (Push all jobs to queue)
-    for (const cat of CONFIG.CATEGORIES) {
-      for (const locale of CONFIG.TARGETS) {
-        for (const district of locale.districts) {
-          const query = `${district}, ${locale.city} ${cat}`;
-          this.log(`\n\n📌 TARGET: ${query}`);
-          
-          try {
-            const places = await this.collector.execute(query);
-            for (const place of places) {
-              await this.queue.push({
-                place,
-                city: locale.city,
-                district,
-                category: cat
-              });
+    if (customQuery) {
+      this.log(`\n\n📌 TARGET (CUSTOM): ${customQuery}`);
+      try {
+        const places = await this.collector.execute(customQuery);
+        for (const place of places) {
+          await this.queue.push({
+            place,
+            city: "Bilinmiyor", // API'den gelen serbest metin
+            district: "Bilinmiyor",
+            category: customQuery
+          });
+        }
+      } catch (e: any) {
+        this.error(`Target loop failed: ${customQuery}`, e.message);
+      }
+    } else {
+      for (const cat of CONFIG.CATEGORIES) {
+        for (const locale of CONFIG.TARGETS) {
+          for (const district of locale.districts) {
+            const query = `${district}, ${locale.city} ${cat}`;
+            this.log(`\n\n📌 TARGET: ${query}`);
+            
+            try {
+              const places = await this.collector.execute(query);
+              for (const place of places) {
+                await this.queue.push({
+                  place,
+                  city: locale.city,
+                  district,
+                  category: cat
+                });
+              }
+            } catch (e: any) {
+              this.error(`Target loop failed: ${query}`, e.message);
             }
-          } catch (e: any) {
-            this.error(`Target loop failed: ${query}`, e.message);
           }
         }
       }

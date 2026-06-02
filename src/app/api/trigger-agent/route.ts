@@ -15,10 +15,12 @@ export async function POST(req: Request) {
     } catch (e) {}
     console.log('Agent Triggered via Webhook. Payload:', body);
 
+    const query = body.query || null;
+
     // İşlemi arka planda (asenkron) başlatıyoruz.
     // Next.js API Routes (serverless) uzun süren işlemleri beklemeden response dönebilmeli.
     // Coolify (Node server) üzerinde bu arka planda çalışmaya devam edecektir.
-    startAgentEngine().catch(console.error);
+    startAgentEngine(query).catch(console.error);
 
     return NextResponse.json({ 
       success: true, 
@@ -31,7 +33,7 @@ export async function POST(req: Request) {
   }
 }
 
-async function startAgentEngine() {
+async function startAgentEngine(customQuery?: string) {
   console.log('🚀 Bootstrapping Basepound V2 Engine from API...');
   
   // 1. Initialize Storage
@@ -42,6 +44,6 @@ async function startAgentEngine() {
   const orchestrator = new OrchestratorAgent(storage);
   
   // 3. Run Pipeline
-  await orchestrator.execute();
+  await orchestrator.execute(customQuery);
   console.log('✅ Basepound V2 Engine execution finished.');
 }

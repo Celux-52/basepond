@@ -56,6 +56,9 @@
             }
           ]
         },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"query\": \"{{ $('Telegram Trigger').item.json.message.text.replace('arama yap', '').trim() }}\" }",
         "options": {}
       },
       "id": "f86d63cb-13f5-412e-9d2d-20d0f28e1c6b",
@@ -69,8 +72,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $json.message.chat.id }}",
-        "text": "✅ Arama motoru (Orchestrator Agent) TR dışı klinikler için başlatıldı. Sonuçlar Supabase'e ve Google E-Tablo'ya gönderilecek!",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "✅ Arama başlatıldı! Hedef: *{{ $('Telegram Trigger').item.json.message.text.replace('arama yap', '').trim() }}*\n\nYapay zeka ajanları çalışıyor, sonuçlar kısa süre içinde E-Tablo'ya akmaya başlayacak! 🚀",
         "additionalFields": {}
       },
       "id": "cf1c57ea-628b-4b13-9118-2c2e0b5779c1",
