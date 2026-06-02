@@ -111,6 +111,7 @@
     "backToLogin": "Girişe dön",
     "invalidCredentials": "Hatalı e-posta veya şifre",
     "passwordsDontMatch": "Şifreler eşleşmiyor",
-    "emailSent": "Onay bağlantısı için e-postanızı kontrol edin"
+    "emailSent": "Onay bağlantısı için e-postanızı kontrol edin",
+    "checkEmail": "Lütfen e-posta adresinizi doğrulayın. Size bir doğrulama linki gönderdik."
   }
 }
