@@ -178,15 +178,21 @@ export async function getDashboardLeads(
     const isUnlocked = statusRecord?.is_unlocked || false;
 
     return {
+      ...d,
       id: d.id,
       business_name: isUnlocked ? d.business_name : maskName(d.business_name),
+      phone: isUnlocked ? d.phone : null,
+      website: isUnlocked ? d.website : null,
+      email: isUnlocked ? d.email : null,
+      maps_url: isUnlocked ? d.maps_url : null,
+      instagram_url: isUnlocked ? d.instagram_url : null,
+      facebook_url: isUnlocked ? d.facebook_url : null,
       category: d.category,
       city: d.city,
-      district: '',
+      district: d.district || '',
       last_verified_at: d.created_at,
       rating: d.rating,
       review_count: d.review_count,
-      website: isUnlocked ? d.website : null,
       ai_score: analysis?.ai_score || 0,
       quality_tier: analysis?.quality_tier || 'C',
       opportunity_reasons: parsedReasons,
