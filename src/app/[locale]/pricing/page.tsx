@@ -132,7 +132,7 @@ export default function PricingPage() {
             <Button 
               className="mt-4 w-full flex items-center justify-center gap-2" 
               variant={hasPurchased ? "default" : "secondary"}
-              onClick={() => handleBuyCredits(100, 'Ekstra Paket')}
+              onClick={() => handleBuyCredits(1000, 'Ekstra Paket')}
               disabled={loadingPlan === 'Ekstra Paket' || (!hasPurchased && !isChecking)}
             >
               {isChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : 
