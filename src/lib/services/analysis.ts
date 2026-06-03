@@ -24,7 +24,12 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
 
   try {
     const formattedUrl = url.startsWith("http") ? url : `https://${url}`;
-    const has_ssl = formattedUrl.startsWith("https");
+    
+    // GÜVENLİK (Rezil Olmamak İçin): SSL ve Mobil Uyum testleri basit bir fetch ile %100 doğrulanamaz.
+    // Eğer bunlara false dersek ve yapay zeka müşteriyi eleştirirse, müşteri kanıt sunduğunda rezil oluruz.
+    // Bu yüzden yapay zekanın bu konularda "eminmiş gibi" atıp tutmasını engellemek için varsayılan olarak TRUE gönderiyoruz.
+    const has_ssl = true; 
+    const mobile_responsive = true;
 
     // We do a simple GET request with a short timeout to see if it's alive
     const controller = new AbortController();
@@ -42,9 +47,6 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
     }
 
     const html = await response.text();
-    
-    // Very basic heuristic checks for MVP
-    const mobile_responsive = html.includes("viewport") && html.includes("device-width");
     
     const detected_socials = {
       instagram: html.includes("instagram.com"),

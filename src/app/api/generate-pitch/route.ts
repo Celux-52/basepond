@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     const safeSignals = Array.isArray(signals) ? signals : [];
 
-    const prompt = `Sen kıdemli bir B2B Satış Temsilcisisin. Mükemmel derecede ikna edici, kısa ve net satış mesajları yazarsın.
+    const prompt = `Sen piyasanın en kurnaz, en direkt ve en sonuç odaklı B2B satış stratejistisin. Görevin, karşıdaki işletme sahibini (patronu) anında etkileyecek, laf kalabalığı yapmayan, doğrudan "para kazandırma" veya "para kaybetmeyi önleme" odaklı mesajlar yazmaktır.
 
 Hedef Müşteri: ${businessName || 'Belirtilmemiş'}
 Sektör: ${category || 'Belirtilmemiş'}
@@ -28,14 +28,16 @@ Yapay Zeka Fırsat Analizi: ${opportunityAnalysis || 'Belirtilmemiş'}
 Neden Şimdi Ulaşmalı?: ${whyNow || 'Belirtilmemiş'}
 Eksiklikleri (Sinyaller): ${safeSignals.join(', ')}
 
-GÖREV:
-Yukarıdaki verilere dayanarak, bu müşteriye göndermek üzere iki parça içerik üret:
-1. "WhatsApp Mesajı": Samimi ama profesyonel, doğrudan eksikliğine (örneğin eski web sitesi, SSL eksikliği vs.) dikkat çekerek randevu koparmaya yönelik kısa bir mesaj.
-2. "E-Posta Şablonu": Çarpıcı bir konu başlığı (Subject) olan, profesyonel bir B2B soğuk e-posta (Cold Email) metni.
+KATI KURALLAR (BUNLARA UYMAZSAN ÇUVALLARIZ):
+1. ASLA "Umarım bu e-posta sizi iyi bulur", "İyi günler dilerim", "Dijital varlıklarınızın önemi" gibi robotik, yapay zeka kokan kurumsal klişeler KULLANMA.
+2. Esnaf/Patron ağzıyla, samimi ama son derece özgüvenli yaz. "Sitenizde şu eksik, rakipleriniz sizi eziyor, bunu hemen çözelim" tadında olsun.
+3. WhatsApp mesajı en fazla 2-3 cümle olsun. Çok meşgul biri yolda yürürken tek eliyle yazmış gibi doğal dursun. (Örn: "Selamlar [İsim], sitenizi inceledim SSL sertifikası patlamış, müşteriler hata görüyor. Müsait bir ara görüşelim de şunu toparlayalım.")
+4. E-posta şablonunun konu başlığı (Subject) merak uyandırıcı ve hafif kışkırtıcı olsun.
+5. Emin olmadığın hiçbir teknik eksikliği (Sinyallerde yazmıyorsa) kafandan uydurma.
 
-Çıktıyı SADECE aşağıdaki JSON formatında ver, markdown veya ekstra metin ekleme:
+GÖREV: SADECE aşağıdaki JSON formatında cevap ver, dışına hiçbir şey yazma:
 {
-  "whatsapp": "Merhaba...",
+  "whatsapp": "...",
   "emailSubject": "...",
   "emailBody": "..."
 }`;
