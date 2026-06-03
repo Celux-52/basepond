@@ -85,6 +85,13 @@ export default function ResultsPage({ params }: { params: Promise<{ jobId: strin
   const handleExportCSV = () => {
     if (!businesses.length) return;
     const headers = ['Firma Adı', 'Kategori', 'Telefon', 'Web Sitesi', 'AI Skoru', 'Neden Fırsat?'];
+    
+    // Excel için güvenli CSV hücresi oluşturucu (çift tırnakları kaçırır)
+    const escapeCsv = (text: any) => {
+      if (!text) return '""';
+      return `"${String(text).replace(/"/g, '""')}"`;
+    };
+
     const csvRows = businesses.map(b => {
       const analysis = b.business_analysis;
       const aiScore = analysis?.ai_score || 0;
@@ -96,15 +103,17 @@ export default function ResultsPage({ params }: { params: Promise<{ jobId: strin
         reasonText = analysis?.opportunity_reason || '';
       }
       return [
-        `"${b.business_name || ''}"`,
-        `"${b.category || ''}"`,
-        `"${b.phone || ''}"`,
-        `"${b.website || ''}"`,
+        escapeCsv(b.business_name),
+        escapeCsv(b.category),
+        escapeCsv(b.phone),
+        escapeCsv(b.website),
         aiScore,
-        `"${reasonText}"`
-      ].join(',');
+        escapeCsv(reasonText)
+      ].join(';'); // Excel için noktalı virgül
     });
-    const csvContent = [headers.join(','), ...csvRows].join('\n');
+    
+    // Türkçe karakterlerin Excel'de bozulmaması için BOM (\uFEFF) ekliyoruz
+    const csvContent = '\uFEFF' + [headers.join(';'), ...csvRows].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
