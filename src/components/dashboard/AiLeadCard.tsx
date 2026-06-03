@@ -7,8 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   MapPin, Phone, Globe, Star, Mail, Instagram, Facebook, Twitter, Linkedin, 
-  ChevronDown, Flame, Snowflake, Target, Zap, AlertTriangle
+  ChevronDown, Flame, Snowflake, Target, Zap, AlertTriangle, Loader2
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { BusinessRecord } from '@/engine/types/business';
 
 interface AiLeadCardProps {
@@ -137,16 +138,46 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
             )}
           </div>
 
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-primary hover:text-primary hover:bg-primary/10 gap-1.5"
-            onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
-          >
-            <Target className="w-4 h-4" />
-            Fırsat Detayı
-            <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
-          </Button>
+          {score > 0 ? (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-primary hover:text-primary hover:bg-primary/10 gap-1.5"
+              onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+            >
+              <Target className="w-4 h-4" />
+              Fırsat Detayı
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-bold shadow-lg"
+              onClick={async (e) => {
+                e.stopPropagation();
+                setIsGeneratingPitch(true);
+                try {
+                  const res = await fetch('/api/analyze-now', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ businessId: business.id })
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error);
+                  toast.success('Analiz tamamlandı ve kilidi açıldı! Liste otomatik güncelleniyor.');
+                } catch (err: any) {
+                  toast.error(err.message || 'Analiz başarısız oldu');
+                } finally {
+                  setIsGeneratingPitch(false);
+                }
+              }}
+              disabled={isGeneratingPitch}
+            >
+              {isGeneratingPitch ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4 fill-current" />}
+              Anında Analiz Et (1 Kredi)
+            </Button>
+          )}
 
         </div>
 

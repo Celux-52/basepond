@@ -31,7 +31,59 @@ async function handleQueue() {
       .single();
 
     if (findError || !item) {
-      return NextResponse.json({ message: 'No pending jobs in queue' });
+      // ----------------------------------------------------
+      // BACKGROUND AI MODE: Process businesses with ai_score = 0
+      // ----------------------------------------------------
+      const { data: unanalyzed, error: unanalyzedError } = await supabaseAdmin
+        .from('business_analysis')
+        .select('id, business_id, businesses ( business_name, category, phone, website )')
+        .eq('ai_score', 0)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (unanalyzedError || !unanalyzed) {
+        return NextResponse.json({ message: 'No pending jobs or unanalyzed businesses in queue' });
+      }
+
+      console.log(`[Queue] Found unanalyzed business: ${(unanalyzed.businesses as any)?.business_name}`);
+      
+      const bData = unanalyzed.businesses as any;
+      let website = bData.website;
+      let phone = bData.phone;
+
+      // 1. Deep Enrichment (Website + Apollo)
+      const websiteAnalysis = await analyzeWebsite(website);
+      const apolloData = await enrichCompanyData(website, bData.business_name);
+
+      website = website || apolloData.website_url || null;
+      phone = phone || apolloData.phone || null;
+
+      // 2. AI Scoring
+      const aiScore = await generateAIScore(
+        { name: bData.business_name, category: bData.category || 'business' },
+        websiteAnalysis,
+        apolloData
+      );
+
+      // 3. Update business_analysis
+      await supabaseAdmin.from('business_analysis').update({
+        ai_score: aiScore.ai_score,
+        opportunity_reason: aiScore.opportunity_reason,
+        website_status: websiteAnalysis.status,
+        growth_potential: aiScore.growth_potential,
+        has_ssl: websiteAnalysis.has_ssl,
+        mobile_responsive: websiteAnalysis.mobile_responsive,
+        has_social_links: websiteAnalysis.has_social_links,
+      }).eq('id', unanalyzed.id);
+
+      // 4. Update businesses (phone/website might be enriched)
+      await supabaseAdmin.from('businesses').update({
+        phone: phone,
+        website: website
+      }).eq('id', unanalyzed.business_id);
+
+      return NextResponse.json({ success: true, processed_analysis: unanalyzed.business_id });
     }
 
     await supabaseAdmin.from('crawl_job_items').update({ status: 'processing' }).eq('id', item.id);
@@ -168,64 +220,37 @@ async function handleQueue() {
       if (sourceRecord) {
         fetchedCount++;
 
-        // 2. Deep Enrichment (Website + Apollo)
-        const websiteAnalysis = await analyzeWebsite(website);
-        const apolloData = await enrichCompanyData(website, place.name);
-
-        // Merge Apollo Phone/Website if Google didn't have it
-        website = website || apolloData.website_url || null;
-        const finalPhone = phone || apolloData.phone || null;
-
-        // 3. AI Scoring
-        const aiScore = await generateAIScore(
-          { name: place.name, category: place.types?.[0] || 'business', rating: details?.rating, review_count: details?.user_ratings_total },
-          websiteAnalysis,
-          apolloData
-        );
-
-        // 4. UPSERT to businesses
+        // Fast Ingestion: Immediately insert with ai_score = 0
         const { data: business } = await supabaseAdmin
           .from('businesses')
           .insert({
             business_name: place.name,
             category: (item.crawl_jobs as any)?.sector || place.types?.[0] || 'Unknown',
             city: (item.crawl_jobs as any)?.region || 'Unknown',
-            phone: finalPhone,
-            website: website,
+            phone: phone, // Sadece Google verisi
+            website: website, // Sadece Google verisi
             rating: details?.rating || null,
             review_count: details?.user_ratings_total || null,
             source_record_id: sourceRecord.id,
             crawl_job_id: item.job_id,
-            status: 'published'
+            status: 'APPROVED' // Hemen Dashboard'da görünmesi için APPROVED
           })
           .select('id')
           .single();
 
-        // 5. UPSERT to business_analysis (Manual to avoid missing unique constraint)
         if (business) {
-          const { data: existingAnalysis } = await supabaseAdmin
-            .from('business_analysis')
-            .select('id')
-            .eq('business_id', business.id)
-            .limit(1)
-            .maybeSingle();
-
           const analysisPayload = {
             business_id: business.id,
-            ai_score: aiScore.ai_score,
-            opportunity_reason: aiScore.opportunity_reason,
-            website_status: websiteAnalysis.status,
-            growth_potential: aiScore.growth_potential,
-            has_ssl: websiteAnalysis.has_ssl,
-            mobile_responsive: websiteAnalysis.mobile_responsive,
-            has_social_links: websiteAnalysis.has_social_links,
+            ai_score: 0, // AI analizi daha sonra yapılacak
+            opportunity_reason: JSON.stringify({ summary: [], services: [], tags: [] }),
+            website_status: website ? 'Unknown' : 'No Website',
+            growth_potential: 'Bilinmiyor',
+            has_ssl: false,
+            mobile_responsive: false,
+            has_social_links: false,
           };
 
-          if (existingAnalysis) {
-            await supabaseAdmin.from('business_analysis').update(analysisPayload).eq('id', existingAnalysis.id);
-          } else {
-            await supabaseAdmin.from('business_analysis').insert(analysisPayload);
-          }
+          await supabaseAdmin.from('business_analysis').insert(analysisPayload);
         }
       }
     }));
