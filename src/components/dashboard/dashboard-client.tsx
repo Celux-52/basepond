@@ -175,30 +175,30 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
           debouncedSector,
           debouncedDistrict
         );
-        // Sadece yeni veri geldiyse veya state'i sessizce güncelle (React DOM'u otomatik halleder)
         setLeads(prev => {
-          // Sayfa 1'den ilerideyse arkaplan yenilemesini şimdilik ezme (kullanıcı aşağı kaydırmış olabilir)
           if (prev.length > 50) return prev;
-          
           const prevStr = JSON.stringify(prev);
           const dataStr = JSON.stringify(data);
-          
           if (prevStr !== dataStr) {
             return data;
           }
-          
           return prev;
         });
-
-        // Eğer bekleyen AI analiz işi varsa onu da arka planda tetikle (Telegram vs. dışarıdan gelen veriler için)
-        fetch('/api/cron/process-queue', { method: 'POST' }).catch(() => {});
-        
       } catch (e) {
-        // Sessiz hata yönetimi
+        // Sessiz hata
       }
-    }, 5000); // 5 saniyede bir kontrol et
+    }, 15000); // 5 saniye sunucuyu kilitliyordu, 15 saniyeye çıkarıldı
 
-    return () => clearInterval(interval);
+    // AI İşlemlerini tetikleyen ayrı ve daha yavaş bir döngü
+    // Eğer bekleyen AI analiz işi varsa onu da arka planda tetikle
+    const aiInterval = setInterval(() => {
+      fetch('/api/cron/process-queue', { method: 'POST' }).catch(() => {});
+    }, 60000); // Sadece dakikada bir kontrol et (Sunucu çökmesini önler)
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(aiInterval);
+    };
   }, [filterMode, debouncedSearch, debouncedCity, debouncedDistrict, debouncedSector, smartFilters]);
 
   const loadLeads = async (reset = false) => {
