@@ -178,17 +178,24 @@ export async function getDashboardLeads(
     }
 
     const isUnlocked = statusRecord?.is_unlocked || false;
+    
+    // Gasp edilme (Steal) kontrolü
+    const isVictim = isUnlocked && d.claimed_by && d.claimed_by !== userData.user.id && d.claimed_at &&
+                     (new Date().getTime() - new Date(d.claimed_at).getTime()) / (1000 * 3600 * 24) <= 7;
+    
+    const showDetails = isUnlocked && !isVictim;
 
     return {
       ...d,
       id: d.id,
-      business_name: isUnlocked ? d.business_name : maskName(d.business_name),
-      phone: isUnlocked ? d.phone : null,
-      website: isUnlocked ? d.website : null,
-      email: isUnlocked ? d.email : null,
-      maps_url: isUnlocked ? d.maps_url : null,
-      instagram_url: isUnlocked ? d.instagram_url : null,
-      facebook_url: isUnlocked ? d.facebook_url : null,
+      business_name: showDetails ? d.business_name : maskName(d.business_name),
+      phone: showDetails ? d.phone : null,
+      website: showDetails ? d.website : null,
+      email: showDetails ? d.email : null,
+      maps_url: showDetails ? d.maps_url : null,
+      instagram_url: showDetails ? d.instagram_url : null,
+      facebook_url: showDetails ? d.facebook_url : null,
+      is_stolen: isVictim,
       category: d.category,
       city: d.city,
       district: d.district || '',

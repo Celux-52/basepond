@@ -32,6 +32,7 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
   const isClaimed = !!business.claimed_by;
   const isRecentlyClaimed = isClaimed && business.claimed_at && 
     (new Date().getTime() - new Date(business.claimed_at).getTime()) / (1000 * 3600 * 24) <= 7;
+  const isVictim = !!business.is_stolen;
   
   const recServices = typeof business.recommended_services === 'string' 
     ? business.recommended_services.split(',').map(s => s.trim()).filter(Boolean)
@@ -51,8 +52,15 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
       `} />
 
       <div className="relative z-10 p-5">
+        
+        {isVictim && (
+          <div className="absolute -top-5 -left-5 -right-5 bg-red-600 text-white text-[11px] font-black text-center py-1.5 uppercase tracking-widest z-20 shadow-md">
+            ☠️ Rakip Ajans Tarafından Gasp Edildi! ☠️
+          </div>
+        )}
+
         {/* Top Header Row */}
-        <div className="flex justify-between items-start gap-4">
+        <div className={`flex justify-between items-start gap-4 ${isVictim ? 'pt-4' : ''}`}>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1.5">
               <Badge variant="outline" className="bg-background/50 dark:bg-zinc-900/50 border-border/50 text-muted-foreground">
@@ -142,7 +150,36 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
             )}
           </div>
 
-          {score > 0 ? (
+          {isVictim ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="bg-red-900 text-red-100 hover:bg-red-800 gap-1.5 font-bold shadow-lg border border-red-700"
+              disabled={isGeneratingPitch}
+              onClick={async (e) => {
+                e.stopPropagation();
+                setIsGeneratingPitch(true);
+                try {
+                  const res = await fetch('/api/analyze-now', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ businessId: business.id, steal: true })
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error);
+                  
+                  toast.success('İntikam alındı! Firma tekrar sizde.');
+                  setTimeout(() => window.location.reload(), 1000);
+                } catch (err: any) {
+                  toast.error(err.message || 'Bir hata oluştu');
+                  setIsGeneratingPitch(false);
+                }
+              }}
+            >
+              {isGeneratingPitch ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
+              Geri Çal / İntikam (3 Kredi)
+            </Button>
+          ) : score > 0 ? (
             <Button 
               variant="ghost" 
               size="sm" 
