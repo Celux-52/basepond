@@ -46,6 +46,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
 
+    // 2.5 Check FOMO Lock (Arazi Kapmaca)
+    if (business.claimed_by && business.claimed_by !== user.id && business.claimed_at) {
+      const claimedDate = new Date(business.claimed_at);
+      const now = new Date();
+      const diffDays = (now.getTime() - claimedDate.getTime()) / (1000 * 3600 * 24);
+      if (diffDays <= 7) {
+        return NextResponse.json({ error: 'Bu fırsat yakın zamanda başka bir üye tarafından kilitlendi.' }, { status: 403 });
+      }
+    }
+
     // 3. Process the AI Analysis
     let website = business.website;
     let phone = business.phone;
@@ -62,10 +72,12 @@ export async function POST(req: Request) {
       apolloData
     );
 
-    // 4. Update Business and Analysis
+    // 4. Update Business and Analysis (Set FOMO Lock)
     await supabaseAdmin.from('businesses').update({
       phone: phone,
-      website: website
+      website: website,
+      claimed_by: user.id,
+      claimed_at: new Date().toISOString()
     }).eq('id', business.id);
 
     // Fetch existing analysis id to update

@@ -3,6 +3,7 @@ export interface WebsiteAnalysis {
   has_ssl: boolean;
   mobile_responsive: boolean;
   has_social_links: boolean;
+  is_slow: boolean; // Yeni eklendi
   detected_socials: {
     instagram?: boolean;
     facebook?: boolean;
@@ -18,6 +19,7 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
       has_ssl: false,
       mobile_responsive: false,
       has_social_links: false,
+      is_slow: false,
       detected_socials: {}
     };
   }
@@ -25,28 +27,47 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
   try {
     const formattedUrl = url.startsWith("http") ? url : `https://${url}`;
     
-    // GÜVENLİK (Rezil Olmamak İçin): SSL ve Mobil Uyum testleri basit bir fetch ile %100 doğrulanamaz.
-    // Eğer bunlara false dersek ve yapay zeka müşteriyi eleştirirse, müşteri kanıt sunduğunda rezil oluruz.
-    // Bu yüzden yapay zekanın bu konularda "eminmiş gibi" atıp tutmasını engellemek için varsayılan olarak TRUE gönderiyoruz.
-    const has_ssl = true; 
-    const mobile_responsive = true;
-
-    // We do a simple GET request with a short timeout to see if it's alive
+    const startTime = Date.now();
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 sec timeout
     
-    const response = await fetch(formattedUrl, { 
-      signal: controller.signal,
-      headers: { "User-Agent": "Basepound-Analyzer/1.0" }
-    });
+    let has_ssl = formattedUrl.startsWith("https");
+    let response;
+    
+    try {
+      response = await fetch(formattedUrl, { 
+        signal: controller.signal,
+        headers: { "User-Agent": "Basepound-Analyzer/1.0" }
+      });
+    } catch (httpsError) {
+      // If HTTPS fails, and it wasn't explicitly http, maybe they don't have SSL.
+      if (formattedUrl.startsWith("https")) {
+        has_ssl = false; // Gerçek kanıt: HTTPS reddedildi veya zaman aşımı
+        // HTTP ile tekrar deneyelim (Gerçekten site var mı?)
+        const httpUrl = formattedUrl.replace("https://", "http://");
+        response = await fetch(httpUrl, { 
+          signal: controller.signal,
+          headers: { "User-Agent": "Basepound-Analyzer/1.0" }
+        });
+      } else {
+        throw httpsError;
+      }
+    }
     
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
+    if (!response || !response.ok) {
       throw new Error("Not OK");
     }
 
+    const duration = Date.now() - startTime;
+    // Gerçek Hız Kanıtı: 2.5 saniyeden uzun sürerse yavaş (Mobil/UX problemi)
+    const is_slow = duration > 2500; 
+    
     const html = await response.text();
+    
+    // Gerçek bir SEO/UX metrisi:
+    const mobile_responsive = html.includes("viewport"); // Eğer viewport meta tag yoksa KESİNLİKLE mobilde patlar.
     
     const detected_socials = {
       instagram: html.includes("instagram.com"),
@@ -62,6 +83,7 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
       has_ssl,
       mobile_responsive,
       has_social_links,
+      is_slow,
       detected_socials
     };
   } catch (error) {
@@ -70,6 +92,7 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
       has_ssl: url.startsWith("https"),
       mobile_responsive: false,
       has_social_links: false,
+      is_slow: false, // Error olunca hız önemsiz
       detected_socials: {}
     };
   }

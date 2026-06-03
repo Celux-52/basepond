@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { businessName, category, signals, whyNow, opportunityAnalysis } = body;
+    const { businessName, category, signals, whyNow, opportunityAnalysis, phone } = body;
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
@@ -20,7 +20,11 @@ export async function POST(req: Request) {
 
     const safeSignals = Array.isArray(signals) ? signals : [];
 
-    const prompt = `Sen piyasanın en kurnaz, en direkt ve en sonuç odaklı B2B satış stratejistisin. Görevin, karşıdaki işletme sahibini (patronu) anında etkileyecek, laf kalabalığı yapmayan, doğrudan "para kazandırma" veya "para kaybetmeyi önleme" odaklı mesajlar yazmaktır.
+    // Sabit Hat kontrolü
+    const isMobile = phone ? /^(\+90|0)?5\d{9}$/.test(phone.replace(/\D/g, '')) : true;
+
+    const prompt = `Sen çok meşgul, müşteriye muhtaç olmayan, "Tok Satıcı" ve danışman rolünde bir B2B uzmanısın.
+Görev: Karşıdaki işletme sahibini merak ve hafif bir panikle sana dönüş yapmaya zorlamak. "Ben yaparım, ben satarım" gibi laflar YASAK.
 
 Hedef Müşteri: ${businessName || 'Belirtilmemiş'}
 Sektör: ${category || 'Belirtilmemiş'}
@@ -29,15 +33,15 @@ Neden Şimdi Ulaşmalı?: ${whyNow || 'Belirtilmemiş'}
 Eksiklikleri (Sinyaller): ${safeSignals.join(', ')}
 
 KATI KURALLAR (BUNLARA UYMAZSAN ÇUVALLARIZ):
-1. ASLA "Umarım bu e-posta sizi iyi bulur", "İyi günler dilerim", "Dijital varlıklarınızın önemi" gibi robotik, yapay zeka kokan kurumsal klişeler KULLANMA.
-2. Esnaf/Patron ağzıyla, samimi ama son derece özgüvenli yaz. "Sitenizde şu eksik, rakipleriniz sizi eziyor, bunu hemen çözelim" tadında olsun.
-3. WhatsApp mesajı en fazla 2-3 cümle olsun. Çok meşgul biri yolda yürürken tek eliyle yazmış gibi doğal dursun. (Örn: "Selamlar [İsim], sitenizi inceledim SSL sertifikası patlamış, müşteriler hata görüyor. Müsait bir ara görüşelim de şunu toparlayalım.")
-4. E-posta şablonunun konu başlığı (Subject) merak uyandırıcı ve hafif kışkırtıcı olsun.
-5. Emin olmadığın hiçbir teknik eksikliği (Sinyallerde yazmıyorsa) kafandan uydurma.
+1. ASLA "Umarım bu e-posta sizi iyi bulur", "İyi günler dilerim" gibi robotik klişeler KULLANMA.
+2. Agresif veya kurnaz olma. "Siteniz bozuk ben yapayım" deme. Şöyle de: "Bölgedeki firmaları tararken denk geldim, sitenizde şu eksik, reklam bütçeniz boşa gidiyor haberiniz olsun. Vaktim yok ama kendi IT'cinize acil kontrol ettirin."
+3. Müşteriye "Muhtaç değilmiş" gibi davran. Bu sayede sana "Siz bakamaz mısınız?" diye dönecek.
+4. E-posta şablonunun konu başlığı merak uyandırıcı olsun.
+5. Sinyallerde yazmayan teknik bir kusuru uydurma.
 
 GÖREV: SADECE aşağıdaki JSON formatında cevap ver, dışına hiçbir şey yazma:
 {
-  "whatsapp": "...",
+  ${isMobile ? `"whatsapp": "WhatsApp için kısa, tek elle yazılmış gibi meşgul bir mesaj...",` : `"coldCallScript": "Bu bir sabit hat. Çıkan sekreteri aşmak ve patrona bağlanmak için kullanılacak zekice bir telefon konuşması metni...",`}
   "emailSubject": "...",
   "emailBody": "..."
 }`;

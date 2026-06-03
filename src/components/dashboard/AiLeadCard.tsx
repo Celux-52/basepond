@@ -21,13 +21,17 @@ interface AiLeadCardProps {
 export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
-  const [generatedPitch, setGeneratedPitch] = useState<{whatsapp: string, emailSubject: string, emailBody: string} | null>(null);
+  const [generatedPitch, setGeneratedPitch] = useState<any>(null);
   
   if (!business) return null;
 
   const score = business.ai_score || 0;
   const isHot = business.sales_readiness === 'Sıcak';
   const signals = business.signals || [];
+  
+  const isClaimed = !!business.claimed_by;
+  const isRecentlyClaimed = isClaimed && business.claimed_at && 
+    (new Date().getTime() - new Date(business.claimed_at).getTime()) / (1000 * 3600 * 24) <= 7;
   
   const recServices = typeof business.recommended_services === 'string' 
     ? business.recommended_services.split(',').map(s => s.trim()).filter(Boolean)
@@ -149,6 +153,16 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
               Fırsat Detayı
               <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
             </Button>
+          ) : isRecentlyClaimed ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="opacity-80 cursor-not-allowed gap-1.5 font-bold shadow-lg bg-red-950/40 text-red-500 border border-red-500/30"
+              disabled
+            >
+              <AlertTriangle className="w-4 h-4" />
+              Başkası Tarafından Kilitlendi
+            </Button>
           ) : (
             <Button
               variant="default"
@@ -242,11 +256,12 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
                             category: business.category,
                             signals: business.signals || [],
                             whyNow: business.why_now || '',
-                            opportunityAnalysis: business.opportunity_analysis || ''
+                            opportunityAnalysis: business.opportunity_analysis || '',
+                            phone: business.phone || ''
                           })
                         });
                         const data = await res.json();
-                        if (data.whatsapp) {
+                        if (data.whatsapp || data.coldCallScript) {
                           setGeneratedPitch(data);
                         }
                       } catch (err) {
@@ -266,15 +281,29 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
                   {/* Generated Pitch Display */}
                   {generatedPitch && (
                     <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-bold text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1.5"><Phone className="w-4 h-4" /> WhatsApp Mesajı</h4>
-                          <Button size="icon" variant="ghost" className="h-6 w-6 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(generatedPitch.whatsapp); }}>
-                            <span className="text-xs">Kopyala</span>
-                          </Button>
+                      {generatedPitch.whatsapp && (
+                        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-bold text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1.5"><Phone className="w-4 h-4" /> WhatsApp Mesajı</h4>
+                            <Button size="icon" variant="ghost" className="h-6 w-6 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(generatedPitch.whatsapp); }}>
+                              <span className="text-xs">Kopyala</span>
+                            </Button>
+                          </div>
+                          <p className="text-sm text-foreground/80 dark:text-zinc-300 whitespace-pre-wrap">{generatedPitch.whatsapp}</p>
                         </div>
-                        <p className="text-sm text-foreground/80 dark:text-zinc-300 whitespace-pre-wrap">{generatedPitch.whatsapp}</p>
-                      </div>
+                      )}
+
+                      {generatedPitch.coldCallScript && (
+                        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-bold text-orange-600 dark:text-orange-400 text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Sekreteri Aşma Senaryosu (Sabit Hat)</h4>
+                            <Button size="icon" variant="ghost" className="h-6 w-6 text-orange-500 hover:text-orange-600 hover:bg-orange-500/10" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(generatedPitch.coldCallScript); }}>
+                              <span className="text-xs">Kopyala</span>
+                            </Button>
+                          </div>
+                          <p className="text-sm text-foreground/80 dark:text-zinc-300 whitespace-pre-wrap italic">"{generatedPitch.coldCallScript}"</p>
+                        </div>
+                      )}
 
                       <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-2">

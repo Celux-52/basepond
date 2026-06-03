@@ -35,6 +35,8 @@ export async function getDashboardLeads(
       rating,
       review_count,
       website,
+      claimed_by,
+      claimed_at,
       business_analysis${hasAnalysisFilter ? '!inner' : ''} (
         ai_score,
         quality_tier,

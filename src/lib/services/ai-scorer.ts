@@ -33,8 +33,10 @@ export async function generateAIScore(
     Kategori: ${business.category}
     Google Puanı: ${business.rating || "Yok"} (${business.review_count || 0} yorum)
     Web Sitesi Durumu: ${analysis.status}
-    Mobil Uyumluluk: ${analysis.mobile_responsive}
-    Sosyal Medya Linkleri Var Mı: ${analysis.has_social_links}
+    Mobil Uyumluluk: ${analysis.mobile_responsive ? "Evet" : "Hayır (Acil düzeltilmeli)"}
+    Site Hızı: ${analysis.is_slow ? "Çok Yavaş (>2.5s)" : "Normal"}
+    SSL Güvenliği: ${analysis.has_ssl ? "Var" : "Yok (Tehlikeli)"}
+    Sosyal Medya Linkleri Var Mı: ${analysis.has_social_links ? "Evet" : "Hayır"}
     E-posta Bulundu Mu: ${enrichment.primary_email ? "Evet" : "Hayır"}
 
     ÖNEMLİ KURALLAR:
