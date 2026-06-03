@@ -54,9 +54,8 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
       }
     }
     
-    clearTimeout(timeoutId);
-
     if (!response || !response.ok) {
+      clearTimeout(timeoutId);
       throw new Error("Not OK");
     }
 
@@ -88,6 +87,7 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
     }
     
     const html = await response.text();
+    clearTimeout(timeoutId);
     
     // Gerçek bir SEO/UX metrisi:
     const mobile_responsive = html.includes("viewport"); // Eğer viewport meta tag yoksa KESİNLİKLE mobilde patlar.

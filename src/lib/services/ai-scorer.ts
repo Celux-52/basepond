@@ -20,7 +20,7 @@ export async function generateAIScore(
   enrichment: ApolloEnrichmentData
 ): Promise<AIScoreResult> {
   if (!OPENROUTER_API_KEY) {
-    return mockAIScore();
+    return systemBusyFallback();
   }
 
   const prompt = `
@@ -73,8 +73,12 @@ export async function generateAIScore(
   ];
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
+      signal: controller.signal,
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
@@ -87,6 +91,12 @@ export async function generateAIScore(
         messages: [{ role: "user", content: prompt }]
       })
     });
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`OpenRouter HTTP error! status: ${response.status}`);
+    }
 
     const data = await response.json();
     
@@ -120,24 +130,24 @@ export async function generateAIScore(
     };
   } catch (error) {
     console.error("AI Scorer Error:", error);
-    return mockAIScore();
+    return systemBusyFallback();
   }
 }
 
-function mockAIScore(): AIScoreResult {
+function systemBusyFallback(): AIScoreResult {
   const structuredReason = JSON.stringify({
-    summary: ["Web sitesi çok eski", "SEO çalışması yapılmamış", "Mobil görünüm bozuk"],
-    services: ["Premium Web Tasarımı", "Kurumsal SEO", "Sosyal Medya Yönetimi"],
-    tags: ["HIGH SEO OPPORTUNITY", "WEAK BRANDING"]
+    summary: ["Şu an global AI ağlarında yoğunluk var"],
+    services: ["Sistem Meşgul"],
+    tags: ["SYSTEM_BUSY"]
   });
 
   return {
-    ai_score: Math.floor(Math.random() * 40) + 60, // 60-100
+    ai_score: 50,
     opportunity_reason: structuredReason,
-    growth_potential: "Yüksek",
-    urgency_score: Math.floor(Math.random() * 30) + 70,
-    sales_readiness: 65,
-    buy_intent: "High",
-    why_now_signals: ["Web sitesi tepki vermiyor", "Rakipler dijitalleşirken geride kalmış"]
+    growth_potential: "Low",
+    urgency_score: 0,
+    sales_readiness: 0,
+    buy_intent: "Low",
+    why_now_signals: ["İşleminiz sıraya alındı, krediniz iade edildi."]
   };
 }

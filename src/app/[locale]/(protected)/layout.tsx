@@ -5,6 +5,7 @@ import { Zap, LogOut, Settings, LayoutDashboard, Search, Bookmark, User, FileDow
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { logout } from '@/app/actions/auth';
+import { GlobalCreditDisplay } from '@/components/dashboard/global-credit-display';
 
 export default async function ProtectedLayout({
   children,
@@ -20,18 +21,19 @@ export default async function ProtectedLayout({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('credits, full_name, created_at, has_purchased')
+    .select('credits, full_name, created_at, has_purchased, trial_ends_at')
     .eq('id', user.id)
     .single();
 
   if (profile) {
-    const trialDays = 3;
-    const trialTime = trialDays * 24 * 60 * 60 * 1000;
-    const createdAtTime = new Date(profile.created_at || user.created_at).getTime();
-    const isTrialExpired = Date.now() > createdAtTime + trialTime;
+    const trialEndsAt = profile.trial_ends_at 
+      ? new Date(profile.trial_ends_at).getTime() 
+      : new Date(profile.created_at || user.created_at).getTime() + (3 * 24 * 60 * 60 * 1000);
+    
+    const isTrialExpired = Date.now() > trialEndsAt;
 
     if (isTrialExpired && !profile.has_purchased) {
-      // Deneme süresi bitmiş ve paket almamış, fiyatlandırmaya at
+      // KATI DUVAR (Hard Paywall): Deneme süresi bitmiş ve aktif paket yok.
       redirect('/pricing');
     }
   }
@@ -63,7 +65,7 @@ export default async function ProtectedLayout({
 
           <div className="ml-auto flex items-center space-x-2 sm:space-x-4">
             <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground mr-2 px-3 py-1 bg-muted/50 rounded-full border border-border/50">
-              <span className="text-amber-500 font-bold">⭐ {profile?.credits ?? 0}</span>
+              <GlobalCreditDisplay initialCredits={profile?.credits ?? 0} />
               <span className="text-border">|</span>
               <span>{user.email}</span>
             </div>

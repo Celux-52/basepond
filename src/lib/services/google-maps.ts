@@ -52,17 +52,27 @@ export async function searchPlaces(query: string, maxResults: number = 20): Prom
       }
 
       try {
-        const response = await fetch(url);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          console.warn(`Google Maps API HTTP error: ${response.status}`);
+          break;
+        }
+
         const data = await response.json();
 
         // Token bazen geç aktifleşir ve INVALID_REQUEST döner. 
-        if (data.status === "INVALID_REQUEST" && nextPageToken) {
+        if (data?.status === "INVALID_REQUEST" && nextPageToken) {
           // Biraz daha bekleyip tekrar denemek daha sağlıklı ama döngüyü bozmamak için şimdilik bir sonraki modifier'a geçiyoruz.
           break;
         }
 
-        if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
-          console.warn(`Google Maps API warning: ${data.status}`);
+        if (data?.status !== "OK" && data?.status !== "ZERO_RESULTS") {
+          console.warn(`Google Maps API warning: ${data?.status}`);
           break;
         }
 
@@ -102,14 +112,34 @@ export async function getPlaceDetails(placeId: string): Promise<GooglePlaceDetai
   const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_phone_number,website,url,rating,user_ratings_total,business_status,address_components&key=${GOOGLE_API_KEY}`;
   
   try {
-    const response = await fetch(url);
-    const data = await response.json();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
     
-    if (data.status !== "OK") {
-      throw new Error(`Google Maps API error: ${data.status}`);
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Google Maps API HTTP error: ${response.status}`);
     }
 
-    return data.result as GooglePlaceDetails;
+    const data = await response.json();
+    
+    if (data?.status !== "OK") {
+      throw new Error(`Google Maps API error: ${data?.status}`);
+    }
+
+    const result = data?.result || {};
+    return {
+      place_id: placeId,
+      name: result?.name ?? "Bilinmiyor",
+      formatted_phone_number: result?.formatted_phone_number ?? undefined,
+      website: result?.website ?? undefined,
+      url: result?.url ?? undefined,
+      rating: result?.rating ?? 0,
+      user_ratings_total: result?.user_ratings_total ?? 0,
+      business_status: result?.business_status ?? 'UNKNOWN',
+      address_components: result?.address_components ?? []
+    } as GooglePlaceDetails;
   } catch (error) {
     console.error(`Error fetching details for place ${placeId}:`, error);
     return null;

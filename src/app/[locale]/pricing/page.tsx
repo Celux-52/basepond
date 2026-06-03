@@ -39,7 +39,7 @@ export default function PricingPage() {
       const res = await fetch('/api/credits/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({ amount, planName })
       });
       
       const data = await res.json();
@@ -61,7 +61,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-base font-semibold text-primary tracking-wide uppercase">Basepound Pricing</h2>
+        <h2 className="text-base font-semibold text-primary tracking-wide uppercase">Abonelik & Kontör (Top-up)</h2>
         <p className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl text-foreground">
           Sıradan Data Değil, <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-emerald-500">Premium İstihbarat.</span>
         </p>
@@ -72,73 +72,73 @@ export default function PricingPage() {
 
       <div className="mt-16 max-w-md mx-auto flex justify-center">
         {/* Single Premium Plan */}
-        <Card className="flex flex-col justify-between border-primary bg-primary/5 shadow-lg shadow-primary/20 relative transform w-full transition-all duration-300 hover:shadow-primary/30">
-          <div className="absolute top-0 right-0 -mt-4 mr-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
-            Tek Paket
+        <Card className="flex flex-col justify-between border-primary bg-primary/5 shadow-2xl shadow-primary/20 relative transform w-full max-w-lg transition-all duration-300 hover:shadow-primary/40 hover:-translate-y-2 border-2">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 bg-primary text-primary-foreground text-xs font-bold px-6 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+            Sadece Tek Paket
           </div>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Star className="w-6 h-6 text-primary" /> Premium
+          <CardHeader className="text-center pt-8">
+            <CardTitle className="text-3xl font-black flex items-center justify-center gap-2">
+              <Star className="w-8 h-8 text-primary" /> Basepound Growth
             </CardTitle>
-            <CardDescription className="text-sm">Tüm özellikleri sınırları zorlayarak kullanın.</CardDescription>
-            <div className="mt-4 flex items-baseline text-5xl font-extrabold">
-              $44.99
-              <span className="ml-2 text-xl font-medium text-muted-foreground">/ ay</span>
+            <CardDescription className="text-base mt-2">Sınırları aşın, tüm özellikleri kilitsiz kullanın.</CardDescription>
+            <div className="mt-6 flex items-baseline justify-center text-6xl font-extrabold text-foreground">
+              $49.99
+              <span className="ml-2 text-2xl font-medium text-muted-foreground">/ ay</span>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4 flex-1">
-            <ul className="space-y-3">
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span className="font-medium text-primary">3000 Business Scan</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Gelişmiş Fırsat Analizi</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Premium İşletme Verileri</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Sosyal Medya Analizi</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Gelişmiş Filtreleme</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Excel Export</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Öncelikli Tarama Hızı</span></li>
-              <li className="flex gap-2"><CheckCircle2 className="flex-shrink-0 h-5 w-5 text-emerald-500" /> <span>Güçlü Opportunity Scoring</span></li>
+          <CardContent className="space-y-6 flex-1 px-8">
+            <ul className="space-y-4 text-lg">
+              <li className="flex gap-3 items-center"><CheckCircle2 className="flex-shrink-0 h-6 w-6 text-emerald-500" /> <span className="font-semibold text-primary">Aylık 3000 Tarama (Scan)</span></li>
+              <li className="flex gap-3 items-center"><CheckCircle2 className="flex-shrink-0 h-6 w-6 text-emerald-500" /> <span className="font-medium">Gelişmiş Fırsat Analizi</span></li>
+              <li className="flex gap-3 items-center"><CheckCircle2 className="flex-shrink-0 h-6 w-6 text-emerald-500" /> <span className="font-medium">Rakip Fırsatı Gasp Etme (Steal)</span></li>
+              <li className="flex gap-3 items-center"><CheckCircle2 className="flex-shrink-0 h-6 w-6 text-emerald-500" /> <span className="font-medium">AI Destekli Satış Metinleri</span></li>
+              <li className="flex gap-3 items-center"><CheckCircle2 className="flex-shrink-0 h-6 w-6 text-emerald-500" /> <span className="font-medium">Öncelikli API Hızı (Limitsiz)</span></li>
             </ul>
-            <div className="mt-6 pt-6 border-t border-primary/20">
-              <p className="text-sm font-semibold mb-2">Sınırsız Özgürlük</p>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Dijital Ajanslar & Satış Ekipleri için en ideali</li>
-              </ul>
+            <div className="mt-8 pt-8 border-t border-primary/20 text-center">
+              <p className="text-sm font-semibold mb-2 text-foreground">Büyümenizi Hızlandırın</p>
+              <p className="text-sm text-muted-foreground">İptal edene kadar her ay yenilenir.</p>
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="pb-8 px-8">
             <Button 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={() => handleBuyCredits(3000, 'Premium')}
-              disabled={loadingPlan === 'Premium'}
+              className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl"
+              onClick={() => handleBuyCredits(3000, 'Basepound Growth')}
+              disabled={loadingPlan === 'Basepound Growth'}
             >
-              {loadingPlan === 'Premium' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Premium Planı Seç
+              {loadingPlan === 'Basepound Growth' ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+              Growth Planını Başlat
             </Button>
           </CardFooter>
         </Card>
       </div>
 
       {/* Pay-As-You-Go Section */}
-      <div className="mt-20 max-w-4xl mx-auto bg-muted/30 border border-border/50 rounded-2xl p-8 lg:flex lg:items-center lg:justify-between">
+      <div className="mt-16 max-w-3xl mx-auto bg-muted/40 border border-border rounded-2xl p-8 lg:flex lg:items-center lg:justify-between shadow-sm">
         <div>
-          <h3 className="text-2xl font-bold text-foreground">Extra Kullanım</h3>
-          <p className="mt-2 text-muted-foreground">
-            Kullanıcılar ihtiyaç duydukça ek tarama satın alabilir.
+          <h3 className="text-2xl font-bold text-foreground">Cephane Doldur (Top-up)</h3>
+          <p className="mt-2 text-muted-foreground max-w-md">
+            Limitiniz mi bitti? Hiç sorun değil. Aylık planınız devam ettiği sürece dilediğiniz an ek kredi yükleyebilirsiniz.
           </p>
+          {!hasPurchased && !isChecking && (
+            <p className="mt-3 text-sm font-semibold text-rose-500 bg-rose-500/10 inline-block px-3 py-1 rounded-md">
+              Bu işlem için aktif aylık paket gereklidir.
+            </p>
+          )}
         </div>
-        <div className="mt-6 lg:mt-0 lg:ml-8 flex-shrink-0">
-          <div className="bg-card border border-border/50 rounded-xl p-6 text-center shadow-sm">
-            <span className="block text-sm font-medium text-muted-foreground uppercase tracking-wide">+1000 Ek Business Scan</span>
+        <div className="mt-6 lg:mt-0 lg:ml-8 flex-shrink-0 min-w-[250px]">
+          <div className="bg-background border border-border/80 rounded-xl p-6 text-center shadow-md">
+            <span className="block text-sm font-bold text-primary uppercase tracking-wide">+1000 Kredi</span>
             <span className="mt-2 block text-4xl font-extrabold text-foreground">$15</span>
             <Button 
-              className="mt-4 w-full flex items-center justify-center gap-2" 
+              className="mt-6 w-full flex items-center justify-center gap-2 h-12 font-medium" 
               variant={hasPurchased ? "default" : "secondary"}
-              onClick={() => handleBuyCredits(1000, 'Ekstra Paket')}
-              disabled={loadingPlan === 'Ekstra Paket' || (!hasPurchased && !isChecking)}
+              onClick={() => handleBuyCredits(1000, 'Top-up')}
+              disabled={loadingPlan === 'Top-up' || (!hasPurchased && !isChecking)}
             >
-              {isChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : 
-               loadingPlan === 'Ekstra Paket' ? <Loader2 className="w-4 h-4 animate-spin" /> : 
-               !hasPurchased ? "Önce Paket Almalısınız" :
-               <>Anında Yükle <ArrowRight className="w-4 h-4" /></>}
+              {isChecking ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+               loadingPlan === 'Top-up' ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+               !hasPurchased ? "Aktif Paket Gerekli" :
+               <>Cephane Doldur <ArrowRight className="w-4 h-4" /></>}
             </Button>
           </div>
         </div>

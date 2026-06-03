@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AiLeadCard as LeadCard } from './AiLeadCard';
 import { LeadDrawer } from './lead-drawer';
 import { CreditIndicator } from './credit-indicator';
@@ -303,11 +303,46 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
     }
   };
 
-  const handleUnlocked = (updatedLead: any) => {
+  const handleUnlocked = useCallback((updatedLead: any) => {
     setLeads(prev => prev.map(l => l.id === updatedLead.id ? updatedLead : l));
     setSelectedLead(updatedLead);
     setBalance(b => Math.max(0, b - 1));
-  };
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('update-credits', { detail: -1 }));
+    }
+  }, []);
+
+  const onActionStart = useCallback((cost: number) => {
+    setBalance(prev => Math.max(0, prev - cost));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('update-credits', { detail: -cost }));
+    }
+  }, []);
+
+  const onActionError = useCallback((cost: number) => {
+    setBalance(prev => prev + cost);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('update-credits', { detail: cost }));
+    }
+  }, []);
+
+  const onActionSuccess = useCallback((businessId: string, actionType: 'steal' | 'unlock') => {
+    setLeads(prev => prev.map(lead => {
+      if (lead.id === businessId) {
+        return { 
+          ...lead, 
+          is_unlocked: true,
+          is_stolen: false, 
+          claimed_at: new Date().toISOString()
+        };
+      }
+      return lead;
+    }));
+  }, []);
+
+  const handleCardClick = useCallback((lead: any) => {
+    setSelectedLead(lead);
+  }, []);
 
   const activeFiltersCount = smartFilters.size + (filterMode !== 'ALL' ? 1 : 0) + (debouncedCity ? 1 : 0) + (debouncedSector ? 1 : 0) + (debouncedDistrict ? 1 : 0) + (debouncedSearch ? 1 : 0);
 
@@ -554,7 +589,10 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                     key={`${lead.id}-${i}`} 
                     business={lead} 
                     activeFilter={filterMode} // we pass it just in case lead-card uses it
-                    onClick={() => setSelectedLead(lead)} 
+                    onClick={handleCardClick}
+                    onActionStart={onActionStart}
+                    onActionError={onActionError}
+                    onActionSuccess={onActionSuccess}
                   />
                 ))}
               </div>

@@ -11,7 +11,7 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
 
 export async function generateSalesScript(input: any): Promise<SalesScriptResult | null> {
   if (!OPENROUTER_API_KEY) {
-    return mockSalesScript(input.name);
+    return systemBusyFallback();
   }
 
   const prompt = `
@@ -53,8 +53,12 @@ Lütfen tam olarak aşağıdaki JSON formatında, geçerli bir JSON objesi dönd
   ];
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout for LLM
+
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
+      signal: controller.signal,
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
@@ -67,6 +71,12 @@ Lütfen tam olarak aşağıdaki JSON formatında, geçerli bir JSON objesi dönd
         messages: [{ role: "user", content: prompt }]
       })
     });
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+       throw new Error(`OpenRouter HTTP error! status: ${response.status}`);
+    }
 
     const data = await response.json();
     let content = data.choices?.[0]?.message?.content;
@@ -86,17 +96,17 @@ Lütfen tam olarak aşağıdaki JSON formatında, geçerli bir JSON objesi dönd
     };
   } catch (error) {
     console.error("AI Script Error:", error);
-    return mockSalesScript(input.name);
+    return systemBusyFallback();
   }
 }
 
-function mockSalesScript(name: string): SalesScriptResult {
+function systemBusyFallback(): SalesScriptResult {
   return {
-    summary: `${name} firmasının web sitesi bulunmuyor. Acilen premium bir web sitesi satışı yapılmalı.`,
-    pitch: `Merhaba ${name} yetkilisi. İşletmenizin Google'daki müşteri potansiyelini inceledim. Hizmetleriniz harika görünüyor ancak web siteniz olmadığı için bölgenizdeki birçok müşteriyi rakiplerinize kaptırıyorsunuz. Size özel hazırladığım dijital büyüme planını paylaşmak isterim.`,
-    opener: `Merhaba, bölgenizdeki arama hacimlerini incelerken ${name} olarak ciddi bir dijital potansiyeli kaçırdığınızı fark ettim.`,
-    follow_up: `Merhaba, dünkü mesajımla ilgili fırsat bulabildiniz mi? Sadece 10 dakikada size potansiyelinizi göstermek isterim.`,
-    cta: `Bu Perşembe öğleden sonra 10 dakikalık kısa bir telefon görüşmesi yapalım mı?`,
-    reason_to_contact: `Rakipleri dijitalde agresif büyüyor, eğer web sitesini şimdi kurmazsa yerel pazardaki görünürlüğü sıfıra inecek.`
+    summary: "Sistem Uyarı: AI ağlarında yoğunluk",
+    pitch: "Şu an global AI ağlarında yoğunluk var, işleminiz sıraya alındı, krediniz iade edildi.",
+    opener: "Şu an global AI ağlarında yoğunluk var, lütfen daha sonra tekrar deneyin.",
+    follow_up: "Sistem meşgul, işlem sağlanamadı.",
+    cta: "Lütfen daha sonra tekrar deneyin.",
+    reason_to_contact: "AI API zaman aşımı."
   };
 }

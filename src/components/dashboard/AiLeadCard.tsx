@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,11 +14,14 @@ import { BusinessRecord } from '@/engine/types/business';
 
 interface AiLeadCardProps {
   business: BusinessRecord;
-  onClick?: () => void;
+  onClick?: (business: BusinessRecord) => void;
   activeFilter?: string; // To match LeadCard signature
+  onActionStart?: (cost: number) => void;
+  onActionSuccess?: (businessId: string, actionType: 'steal' | 'unlock') => void;
+  onActionError?: (cost: number) => void;
 }
 
-export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
+export const AiLeadCard = memo(function AiLeadCard({ business, onClick, activeFilter, onActionStart, onActionSuccess, onActionError }: AiLeadCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
   const [generatedPitch, setGeneratedPitch] = useState<any>(null);
@@ -38,9 +41,56 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
     ? business.recommended_services.split(',').map(s => s.trim()).filter(Boolean)
     : (Array.isArray(business.recommended_services) ? business.recommended_services : []);
 
+  const isUnlocked = !!business.is_unlocked;
+
+  const handleSteal = async (e: any) => {
+    e.stopPropagation();
+    setIsGeneratingPitch(true);
+    if (onActionStart) onActionStart(3);
+    try {
+      const res = await fetch('/api/analyze-now', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId: business.id, steal: true })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      toast.success(isVictim ? 'İntikam alındı! Firma tekrar sizde.' : 'Fırsat gasp edildi! 3 kredi düşüldü.');
+      if (onActionSuccess) onActionSuccess(business.id, 'steal');
+    } catch (err: any) {
+      toast.error(err.message || 'Bir hata oluştu');
+      if (onActionError) onActionError(3);
+    } finally {
+      setIsGeneratingPitch(false);
+    }
+  };
+
+  const handleUnlock = async (e: any) => {
+    e.stopPropagation();
+    setIsGeneratingPitch(true);
+    if (onActionStart) onActionStart(1);
+    try {
+      const res = await fetch('/api/analyze-now', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId: business.id })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success('Analiz tamamlandı ve kilidi açıldı! Liste otomatik güncelleniyor.');
+      if (onActionSuccess) onActionSuccess(business.id, 'unlock');
+    } catch (err: any) {
+      toast.error(err.message || 'Analiz başarısız oldu');
+      if (onActionError) onActionError(1);
+    } finally {
+      setIsGeneratingPitch(false);
+    }
+  };
+
   return (
     <Card 
-      onClick={onClick}
+      onClick={() => onClick?.(business)}
       className={`relative overflow-hidden border border-border/60 dark:border-zinc-800/60 bg-card/40 dark:bg-zinc-950/40 backdrop-blur-xl shadow-xl transition-all duration-500 hover:border-primary/50 group ${onClick ? 'cursor-pointer' : ''}`}
     >
       
@@ -156,30 +206,12 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
               size="sm"
               className="bg-red-900 text-red-100 hover:bg-red-800 gap-1.5 font-bold shadow-lg border border-red-700"
               disabled={isGeneratingPitch}
-              onClick={async (e) => {
-                e.stopPropagation();
-                setIsGeneratingPitch(true);
-                try {
-                  const res = await fetch('/api/analyze-now', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ businessId: business.id, steal: true })
-                  });
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.error);
-                  
-                  toast.success('İntikam alındı! Firma tekrar sizde.');
-                  setTimeout(() => window.location.reload(), 1000);
-                } catch (err: any) {
-                  toast.error(err.message || 'Bir hata oluştu');
-                  setIsGeneratingPitch(false);
-                }
-              }}
+              onClick={handleSteal}
             >
               {isGeneratingPitch ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
               Geri Çal / İntikam (3 Kredi)
             </Button>
-          ) : score > 0 ? (
+          ) : isUnlocked ? (
             <Button 
               variant="ghost" 
               size="sm" 
@@ -196,56 +228,21 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
               size="sm"
               className="bg-red-600 hover:bg-red-700 text-white gap-1.5 font-bold shadow-lg"
               disabled={isGeneratingPitch}
-              onClick={async (e) => {
-                e.stopPropagation();
-                setIsGeneratingPitch(true);
-                try {
-                  const res = await fetch('/api/analyze-now', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ businessId: business.id, steal: true })
-                  });
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.error);
-                  
-                  toast.success('Fırsat gasp edildi! 3 kredi düşüldü.');
-                  setTimeout(() => window.location.reload(), 1000);
-                } catch (err: any) {
-                  toast.error(err.message || 'Bir hata oluştu');
-                  setIsGeneratingPitch(false);
-                }
-              }}
+              onClick={handleSteal}
             >
               {isGeneratingPitch ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
-              Gasp Et (3 Kredi)
+              ☠️ Gasp Et (3 Kredi)
             </Button>
           ) : (
             <Button
               variant="default"
               size="sm"
               className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-bold shadow-lg"
-              onClick={async (e) => {
-                e.stopPropagation();
-                setIsGeneratingPitch(true);
-                try {
-                  const res = await fetch('/api/analyze-now', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ businessId: business.id })
-                  });
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.error);
-                  toast.success('Analiz tamamlandı ve kilidi açıldı! Liste otomatik güncelleniyor.');
-                } catch (err: any) {
-                  toast.error(err.message || 'Analiz başarısız oldu');
-                } finally {
-                  setIsGeneratingPitch(false);
-                }
-              }}
               disabled={isGeneratingPitch}
+              onClick={handleUnlock}
             >
               {isGeneratingPitch ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4 fill-current" />}
-              Anında Analiz Et (1 Kredi)
+              ⚡ 1 Kredi ile Analiz Et
             </Button>
           )}
 
@@ -385,4 +382,4 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
       </div>
     </Card>
   );
-}
+});

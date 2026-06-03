@@ -3,6 +3,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
+// Idempotency lock set for race condition protection
+const unlockLocks = new Set<string>();
+
 export async function getDashboardLeads(
   filterMode: string = 'ALL',
   searchQuery: string = '',
@@ -31,6 +34,12 @@ export async function getDashboardLeads(
       business_name,
       category,
       city,
+      district,
+      phone,
+      email,
+      maps_url,
+      instagram_url,
+      facebook_url,
       created_at,
       rating,
       review_count,
@@ -47,7 +56,8 @@ export async function getDashboardLeads(
         seo_score,
         has_ssl,
         mobile_responsive,
-        has_social_links
+        has_social_links,
+        recommended_services
       ),
       user_lead_status${filterMode === 'UNLOCKED' ? '!inner' : ''} (
         status,
@@ -188,20 +198,20 @@ export async function getDashboardLeads(
     return {
       ...d,
       id: d.id,
-      business_name: showDetails ? d.business_name : maskName(d.business_name),
-      phone: showDetails ? d.phone : null,
-      website: showDetails ? d.website : null,
-      email: showDetails ? d.email : null,
-      maps_url: showDetails ? d.maps_url : null,
-      instagram_url: showDetails ? d.instagram_url : null,
-      facebook_url: showDetails ? d.facebook_url : null,
+      business_name: showDetails ? (d.business_name || null) : maskName(d.business_name),
+      phone: showDetails ? (d.phone || null) : null,
+      website: showDetails ? (d.website || null) : null,
+      email: showDetails ? (d.email || null) : null,
+      maps_url: showDetails ? (d.maps_url || null) : null,
+      instagram_url: showDetails ? (d.instagram_url || null) : null,
+      facebook_url: showDetails ? (d.facebook_url || null) : null,
       is_stolen: isVictim,
-      category: d.category,
-      city: d.city,
+      category: d.category || null,
+      city: d.city || null,
       district: d.district || '',
-      last_verified_at: d.created_at,
-      rating: d.rating,
-      review_count: d.review_count,
+      last_verified_at: d.created_at || null,
+      rating: d.rating || null,
+      review_count: d.review_count || 0,
       ai_score: analysis?.ai_score || 0,
       quality_tier: analysis?.quality_tier || 'C',
       opportunity_reasons: parsedReasons,
@@ -269,13 +279,13 @@ export async function getSecureLeadsPool() {
     // d.signals varsa olduğu gibi bırakıyoruz, ancak tel, websitesi ve mail null yapılacak eğer unlock edilmemişse
     return {
       ...d,
-      business_name: isUnlocked ? d.business_name : maskName(d.business_name),
-      phone: isUnlocked ? d.phone : null,
-      website: isUnlocked ? d.website : null,
-      email: isUnlocked ? d.email : null,
-      maps_url: isUnlocked ? d.maps_url : null,
-      instagram_url: isUnlocked ? d.instagram_url : null,
-      facebook_url: isUnlocked ? d.facebook_url : null,
+      business_name: isUnlocked ? (d.business_name || null) : maskName(d.business_name),
+      phone: isUnlocked ? (d.phone || null) : null,
+      website: isUnlocked ? (d.website || null) : null,
+      email: isUnlocked ? (d.email || null) : null,
+      maps_url: isUnlocked ? (d.maps_url || null) : null,
+      instagram_url: isUnlocked ? (d.instagram_url || null) : null,
+      facebook_url: showDetails ? (d.facebook_url || null) : null,
       ai_score: analysis?.ai_score || 0,
       opportunity_reasons: parsedReasons,
       recommended_services: parsedServices,
@@ -411,32 +421,45 @@ export async function getUserWallet() {
   if (!userData.user) return { balance: 0 };
 
   const { data } = await supabase
-    .from('user_wallets')
-    .select('balance')
-    .eq('user_id', userData.user.id)
+    .from('profiles')
+    .select('credits')
+    .eq('id', userData.user.id)
     .single();
 
-  return data || { balance: 0 };
+  return { balance: data?.credits || 0 };
 }
 
 export async function unlockLeadPhone(businessId: string) {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) throw new Error('Unauthorized');
+  if (!userData.user) return { success: false, message: 'Oturum süresi doldu, lütfen tekrar giriş yapın.' };
 
-  const { data, error } = await supabase.rpc('unlock_lead_phone', { p_business_id: businessId });
-  
-  if (error) {
-    console.error('unlockLeadPhone Error:', error);
-    throw new Error('RPC Error');
+  const lockKey = `${userData.user.id}_${businessId}`;
+  if (unlockLocks.has(lockKey)) {
+    return { success: false, message: 'İşleminiz şu an devam ediyor, lütfen bekleyin.' };
   }
+  unlockLocks.add(lockKey);
 
-  if (data && data.error) {
-    throw new Error(data.error);
+  try {
+    const { data, error } = await supabase.rpc('unlock_lead_phone', { p_business_id: businessId });
+    
+    if (error) {
+      console.error('unlockLeadPhone Error:', error);
+      return { success: false, message: 'Firma verisi alınırken veya güncellenirken bir hata oluştu.' };
+    }
+
+    if (data && data.error) {
+      return { success: false, message: data.error };
+    }
+
+    revalidatePath('/[locale]/(protected)/dashboard'); // Refresh the UI state
+    return await getLeadDetails(businessId);
+  } catch (err: any) {
+    console.error('unlockLeadPhone Catch Error:', err);
+    return { success: false, message: 'Sistem hatası oluştu, işlem gerçekleştirilemedi.' };
+  } finally {
+    unlockLocks.delete(lockKey);
   }
-
-  revalidatePath('/[locale]/(protected)/dashboard'); // Refresh the UI state
-  return await getLeadDetails(businessId);
 }
 
 export async function getLeadDetails(businessId: string) {
@@ -483,15 +506,15 @@ export async function getLeadDetails(businessId: string) {
 
   return {
     id: data.id,
-    business_name: isUnlocked ? data.business_name : maskName(data.business_name),
-    category: data.category,
-    city: data.city,
-    district: '',
-    last_verified_at: data.created_at,
-    rating: data.rating,
-    review_count: data.review_count,
-    website: isUnlocked ? data.website : null,
-    phone: isUnlocked ? data.phone : null,
+    business_name: isUnlocked ? (data.business_name || null) : maskName(data.business_name),
+    category: data.category || null,
+    city: data.city || null,
+    district: data.district || '',
+    last_verified_at: data.created_at || null,
+    rating: data.rating || null,
+    review_count: data.review_count || 0,
+    website: isUnlocked ? (data.website || null) : null,
+    phone: isUnlocked ? (data.phone || null) : null,
     ai_score: analysis?.ai_score || 0,
     quality_tier: analysis?.quality_tier || 'C',
     opportunity_reasons: parsedReasons,

@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const amount = Number(body.amount);
-    // Admin başka bir kullanıcıya da ekleyebilir, yoksa kendi hesabına
+    const planName = body.planName;
     const targetUserId = body.targetUserId || user.id;
 
     if (!amount || amount <= 0) {
@@ -35,12 +35,17 @@ export async function POST(request: Request) {
 
     const { data: profile, error: fetchError } = await adminClient
       .from('profiles')
-      .select('credits')
+      .select('credits, has_purchased')
       .eq('id', targetUserId)
       .single();
 
     if (fetchError || !profile) {
       return NextResponse.json({ error: 'Profil bulunamadı.' }, { status: 404 });
+    }
+
+    // 🔥 KATI GÜVENLİK (Hard Security): Top-up SADECE aktif aboneliği (has_purchased=true) olanlara satılabilir!
+    if (planName === 'Top-up' && !profile.has_purchased) {
+      return NextResponse.json({ error: 'Bu işlem için aktif aylık paket (Basepound Growth) gereklidir.' }, { status: 403 });
     }
 
     const newCredits = (profile.credits || 0) + amount;

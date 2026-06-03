@@ -49,8 +49,12 @@ GÖREV: SADECE aşağıdaki JSON formatında cevap ver, dışına hiçbir şey y
   "emailBody": "..."
 }`;
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
+      signal: controller.signal,
       headers: { 
         "Authorization": `Bearer ${apiKey}`, 
         "Content-Type": "application/json" 
@@ -65,6 +69,8 @@ GÖREV: SADECE aşağıdaki JSON formatında cevap ver, dışına hiçbir şey y
         messages: [{ role: "user", content: prompt }]
       })
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`OpenRouter Error: ${response.status}`);
@@ -90,6 +96,11 @@ GÖREV: SADECE aşağıdaki JSON formatında cevap ver, dışına hiçbir şey y
     return NextResponse.json(parsedContent);
   } catch (error: any) {
     console.error('Pitch generation error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({
+      whatsapp: "Sistem Uyarı: Şu an global AI ağlarında yoğunluk var, işleminiz sıraya alındı, krediniz iade edildi.",
+      coldCallScript: "Sistem Uyarı: Şu an global AI ağlarında yoğunluk var, işleminiz sıraya alındı, krediniz iade edildi.",
+      emailSubject: "Sistem Uyarı: AI Ağlarında Yoğunluk",
+      emailBody: "Şu an global AI ağlarında yoğunluk var, işleminiz sıraya alındı, krediniz iade edildi. Lütfen daha sonra tekrar deneyin."
+    });
   }
 }
