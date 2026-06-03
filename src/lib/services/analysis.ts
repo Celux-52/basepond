@@ -61,8 +61,31 @@ export async function analyzeWebsite(url: string | null | undefined): Promise<We
     }
 
     const duration = Date.now() - startTime;
-    // Gerçek Hız Kanıtı: 2.5 saniyeden uzun sürerse yavaş (Mobil/UX problemi)
-    const is_slow = duration > 2500; 
+    let is_slow = duration > 2500; 
+
+    // Google PageSpeed API Entegrasyonu (Eğer API anahtarı varsa)
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (apiKey) {
+      try {
+        const psController = new AbortController();
+        const psTimeoutId = setTimeout(() => psController.abort(), 8000); // 8 saniye bekle, olmazsa vazgeç
+        const psRes = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${formattedUrl}&strategy=mobile&key=${apiKey}`, {
+          signal: psController.signal
+        });
+        clearTimeout(psTimeoutId);
+        
+        if (psRes.ok) {
+          const psData = await psRes.json();
+          const score = psData?.lighthouseResult?.categories?.performance?.score;
+          if (typeof score === 'number') {
+            is_slow = (score * 100) < 60; // Google skoru 60'ın altındaysa yavaş
+          }
+        }
+      } catch (err) {
+        // PageSpeed API zaman aşımına uğrarsa veya hata verirse, kendi ölçümümüzü (duration) kullanırız.
+        console.warn("PageSpeed API Hatası, varsayılan hız testine dönüldü.");
+      }
+    }
     
     const html = await response.text();
     

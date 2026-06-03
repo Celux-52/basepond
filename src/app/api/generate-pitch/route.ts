@@ -20,8 +20,11 @@ export async function POST(req: Request) {
 
     const safeSignals = Array.isArray(signals) ? signals : [];
 
-    // Sabit Hat kontrolü
-    const isMobile = phone ? /^(\+90|0)?5\d{9}$/.test(phone.replace(/\D/g, '')) : true;
+    // Sabit Hat kontrolü (Regex Düzeltmesi)
+    // Sadece rakamları al. (Örn: +90 555 -> 90555, 0850 -> 0850)
+    const cleanDigits = phone ? phone.replace(/\D/g, '') : '';
+    // Türkiye'de cep numaraları 905, 05 veya sadece 5 ile başlar.
+    const isMobile = cleanDigits ? /^(90|0)?5\d{9}$/.test(cleanDigits) : true;
 
     const prompt = `Sen çok meşgul, müşteriye muhtaç olmayan, "Tok Satıcı" ve danışman rolünde bir B2B uzmanısın.
 Görev: Karşıdaki işletme sahibini merak ve hafif bir panikle sana dönüş yapmaya zorlamak. "Ben yaparım, ben satarım" gibi laflar YASAK.
@@ -34,14 +37,14 @@ Eksiklikleri (Sinyaller): ${safeSignals.join(', ')}
 
 KATI KURALLAR (BUNLARA UYMAZSAN ÇUVALLARIZ):
 1. ASLA "Umarım bu e-posta sizi iyi bulur", "İyi günler dilerim" gibi robotik klişeler KULLANMA.
-2. Agresif veya kurnaz olma. "Siteniz bozuk ben yapayım" deme. Şöyle de: "Bölgedeki firmaları tararken denk geldim, sitenizde şu eksik, reklam bütçeniz boşa gidiyor haberiniz olsun. Vaktim yok ama kendi IT'cinize acil kontrol ettirin."
-3. Müşteriye "Muhtaç değilmiş" gibi davran. Bu sayede sana "Siz bakamaz mısınız?" diye dönecek.
-4. E-posta şablonunun konu başlığı merak uyandırıcı olsun.
+2. Agresif veya kurnaz olma. Şöyle de: "Bölgedeki firmaları tararken denk geldim, sitenizde şu eksik, reklam bütçeniz boşa gidiyor haberiniz olsun. Vaktim yok ama kendi IT'cinize acil kontrol ettirin."
+3. Müşteriye "Muhtaç değilmiş" gibi davran.
+4. KANCA AT (The Hook): Mesajın sonunu mutlaka karşı tarafı cevap vermeye mecbur bırakan, spesifik bir zaman belirten bir soruyla bitir. (Örn: "Perşembe 14:00'te 5 dakikalık telefonda size bunu ekranda kanıtlayabilirim, uygun musunuz?")
 5. Sinyallerde yazmayan teknik bir kusuru uydurma.
 
 GÖREV: SADECE aşağıdaki JSON formatında cevap ver, dışına hiçbir şey yazma:
 {
-  ${isMobile ? `"whatsapp": "WhatsApp için kısa, tek elle yazılmış gibi meşgul bir mesaj...",` : `"coldCallScript": "Bu bir sabit hat. Çıkan sekreteri aşmak ve patrona bağlanmak için kullanılacak zekice bir telefon konuşması metni...",`}
+  ${isMobile ? `"whatsapp": "WhatsApp için kısa, tek elle yazılmış, kancayla biten meşgul bir mesaj...",` : `"coldCallScript": "Bu bir sabit hat. Sekreteri aşıp patrona ulaşmak ve ona kanca atmak için çok zekice bir telefon metni...",`}
   "emailSubject": "...",
   "emailBody": "..."
 }`;

@@ -19,10 +19,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { businessId } = await req.json();
+    const { businessId, steal } = await req.json();
     if (!businessId) {
       return NextResponse.json({ error: 'businessId is required' }, { status: 400 });
     }
+
+    const requiredCredits = steal ? 3 : 1;
 
     // 1. Check if user has credits
     const { data: profile } = await supabase
@@ -31,8 +33,8 @@ export async function POST(req: Request) {
       .eq('id', user.id)
       .single();
 
-    if (!profile || profile.credits < 1) {
-      return NextResponse.json({ error: 'Insufficient credits' }, { status: 403 });
+    if (!profile || profile.credits < requiredCredits) {
+      return NextResponse.json({ error: `Yetersiz kredi (Bu işlem için ${requiredCredits} kredi gerekiyor)` }, { status: 403 });
     }
 
     // 2. Get business data
@@ -51,7 +53,7 @@ export async function POST(req: Request) {
       const claimedDate = new Date(business.claimed_at);
       const now = new Date();
       const diffDays = (now.getTime() - claimedDate.getTime()) / (1000 * 3600 * 24);
-      if (diffDays <= 7) {
+      if (diffDays <= 7 && !steal) {
         return NextResponse.json({ error: 'Bu fırsat yakın zamanda başka bir üye tarafından kilitlendi.' }, { status: 403 });
       }
     }
@@ -102,7 +104,7 @@ export async function POST(req: Request) {
     // 5. Deduct credit and unlock
     await supabase.rpc('deduct_credits', {
       user_id_param: user.id,
-      amount: 1
+      amount: requiredCredits
     });
 
     // Check if user already has a lead status

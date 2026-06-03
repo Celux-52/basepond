@@ -157,11 +157,30 @@ export function AiLeadCard({ business, onClick }: AiLeadCardProps) {
             <Button
               variant="destructive"
               size="sm"
-              className="opacity-80 cursor-not-allowed gap-1.5 font-bold shadow-lg bg-red-950/40 text-red-500 border border-red-500/30"
-              disabled
+              className="bg-red-600 hover:bg-red-700 text-white gap-1.5 font-bold shadow-lg"
+              disabled={isGeneratingPitch}
+              onClick={async (e) => {
+                e.stopPropagation();
+                setIsGeneratingPitch(true);
+                try {
+                  const res = await fetch('/api/analyze-now', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ businessId: business.id, steal: true })
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error);
+                  
+                  toast.success('Fırsat gasp edildi! 3 kredi düşüldü.');
+                  setTimeout(() => window.location.reload(), 1000);
+                } catch (err: any) {
+                  toast.error(err.message || 'Bir hata oluştu');
+                  setIsGeneratingPitch(false);
+                }
+              }}
             >
-              <AlertTriangle className="w-4 h-4" />
-              Başkası Tarafından Kilitlendi
+              {isGeneratingPitch ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
+              Gasp Et (3 Kredi)
             </Button>
           ) : (
             <Button
