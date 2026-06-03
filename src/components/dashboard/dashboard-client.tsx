@@ -552,7 +552,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                 {leads.map((lead, i) => (
                   <LeadCard 
                     key={`${lead.id}-${i}`} 
-                    lead={lead} 
+                    business={lead} 
                     activeFilter={filterMode} // we pass it just in case lead-card uses it
                     onClick={() => setSelectedLead(lead)} 
                   />
