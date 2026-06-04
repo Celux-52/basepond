@@ -85,7 +85,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
   const [stats, setStats] = useState<any>(null);
   const [sectors, setSectors] = useState<any[]>([]);
   const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(initialLeads.length === 50);
+  const [hasMore, setHasMore] = useState(initialLeads.length === 20);
   const [balance, setBalance] = useState(initialBalance);
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -176,7 +176,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
           debouncedDistrict
         );
         setLeads(prev => {
-          if (prev.length > 50) return prev;
+          if (prev.length > 20) return prev;
           const prevStr = JSON.stringify(prev);
           const dataStr = JSON.stringify(data);
           if (prevStr !== dataStr) {
@@ -224,7 +224,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
       } else {
         setLeads(prev => [...prev, ...data]);
       }
-      setHasMore(data.length === 50);
+      setHasMore(data.length === 20);
       setPage(reset ? 1 : nextPage + 1);
     } catch (e) {
       console.error(e);

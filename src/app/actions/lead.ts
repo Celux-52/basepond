@@ -150,7 +150,7 @@ export async function getDashboardLeads(
     query = query.ilike('business_name', `%${searchQuery.trim()}%`);
   }
 
-  const limit = 50;
+  const limit = 20;
   const from = page * limit;
   const to = from + limit - 1;
 
