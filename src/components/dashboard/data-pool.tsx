@@ -295,11 +295,39 @@ export function DataPool() {
             <div className="space-y-3">
               <div className="relative">
                 <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <Input placeholder="İl (Örn: İstanbul)" value={cityFilter} onChange={e => setCityFilter(e.target.value)} className="pl-9 bg-gray-50 border-gray-200" />
+                <select 
+                  value={cityFilter} 
+                  onChange={e => {
+                    setCityFilter(e.target.value);
+                    setDistrictFilter(''); // reset district
+                  }} 
+                  className="flex h-10 w-full rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-9 bg-gray-50 border-gray-200 appearance-none cursor-pointer border"
+                >
+                  <option value="">İl Seçiniz</option>
+                  {Object.keys(turkeyData).sort().map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
               </div>
               <div className="relative">
                 <Map className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <Input placeholder="İlçe (Örn: Pendik)" value={districtFilter} onChange={e => setDistrictFilter(e.target.value)} className="pl-9 bg-gray-50 border-gray-200" />
+                <select 
+                  value={districtFilter} 
+                  onChange={e => setDistrictFilter(e.target.value)} 
+                  disabled={!cityFilter}
+                  className="flex h-10 w-full rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-9 bg-gray-50 border-gray-200 appearance-none cursor-pointer border"
+                >
+                  <option value="">İlçe Seçiniz</option>
+                  {cityFilter && (turkeyData as Record<string, string[]>)[cityFilter]?.sort().map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
               </div>
               <div className="relative">
                 <Briefcase className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />

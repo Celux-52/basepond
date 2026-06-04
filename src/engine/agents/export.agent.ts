@@ -35,9 +35,8 @@ export class ExportAgent extends BaseAgent<void, void> {
     const mappedPremium = premiumLeads.map(l => this.mapRecord(l));
     
     const lowQualityLeads = allLeads.filter(l => {
-      const analysis = Array.isArray(l.business_analysis) ? l.business_analysis[0] : l.business_analysis;
-      const aiScore = analysis?.ai_score || 0;
-      return aiScore < 70;
+      const score = (l as any).business_analysis?.ai_score || (l as any).ai_score || 0;
+      return score < 70;
     });
     const mappedLowQuality = lowQualityLeads.map(l => this.mapRecord(l));
 
@@ -76,7 +75,7 @@ export class ExportAgent extends BaseAgent<void, void> {
       'Google Puanı': l.rating,
       'Yorum Sayısı': l.review_count,
       'Güven Skoru': l.trust_score,
-      'AI Skoru': analysis?.ai_score || l.ai_score,
+      'AI Skoru': (l as any).business_analysis?.ai_score || l.ai_score,
       'Maps Linki': l.maps_url
     };
   }

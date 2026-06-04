@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { 
   ArrowLeft, Phone, Globe, Mail, MapPin, Star, Shield, Smartphone, 
-  Instagram, Facebook, Linkedin, TrendingUp, Bookmark, BookmarkCheck,
+  Camera, Facebook, Linkedin, TrendingUp, Bookmark, BookmarkCheck,
   CheckCircle2, XCircle, Loader2, ExternalLink, Copy, CheckCheck
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -241,7 +241,7 @@ export default function BusinessDetailPage({ params }: { params: Promise<{ id: s
           {[
             { label: 'SSL Sertifikası', value: analysis?.has_ssl, icon: Shield, good: 'Güvenli', bad: 'SSL Yok — Güvensiz' },
             { label: 'Mobil Uyumluluk', value: analysis?.mobile_responsive, icon: Smartphone, good: 'Mobil Uyumlu', bad: 'Mobil Uyumsuz' },
-            { label: 'Sosyal Medya Varlığı', value: analysis?.has_social_links, icon: Instagram, good: 'Sosyal Hesap Var', bad: 'Sosyal Medya Yok' },
+            { label: 'Sosyal Medya Varlığı', value: analysis?.has_social_links, icon: Camera, good: 'Sosyal Hesap Var', bad: 'Sosyal Medya Yok' },
             { label: 'Web Sitesi', value: !!business.website, icon: Globe, good: 'Web Sitesi Var', bad: 'Web Sitesi Yok' },
           ].map(({ label, value, icon: Icon, good, bad }) => (
             <div key={label} className="flex items-center justify-between">

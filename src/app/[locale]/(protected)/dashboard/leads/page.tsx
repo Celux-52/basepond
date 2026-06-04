@@ -72,9 +72,9 @@ export default function LeadsPage() {
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(l => 
-        l.business_name.toLowerCase().includes(q) || 
-        l.category.toLowerCase().includes(q) || 
-        l.district.toLowerCase().includes(q)
+        (l.business_name && l.business_name.toLowerCase().includes(q)) || 
+        (l.category && l.category.toLowerCase().includes(q)) || 
+        (l.district && l.district.toLowerCase().includes(q))
       );
     }
 

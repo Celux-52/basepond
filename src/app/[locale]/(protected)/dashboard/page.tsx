@@ -11,7 +11,17 @@ export default async function DashboardPage({ params }: { params: Promise<{local
   const { data: { user } } = await supabase.auth.getUser();
   const isAdmin = ADMIN_EMAILS.includes(user?.email || '');
 
-  const initialLeads = await getDashboardLeads('PREMIUM');
+  let initialLeads = [];
+  try {
+    initialLeads = await getDashboardLeads('PREMIUM');
+  } catch (err: any) {
+    if (err.message === 'Unauthorized') {
+      const { redirect } = await import('next/navigation');
+      redirect(`/${locale}/login`);
+    }
+    // Diğer hatalar için logla ama boş dizi ile devam et (500 patlamaması için)
+    console.error("Dashboard error:", err);
+  }
   const wallet = await getUserWallet();
 
   return (

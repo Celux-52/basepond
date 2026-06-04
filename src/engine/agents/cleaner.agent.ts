@@ -55,7 +55,7 @@ export class DatabaseCleanerAgent extends BaseAgent<void, void> {
       }
 
       // 3. AI Analysis Check
-      const hasAnalysis = lead.business_analysis && lead.business_analysis.length > 0;
+      const hasAnalysis = Array.isArray((lead as any).business_analysis) ? (lead as any).business_analysis.length > 0 : !!(lead as any).business_analysis;
       
       let finalAiScore = lead.ai_score || 0;
       let finalTrustScore = lead.trust_score || 40;
@@ -95,7 +95,7 @@ export class DatabaseCleanerAgent extends BaseAgent<void, void> {
         needsUpdate = true;
         aiAdded++;
       } else {
-        finalAiScore = lead.business_analysis[0].ai_score || finalAiScore;
+        finalAiScore = (lead as any).business_analysis[0].ai_score || finalAiScore;
       }
 
       // 5. Save updates

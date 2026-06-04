@@ -41,7 +41,6 @@ export default async function ProtectedLayout({
   const navItems = [
     { href: '/dashboard', label: 'Kontrol Paneli', icon: LayoutDashboard },
     { href: '/dashboard/leads', label: 'Satış Havuzu (Leads)', icon: Zap },
-    { href: '/dashboard/pipeline', label: 'Satış Hunisi (Kanban)', icon: Bookmark },
     { href: '/dashboard/search', label: 'Yeni Arama', icon: Search },
     { href: '/dashboard/saved', label: 'Kaydedilenler', icon: Bookmark },
     { href: '/dashboard/profile', label: 'Profilim', icon: User },

@@ -47,6 +47,14 @@ export interface BusinessRecord {
   enrichment_version?: string;
 
   rejection_reason?: string;
+
+  // Dashboard-injected fields (from server actions)
+  is_unlocked?: boolean;
+  is_stolen?: boolean;
+  claimed_by?: string | null;
+  claimed_at?: string | null;
+  quality_tier?: string;
+  opportunity_reasons?: string[];
   
   created_at: Date;
   updated_at: Date;

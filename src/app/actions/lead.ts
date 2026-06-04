@@ -38,18 +38,21 @@ export async function getDashboardLeads(
       phone,
       email,
       maps_url,
-      instagram_url,
-      facebook_url,
+      instagram,
+      facebook,
       created_at,
       rating,
       review_count,
       website,
       claimed_by,
       claimed_at,
-      business_analysis${hasAnalysisFilter ? '!inner' : ''} (
+      opportunity_analysis,
+      why_now,
+      sales_readiness,
+      signals,
+      business_analysis!inner (
         ai_score,
         quality_tier,
-        opportunity_reasons,
         opportunity_reason,
         website_status,
         mobile_score,
@@ -57,7 +60,9 @@ export async function getDashboardLeads(
         has_ssl,
         mobile_responsive,
         has_social_links,
-        recommended_services
+        recommended_services,
+        why_now,
+        sales_readiness
       ),
       user_lead_status${filterMode === 'UNLOCKED' ? '!inner' : ''} (
         status,
@@ -169,21 +174,38 @@ export async function getDashboardLeads(
   };
 
   // Map to frontend schema
-  return data.map((d: any) => {
+  return (data || []).map((d: any) => {
     const analysis = Array.isArray(d.business_analysis) ? d.business_analysis[0] : d.business_analysis;
     // user_lead_status will be array if 1-to-many, we just check if any exists for this user
     const statusRecord = Array.isArray(d.user_lead_status) ? d.user_lead_status.find((s:any) => s.user_id === userData.user.id) : d.user_lead_status;
     
-    let parsedReasons = analysis?.opportunity_reasons || [];
-    let parsedServices = analysis?.recommended_services || [];
+    // Parse opportunity_reason JSON → reasons + services
+    let parsedReasons: string[] = [];
+    let parsedServices: string[] = [];
 
-    if (parsedReasons.length === 0 && analysis?.opportunity_reason) {
+    if (analysis?.opportunity_reason) {
       try {
         const parsed = JSON.parse(analysis.opportunity_reason);
-        parsedReasons = parsed.summary || [];
+        parsedReasons = parsed.summary || parsed.reasons || [];
         parsedServices = parsed.services || [];
       } catch (e) {
-        // ignore JSON parse errors
+        // opportunity_reason might be plain text, not JSON
+        if (typeof analysis.opportunity_reason === 'string' && analysis.opportunity_reason.length > 0) {
+          parsedReasons = [analysis.opportunity_reason];
+        }
+      }
+    }
+    
+    // recommended_services fallback
+    if (parsedServices.length === 0 && analysis?.recommended_services) {
+      if (typeof analysis.recommended_services === 'string') {
+        try {
+          parsedServices = JSON.parse(analysis.recommended_services);
+        } catch {
+          parsedServices = analysis.recommended_services.split(',').map((s: string) => s.trim()).filter(Boolean);
+        }
+      } else if (Array.isArray(analysis.recommended_services)) {
+        parsedServices = analysis.recommended_services;
       }
     }
 
@@ -203,8 +225,8 @@ export async function getDashboardLeads(
       website: showDetails ? (d.website || null) : null,
       email: showDetails ? (d.email || null) : null,
       maps_url: showDetails ? (d.maps_url || null) : null,
-      instagram_url: showDetails ? (d.instagram_url || null) : null,
-      facebook_url: showDetails ? (d.facebook_url || null) : null,
+      instagram: showDetails ? (d.instagram || null) : null,
+      facebook: showDetails ? (d.facebook || null) : null,
       is_stolen: isVictim,
       category: d.category || null,
       city: d.city || null,
@@ -216,6 +238,10 @@ export async function getDashboardLeads(
       quality_tier: analysis?.quality_tier || 'C',
       opportunity_reasons: parsedReasons,
       recommended_services: parsedServices,
+      opportunity_analysis: d.opportunity_analysis || null,
+      why_now: d.why_now || analysis?.why_now || null,
+      sales_readiness: d.sales_readiness || analysis?.sales_readiness || null,
+      signals: d.signals || [],
       is_unlocked: isUnlocked,
       status: statusRecord?.status || 'NEW'
     };
@@ -232,7 +258,6 @@ export async function getSecureLeadsPool() {
       *,
       business_analysis (
         ai_score,
-        opportunity_reasons,
         opportunity_reason,
         recommended_services,
         quality_tier
@@ -263,14 +288,25 @@ export async function getSecureLeadsPool() {
     const analysis = Array.isArray(d.business_analysis) ? d.business_analysis[0] : d.business_analysis;
     const statusRecord = Array.isArray(d.user_lead_status) ? d.user_lead_status.find((s:any) => s.user_id === userData.user.id) : d.user_lead_status;
     
-    let parsedReasons = analysis?.opportunity_reasons || [];
-    let parsedServices = analysis?.recommended_services || [];
-    if (parsedReasons.length === 0 && analysis?.opportunity_reason) {
+    let parsedReasons: string[] = [];
+    let parsedServices: string[] = [];
+    if (analysis?.opportunity_reason) {
       try {
         const parsed = JSON.parse(analysis.opportunity_reason);
-        parsedReasons = parsed.summary || [];
+        parsedReasons = parsed.summary || parsed.reasons || [];
         parsedServices = parsed.services || [];
-      } catch (e) {}
+      } catch (e) {
+        if (typeof analysis.opportunity_reason === 'string') {
+          parsedReasons = [analysis.opportunity_reason];
+        }
+      }
+    }
+    if (parsedServices.length === 0 && analysis?.recommended_services) {
+      if (typeof analysis.recommended_services === 'string') {
+        try { parsedServices = JSON.parse(analysis.recommended_services); } catch {
+          parsedServices = analysis.recommended_services.split(',').map((s: string) => s.trim()).filter(Boolean);
+        }
+      }
     }
 
     const isUnlocked = statusRecord?.is_unlocked || false;
@@ -284,8 +320,8 @@ export async function getSecureLeadsPool() {
       website: isUnlocked ? (d.website || null) : null,
       email: isUnlocked ? (d.email || null) : null,
       maps_url: isUnlocked ? (d.maps_url || null) : null,
-      instagram_url: isUnlocked ? (d.instagram_url || null) : null,
-      facebook_url: showDetails ? (d.facebook_url || null) : null,
+      instagram: isUnlocked ? (d.instagram || null) : null,
+      facebook: isUnlocked ? (d.facebook || null) : null,
       ai_score: analysis?.ai_score || 0,
       opportunity_reasons: parsedReasons,
       recommended_services: parsedServices,
@@ -343,8 +379,29 @@ export async function getDashboardStats() {
 
 export async function getSectorsWithCounts() {
   const supabase = await createClient();
-  const { data } = await supabase.from('businesses').select('category');
-  if (!data) return [];
+  let allCategories: any[] = [];
+  let offset = 0;
+  const BATCH_SIZE = 1000;
+  const MAX_ROWS = 20000; // Limit to 20,000 to prevent memory issues
+
+  while (offset < MAX_ROWS) {
+    const { data } = await supabase
+      .from('businesses')
+      .select('category')
+      .range(offset, offset + BATCH_SIZE - 1);
+    
+    if (data && data.length > 0) {
+      allCategories = allCategories.concat(data);
+      if (data.length < BATCH_SIZE) break; // Reached the end
+      offset += BATCH_SIZE;
+    } else {
+      break;
+    }
+  }
+
+  if (allCategories.length === 0) return [];
+
+  const data = allCategories;
 
   const umbrellaCounts: Record<string, number> = {
     'Güzellik & Bakım': 0,
@@ -515,10 +572,15 @@ export async function getLeadDetails(businessId: string) {
     review_count: data.review_count || 0,
     website: isUnlocked ? (data.website || null) : null,
     phone: isUnlocked ? (data.phone || null) : null,
+    email: isUnlocked ? (data.email || null) : null,
+    maps_url: isUnlocked ? (data.maps_url || null) : null,
+    instagram: isUnlocked ? (data.instagram || null) : null,
+    facebook: isUnlocked ? (data.facebook || null) : null,
     ai_score: analysis?.ai_score || 0,
     quality_tier: analysis?.quality_tier || 'C',
     opportunity_reasons: parsedReasons,
     recommended_services: parsedServices,
+    is_unlocked: isUnlocked,
     status: statusRecord?.status || 'NEW',
     pipeline_stage: data.pipeline_stage || 'YENİ'
   };

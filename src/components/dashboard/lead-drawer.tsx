@@ -20,9 +20,20 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
   const reasons: string[] = [];
   if (lead.opportunity_analysis) reasons.push(lead.opportunity_analysis);
   if (lead.why_now) reasons.push(lead.why_now);
-  if (reasons.length === 0 && Array.isArray(lead.opportunity_reasons)) reasons.push(...lead.opportunity_reasons);
+  if (reasons.length === 0 && Array.isArray(lead.opportunity_reasons) && lead.opportunity_reasons.length > 0) {
+    reasons.push(...lead.opportunity_reasons);
+  }
+  if (reasons.length === 0 && Array.isArray(lead.signals) && lead.signals.length > 0) {
+    reasons.push(...lead.signals);
+  }
+  if (reasons.length === 0) {
+    reasons.push('Yapay zeka bu işletme için doğrudan bir fırsat analizi üretmedi, ancak dijital varlıkları geliştirilmeye açık.');
+  }
+
   
-  const services = Array.isArray(lead.recommended_services) ? lead.recommended_services : [];
+  const services = typeof lead.recommended_services === 'string' 
+    ? lead.recommended_services.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : (Array.isArray(lead.recommended_services) ? lead.recommended_services : []);
 
   const handleUnlock = async () => {
     setIsUnlocking(true);
@@ -131,16 +142,18 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
           </div>
 
           {/* Recommended Services */}
-          <div>
-            <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4">Satılabilecek Hizmetler</h4>
-            <div className="flex flex-wrap gap-2">
-              {services.map((service: string, i: number) => (
-                <span key={i} className="px-3 py-1.5 bg-purple-50 text-purple-700 border border-purple-100 rounded-lg text-sm font-medium">
-                  {service}
-                </span>
-              ))}
+          {services.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4">Satılabilecek Hizmetler</h4>
+              <div className="flex flex-wrap gap-2">
+                {services.map((service: string, i: number) => (
+                  <span key={i} className="px-3 py-1.5 bg-purple-50 text-purple-700 border border-purple-100 rounded-lg text-sm font-medium">
+                    {service}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Details */}
           <div>

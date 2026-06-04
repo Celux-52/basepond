@@ -20,13 +20,13 @@ export async function initiateOnDemandCrawl(searchQuery: string) {
   );
 
   // 1. Check wallet and deduct credits
-  const { data: wallet } = await sbAdmin.from('user_wallets').select('balance').eq('user_id', userId).single();
-  if (!wallet || wallet.balance < COST) {
+  const { data: profile } = await sbAdmin.from('profiles').select('credits').eq('id', userId).single();
+  if (!profile || profile.credits < COST) {
     throw new Error(`Yetersiz bakiye. Bu işlem için ${COST} kredi gerekiyor.`);
   }
 
   // Deduct
-  await sbAdmin.from('user_wallets').update({ balance: wallet.balance - COST }).eq('user_id', userId);
+  await sbAdmin.from('profiles').update({ credits: profile.credits - COST }).eq('id', userId);
 
   // 2. Create Job
   const { data: job, error: jobErr } = await sbAdmin.from('crawl_jobs').insert({

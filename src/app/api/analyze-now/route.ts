@@ -102,10 +102,16 @@ export async function POST(req: Request) {
     }
 
     // 5. Deduct credit and unlock
-    await supabase.rpc('deduct_credits', {
-      user_id_param: user.id,
-      amount: requiredCredits
-    });
+    const currentCredits = profile.credits;
+    const { error: deductError } = await supabaseAdmin
+      .from('profiles')
+      .update({ credits: currentCredits - requiredCredits })
+      .eq('id', user.id);
+
+    if (deductError) {
+      console.error('Kredi düşme hatası:', deductError);
+      return NextResponse.json({ error: 'Kredi güncellenirken hata oluştu' }, { status: 500 });
+    }
 
     // Check if user already has a lead status
     const { data: statusRecord } = await supabaseAdmin

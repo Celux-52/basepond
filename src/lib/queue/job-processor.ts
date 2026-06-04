@@ -3,7 +3,8 @@ import { runBusinessDiscovery } from "../engine/orchestrator";
 
 // This function processes a single job from the queue
 export async function processNextJob() {
-  const supabase = await createClient();
+  const supabaseRaw = await createClient();
+  const supabase: any = supabaseRaw;
 
   // 1. Fetch the next pending job
   const { data: job, error: fetchError } = await supabase

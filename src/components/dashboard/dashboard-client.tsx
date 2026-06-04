@@ -9,6 +9,7 @@ import { initiateOnDemandCrawl, checkCrawlJobStatus } from '@/app/actions/crawl'
 import { Search, Star, Target, Clock, Unlock, Zap, TrendingUp, Phone, Activity, SearchX, Loader2, Bot, Filter, MapPin, Briefcase, Map, Flame, Check, Sparkles, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { turkeyData } from '@/lib/turkey-data';
 
 // Custom Checkbox
 const CustomCheckbox = ({ id, label, checked, onChange }: { id: string, label: string, checked: boolean, onChange: (c: boolean) => void }) => (
@@ -162,32 +163,8 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
   useEffect(() => {
     loadLeads(true);
 
-    // Otomatik Anlık Yenileme (Real-time background polling)
-    const interval = setInterval(async () => {
-      try {
-        const activeSmartFiltersArray = Array.from(smartFilters);
-        const data = await getDashboardLeads(
-          filterMode, 
-          debouncedSearch, 
-          0,
-          activeSmartFiltersArray,
-          debouncedCity,
-          debouncedSector,
-          debouncedDistrict
-        );
-        setLeads(prev => {
-          if (prev.length > 20) return prev;
-          const prevStr = JSON.stringify(prev);
-          const dataStr = JSON.stringify(data);
-          if (prevStr !== dataStr) {
-            return data;
-          }
-          return prev;
-        });
-      } catch (e) {
-        // Sessiz hata
-      }
-    }, 15000); // 5 saniye sunucuyu kilitliyordu, 15 saniyeye çıkarıldı
+    // Otomatik Anlık Yenileme kaldırıldı (Sunucuyu yorduğu ve sayfada gecikme yarattığı için)
+    // Sadece ilk yüklemede ve filtre değişiminde veriler çekilecek.
 
     // AI İşlemlerini tetikleyen ayrı ve daha yavaş bir döngü
     // Eğer bekleyen AI analiz işi varsa onu da arka planda tetikle
@@ -196,7 +173,6 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
     }, 60000); // Sadece dakikada bir kontrol et (Sunucu çökmesini önler)
 
     return () => {
-      clearInterval(interval);
       clearInterval(aiInterval);
     };
   }, [filterMode, debouncedSearch, debouncedCity, debouncedDistrict, debouncedSector, smartFilters]);
@@ -291,9 +267,15 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
   }, [activeJobId, isCrawling]);
 
   const handleStartCrawl = async () => {
-    if (!debouncedSearch) return;
+    const query = debouncedSearch || [debouncedCity, debouncedDistrict, debouncedSector].filter(Boolean).join(' ');
+    
+    if (!query) {
+      toast.error('Lütfen aranacak kelime, il veya sektör seçiniz.');
+      return;
+    }
+
     try {
-      const { jobId } = await initiateOnDemandCrawl(debouncedSearch);
+      const { jobId } = await initiateOnDemandCrawl(query);
       setIsCrawling(true);
       setActiveJobId(jobId);
       setCrawlStatus('queued');
@@ -326,7 +308,8 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
     }
   }, []);
 
-  const onActionSuccess = useCallback((businessId: string, actionType: 'steal' | 'unlock') => {
+  const onActionSuccess = useCallback(async (businessId: string, actionType: 'steal' | 'unlock') => {
+    // Optimistik olarak UI'ı kilidi açılmış şekilde güncelle
     setLeads(prev => prev.map(lead => {
       if (lead.id === businessId) {
         return { 
@@ -338,6 +321,19 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
       }
       return lead;
     }));
+
+    // Server'dan güncel veriyi çek (isim, telefon vb. maskesiz gelecek)
+    try {
+      const { getLeadDetails } = await import('@/app/actions/lead');
+      const updatedLead = await getLeadDetails(businessId);
+      if (updatedLead) {
+        setLeads(prev => prev.map(lead => 
+          lead.id === businessId ? { ...lead, ...updatedLead, is_unlocked: true } : lead
+        ));
+      }
+    } catch {
+      // Zaten optimistik güncelledik, hata olursa bir şey yapmaya gerek yok
+    }
   }, []);
 
   const handleCardClick = useCallback((lead: any) => {
@@ -451,11 +447,39 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
             <div className="space-y-3">
               <div className="relative">
                 <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
-                <input type="text" placeholder="İl (Örn: İstanbul)" value={cityFilter} onChange={e => setCityFilter(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all" />
+                <select 
+                  value={cityFilter} 
+                  onChange={e => {
+                    setCityFilter(e.target.value);
+                    setDistrictFilter(''); // reset district on city change
+                  }} 
+                  className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer"
+                >
+                  <option value="">İl Seçiniz</option>
+                  {Object.keys(turkeyData).sort().map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
               </div>
               <div className="relative">
                 <Map className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
-                <input type="text" placeholder="İlçe (Örn: Pendik)" value={districtFilter} onChange={e => setDistrictFilter(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all" />
+                <select 
+                  value={districtFilter} 
+                  onChange={e => setDistrictFilter(e.target.value)} 
+                  disabled={!cityFilter}
+                  className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer disabled:opacity-50"
+                >
+                  <option value="">İlçe Seçiniz</option>
+                  {cityFilter && (turkeyData as Record<string, string[]>)[cityFilter]?.sort().map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
               </div>
               <div className="relative">
                 <Briefcase className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
@@ -654,31 +678,21 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                   </p>
                 </div>
               )}
-              {welcomeStep === 3 && (
-                <div className="space-y-4 animate-in slide-in-from-right-8">
-                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    <Bookmark className="w-5 h-5 text-emerald-500" /> 3. Kanban Panosu
-                  </h3>
-                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
-                    Sol menüden <strong>"Satış Hunisi"</strong>ne girerek görüştüğünüz müşterileri Trello gibi sürükleyip bırakarak harika bir düzende takip edin.
-                  </p>
-                </div>
-              )}
 
               <div className="mt-8 flex items-center justify-between">
                 <div className="flex gap-1.5">
-                  {[1,2,3].map(step => (
+                  {[1,2].map(step => (
                     <div key={step} className={`w-2 h-2 rounded-full transition-colors ${welcomeStep === step ? 'bg-blue-600' : 'bg-neutral-200'}`} />
                   ))}
                 </div>
                 <div className="flex gap-3">
-                  {welcomeStep < 3 ? (
+                  {welcomeStep < 2 ? (
                     <button onClick={() => setWelcomeStep(w => w + 1)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-colors">
                       Sonraki
                     </button>
                   ) : (
-                    <button onClick={closeWelcome} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-xl transition-colors flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Başlayalım!
+                    <button onClick={closeWelcome} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-xl transition-colors shadow-lg shadow-green-600/20">
+                      Sistemi Kullanmaya Başla
                     </button>
                   )}
                 </div>

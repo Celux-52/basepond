@@ -95,7 +95,9 @@ export async function scrapeBusinessWebsite(url: string): Promise<NativeEnrichme
 
       // 1. Email extraction from mailto links
       $('a[href^="mailto:"]').each((_, el) => {
-        const mailto = $(el).attr('href')?.replace(/mailto:/i, '').split('?')[0].trim();
+        const href = $(el).attr('href');
+        if (!href) return;
+        const mailto = href.replace(/mailto:/i, '').split('?')[0].trim();
         if (mailto && mailto.includes('@')) {
           result.emails.push(mailto);
         }
@@ -103,7 +105,9 @@ export async function scrapeBusinessWebsite(url: string): Promise<NativeEnrichme
 
       // 2. Phone extraction from tel links
       $('a[href^="tel:"]').each((_, el) => {
-        const tel = $(el).attr('href')?.replace(/tel:/i, '').split('?')[0].trim();
+        const href = $(el).attr('href');
+        if (!href) return;
+        const tel = href.replace(/tel:/i, '').split('?')[0].trim();
         const cleaned = cleanPhoneNumber(tel || '');
         if (cleaned) {
           result.phones.push(cleaned);
