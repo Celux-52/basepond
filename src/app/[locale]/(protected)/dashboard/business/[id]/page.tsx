@@ -291,7 +291,7 @@ export default function BusinessDetailPage({ params }: { params: Promise<{ id: s
       {/* BOTTOM ACTIONS */}
       <div className="flex flex-col sm:flex-row gap-4 pb-8">
         {business.phone && (
-          <a href={`tel:${business.phone}`} className="flex-1">
+          <a href={business.phone ? `tel:${business.phone}` : '#'} className="flex-1">
             <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-14 text-base font-bold gap-2">
               <Phone className="w-5 h-5" /> Hemen Ara: {business.phone}
             </Button>

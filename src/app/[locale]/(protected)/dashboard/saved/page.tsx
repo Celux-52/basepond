@@ -149,7 +149,7 @@ export default function SavedPage() {
 
                 <div className="flex gap-2 pt-3 border-t border-border mt-auto">
                   {business.phone && (
-                    <a href={`tel:${business.phone}`} className="flex-1">
+                    <a href={business.phone ? `tel:${business.phone}` : '#'} className="flex-1">
                       <Button size="sm" className="w-full bg-primary text-primary-foreground text-xs">
                         <Phone className="w-3.5 h-3.5 mr-1" /> Ara
                       </Button>

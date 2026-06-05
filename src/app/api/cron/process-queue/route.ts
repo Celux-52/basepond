@@ -12,21 +12,31 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy'
 );
 
+import { createClient as createServerClient } from '@/lib/supabase/server';
+
 export async function POST(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  // Optional check: only enforce if CRON_SECRET is set in env
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const isAuth = await checkAuth(request);
+  if (!isAuth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   return handleQueue();
 }
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const isAuth = await checkAuth(request);
+  if (!isAuth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   return handleQueue();
+}
+
+async function checkAuth(request: Request) {
+  if (!process.env.CRON_SECRET) return true;
+  const authHeader = request.headers.get('authorization');
+  if (authHeader === `Bearer ${process.env.CRON_SECRET}`) return true;
+  try {
+    const supabase = await createServerClient();
+    const { data } = await supabase.auth.getUser();
+    return !!data.user;
+  } catch (e) {
+    return false;
+  }
 }
 
 async function handleQueue() {

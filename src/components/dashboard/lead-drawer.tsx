@@ -104,7 +104,7 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
                 </div>
                 <h3 className="text-3xl font-black text-green-400 tracking-wider mb-6">{lead.phone}</h3>
                 <div className="flex gap-3 w-full">
-                   <a href={`tel:${lead.phone}`} className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                   <a href={lead.phone ? `tel:${lead.phone}` : '#'} className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
                      <Phone className="w-4 h-4" /> Ara
                    </a>
                    <a href={`https://wa.me/${lead.phone?.replace(/[^0-9]/g, '')}`} target="_blank" className="flex-1 bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">

@@ -222,7 +222,7 @@ export function OpportunityCard({ business, onClick }: { business: ProcessedBusi
           )}
           
           {business.phone ? (
-            <a href={`tel:${business.phone}`} title={business.phone} className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-background border border-border/50 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-colors">
+            <a href={business.phone ? `tel:${business.phone}` : '#'} title={business.phone} className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-background border border-border/50 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-colors">
               <Phone className="w-3.5 h-3.5" />
             </a>
           ) : null}

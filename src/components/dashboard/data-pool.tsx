@@ -580,7 +580,7 @@ export function DataPool() {
                         <div className="flex flex-col min-w-0">
                           <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Telefon Numarası</span>
                           {selectedBusiness.phone ? (
-                            <a href={`tel:${selectedBusiness.phone}`} className="text-sm font-bold text-blue-600 hover:underline">{selectedBusiness.phone}</a>
+                            <a href={selectedBusiness.phone ? `tel:${selectedBusiness.phone}` : '#'} className="text-sm font-bold text-blue-600 hover:underline">{selectedBusiness.phone}</a>
                           ) : (
                             <span className="text-sm font-medium text-gray-400">Veritabanında Yok</span>
                           )}

@@ -322,7 +322,7 @@ export function BusinessDiscovery() {
                        </div>
                     )}
                     {selectedBusiness.phone ? (
-                       <a href={`tel:${selectedBusiness.phone}`} className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 transition-all text-center">
+                       <a href={selectedBusiness.phone ? `tel:${selectedBusiness.phone}` : '#'} className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 transition-all text-center">
                          <div className="bg-emerald-100 p-3 rounded-full text-emerald-600"><Phone className="w-5 h-5" /></div>
                          <span className="text-sm font-bold text-gray-700">{selectedBusiness.phone}</span>
                        </a>

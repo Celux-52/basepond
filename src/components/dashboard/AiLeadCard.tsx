@@ -181,7 +181,7 @@ export const AiLeadCard = memo(function AiLeadCard({ business, onClick, activeFi
           
           <div className="flex gap-2">
             {isUnlocked && business.phone && (
-              <a href={`tel:${business.phone}`} title="Ara" onClick={e => e.stopPropagation()}>
+              <a href={business.phone ? `tel:${business.phone}` : '#'} title="Ara" onClick={e => e.stopPropagation()}>
                 <div className="w-8 h-8 rounded bg-muted dark:bg-zinc-900 border border-border dark:border-zinc-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-colors">
                   <Phone className="w-4 h-4" />
                 </div>

@@ -423,7 +423,7 @@ export default function ResultsPage({ params }: { params: Promise<{ jobId: strin
                   {/* ACTION BUTTONS */}
                   <div className="flex gap-2 pt-2 border-t border-border">
                     {business.phone ? (
-                      <a href={`tel:${business.phone}`} className="flex-1">
+                      <a href={business.phone ? `tel:${business.phone}` : '#'} className="flex-1">
                         <Button variant="default" size="sm" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-xs">
                           <Phone className="w-3.5 h-3.5 mr-1.5" /> Ara
                         </Button>
