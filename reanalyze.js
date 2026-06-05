@@ -2,24 +2,33 @@ const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const WebSocket = require('ws');
 
-const envFile = fs.readFileSync('.env.local', 'utf8');
-const env = {};
-envFile.split('\n').forEach(line => {
-  const match = line.match(/^([^=]+)=(.*)$/);
-  if (match) {
-    let val = match[2].trim();
-    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-    else if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
-    env[match[1].trim()] = val;
-  }
-});
+let SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+let SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+let OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-const supabase = createClient(env['NEXT_PUBLIC_SUPABASE_URL'], env['SUPABASE_SERVICE_ROLE_KEY'], {
+try {
+  if (fs.existsSync('.env.local')) {
+    const envFile = fs.readFileSync('.env.local', 'utf8');
+    envFile.split('\n').forEach(line => {
+      const match = line.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        const val = match[2].trim().replace(/^"|^'|"$|'$/g, '');
+        if (key === 'NEXT_PUBLIC_SUPABASE_URL') SUPABASE_URL = val;
+        if (key === 'SUPABASE_SERVICE_ROLE_KEY') SUPABASE_SERVICE_ROLE_KEY = val;
+        if (key === 'OPENROUTER_API_KEY') OPENROUTER_API_KEY = val;
+      }
+    });
+  }
+} catch (e) {
+  // ignore
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false },
   realtime: { transport: WebSocket }
 });
 
-const OPENROUTER_API_KEY = env['OPENROUTER_API_KEY'];
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
