@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { exportToCsv } from "@/lib/export";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { turkeyData } from '@/lib/turkey-data';
 
 function parseReason(reason: string | null) {
   try {

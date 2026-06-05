@@ -36,7 +36,7 @@ export default function BusinessDetailPage({ params }: { params: Promise<{ id: s
 
       if (!b) { setLoading(false); return; }
       setBusiness(b);
-      setAnalysis(b.business_analysis?.[0] || b.business_analysis || null);
+      setAnalysis((b.business_analysis as any)?.[0] || b.business_analysis || null);
 
       // Check saved status
       const { data: { user } } = await supabase.auth.getUser();

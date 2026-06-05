@@ -218,8 +218,9 @@ export default function LeadsPage() {
       {selectedLead && (
         <LeadDrawer 
           lead={selectedLead} 
+          isOpen={!!selectedLead}
           onClose={() => setSelectedLead(null)} 
-          onUnlockSuccess={handleUnlockSuccess}
+          onUnlocked={handleUnlockSuccess}
         />
       )}
     </div>

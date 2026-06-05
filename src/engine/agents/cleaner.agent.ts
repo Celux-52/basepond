@@ -28,14 +28,15 @@ export class DatabaseCleanerAgent extends BaseAgent<void, void> {
   async execute(): Promise<void> {
     this.log('🧽 Starting Database Cleanup & Enrichment...');
     
-    const allLeads = await this.storage.getAllLeads();
-    this.log(`Found ${allLeads.length} total records to check.`);
-
+    const leadGenerator = this.storage.getAllLeads();
+    
     let deleted = 0;
     let aiAdded = 0;
     let updated = 0;
 
-    for (const lead of allLeads) {
+    for await (const chunk of leadGenerator) {
+      this.log(`Processing chunk of ${chunk.length} records...`);
+      for (const lead of chunk) {
       // 1. Phone Validation
       const validPhone = await this.phoneAgent.execute(lead.phone);
       if (!validPhone) {
@@ -78,7 +79,11 @@ export class DatabaseCleanerAgent extends BaseAgent<void, void> {
           rating: lead.rating || 0,
           hasWebsite: webIntel.website_status === 'Active',
           hasSocial: socialIntel.is_active,
-          hasEmail: !!lead.email
+          hasEmail: !!lead.email,
+          hasPhone: !!lead.phone,
+          reviewCount: lead.review_count || 0,
+          websiteSignals: [],
+          htmlSnippet: ""
         });
 
         await this.storage.upsertAnalysis(lead.id, {
@@ -109,7 +114,8 @@ export class DatabaseCleanerAgent extends BaseAgent<void, void> {
       if (!hasAnalysis) {
         await new Promise(r => setTimeout(r, CONFIG.REQUEST_DELAY_MS));
       }
-    }
+      } // End of inner chunk loop
+    } // End of outer generator loop
 
     this.log('🏁 --- CLEANUP COMPLETED ---');
     this.log(`🗑️ Deleted Fake/Invalid: ${deleted}`);

@@ -3,8 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-// Idempotency lock set for race condition protection
-const unlockLocks = new Set<string>();
+// Idempotency handled by Supabase RPC directly.
 
 export async function getDashboardLeads(
   filterMode: string = 'ALL',
@@ -491,12 +490,6 @@ export async function unlockLeadPhone(businessId: string) {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return { success: false, message: 'Oturum süresi doldu, lütfen tekrar giriş yapın.' };
 
-  const lockKey = `${userData.user.id}_${businessId}`;
-  if (unlockLocks.has(lockKey)) {
-    return { success: false, message: 'İşleminiz şu an devam ediyor, lütfen bekleyin.' };
-  }
-  unlockLocks.add(lockKey);
-
   try {
     const { data, error } = await supabase.rpc('unlock_lead_phone', { p_business_id: businessId });
     
@@ -505,8 +498,8 @@ export async function unlockLeadPhone(businessId: string) {
       return { success: false, message: 'Firma verisi alınırken veya güncellenirken bir hata oluştu.' };
     }
 
-    if (data && data.error) {
-      return { success: false, message: data.error };
+    if (data && !data.success) {
+      return { success: false, message: data.message };
     }
 
     revalidatePath('/[locale]/(protected)/dashboard'); // Refresh the UI state
@@ -514,8 +507,6 @@ export async function unlockLeadPhone(businessId: string) {
   } catch (err: any) {
     console.error('unlockLeadPhone Catch Error:', err);
     return { success: false, message: 'Sistem hatası oluştu, işlem gerçekleştirilemedi.' };
-  } finally {
-    unlockLocks.delete(lockKey);
   }
 }
 
@@ -582,7 +573,7 @@ export async function getLeadDetails(businessId: string) {
     recommended_services: parsedServices,
     is_unlocked: isUnlocked,
     status: statusRecord?.status || 'NEW',
-    pipeline_stage: data.pipeline_stage || 'YENİ'
+    pipeline_stage: statusRecord?.pipeline_stage || 'YENİ'
   };
 }
 
@@ -592,9 +583,10 @@ export async function updatePipelineStage(businessId: string, newStage: string) 
   if (!userData.user) throw new Error('Unauthorized');
 
   const { error } = await supabase
-    .from('businesses')
+    .from('user_lead_status')
     .update({ pipeline_stage: newStage })
-    .eq('id', businessId);
+    .eq('business_id', businessId)
+    .eq('user_id', userData.user.id);
 
   if (error) {
     console.error('Update Pipeline Stage Error:', error);

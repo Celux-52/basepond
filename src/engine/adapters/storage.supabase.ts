@@ -144,8 +144,7 @@ export class SupabaseStorageAdapter implements IStorageAdapter {
     return data as any;
   }
 
-  async getPremiumLeads(): Promise<BusinessRecord[]> {
-    let allData: any[] = [];
+  async *getPremiumLeads(): AsyncGenerator<BusinessRecord[]> {
     let page = 0;
     const pageSize = 1000;
     
@@ -161,17 +160,17 @@ export class SupabaseStorageAdapter implements IStorageAdapter {
         const aiScore = analysis?.ai_score || 0;
         return aiScore >= 70;
       });
-      allData = allData.concat(premiums);
+
+      if (premiums.length > 0) {
+        yield premiums;
+      }
       
       if (data.length < pageSize) break;
       page++;
     }
-    
-    return allData;
   }
 
-  async getAllLeads(): Promise<BusinessRecord[]> {
-    let allData: any[] = [];
+  async *getAllLeads(): AsyncGenerator<BusinessRecord[]> {
     let page = 0;
     const pageSize = 1000;
     
@@ -181,12 +180,11 @@ export class SupabaseStorageAdapter implements IStorageAdapter {
         .range(page * pageSize, (page + 1) * pageSize - 1);
         
       if (!data || data.length === 0) break;
-      allData = allData.concat(data);
+      
+      yield data;
       
       if (data.length < pageSize) break;
       page++;
     }
-    
-    return allData;
   }
 }

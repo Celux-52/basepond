@@ -27,7 +27,7 @@ export interface ProcessJob {
   category: string;
 }
 
-export class OrchestratorAgent extends BaseAgent<void, void> {
+export class OrchestratorAgent extends BaseAgent<string, void> {
   private storage: IStorageAdapter;
   private queue: IQueueAdapter<ProcessJob>;
   
@@ -214,7 +214,7 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
 
     // 7. Intelligence Agents
     const webIntel = await this.websiteIntel.execute(details.website);
-    const socialIntel = await this.socialIntel.execute(enriched.socials);
+    const socialIntel = await this.socialIntel.execute({ ...enriched.socials, tiktok: null });
     const supplierIntel = await this.supplierMatch.execute(category);
 
     // 8. AI Opportunity
@@ -262,7 +262,7 @@ export class OrchestratorAgent extends BaseAgent<void, void> {
       ai_score: aiData.ai_score,
       opportunity_analysis: aiData.opportunity_analysis,
       ai_activity: socialIntel.is_active ? 'Active on ' + socialIntel.primary_network : null,
-      sales_readiness: aiData.sales_readiness,
+      sales_readiness: aiData.sales_readiness as any,
       purchase_intent: aiData.purchase_intent,
       why_now: aiData.why_now,
       recommended_services: aiData.recommended_services.concat([supplierIntel.primary_supplier_type]),

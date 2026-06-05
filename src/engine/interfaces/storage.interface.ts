@@ -16,6 +16,6 @@ export interface IStorageAdapter {
   findByMapsUrl(url: string): Promise<BusinessRecord | null>;
   
   // Queries
-  getPremiumLeads(): Promise<BusinessRecord[]>;
-  getAllLeads(): Promise<BusinessRecord[]>;
+  getPremiumLeads(): AsyncGenerator<BusinessRecord[]>;
+  getAllLeads(): AsyncGenerator<BusinessRecord[]>;
 }

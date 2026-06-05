@@ -131,7 +131,11 @@ export async function* runBusinessDiscovery(query: string, city: string, categor
     // Filter places we already yielded
     const placesToProcess = places.filter(p => !yieldedNames.has(p.name)).slice(0, remainingNeeded);
 
-    const processPromises = placesToProcess.map(async (place) => {
+    const CONCURRENCY_LIMIT = 5;
+    for (let i = 0; i < placesToProcess.length; i += CONCURRENCY_LIMIT) {
+      const chunk = placesToProcess.slice(i, i + CONCURRENCY_LIMIT);
+      
+      const processPromises = chunk.map(async (place) => {
       try {
         // Fetch Details
         const details = await getPlaceDetails(place.place_id);
@@ -250,14 +254,6 @@ export async function* runBusinessDiscovery(query: string, city: string, categor
             needs_update: false
           });
 
-          await supabase.from("business_history").insert({
-            business_id: newBusiness.id,
-            rating: place.rating || null,
-            review_count: place.user_ratings_total || null,
-            ai_score: aiScore.ai_score,
-            website_status: webAnalysis.status
-          });
-
           return {
             id: newBusiness.id,
             name: newBusiness.business_name,
@@ -290,33 +286,22 @@ export async function* runBusinessDiscovery(query: string, city: string, categor
       }
     });
 
-    for (const promise of processPromises) {
-      const result = await promise;
-      if (result) {
-        yieldedCount++;
-        yield result;
+      const results = await Promise.all(processPromises);
+      for (const result of results) {
+        if (result) {
+          yieldedCount++;
+          yield result;
+        }
+      }
+
+      // API Rate Limit Protection (Cooldown between chunks)
+      if (i + CONCURRENCY_LIMIT < placesToProcess.length) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
       }
     }
   }
 
   // 3. Log Usage and Cost
-  // Deduct User Scans (1 scan per yielded business)
-  if (yieldedCount > 0) {
-    await supabase.rpc('decrement_scans', { user_id_param: userId, amount: yieldedCount });
-  }
-
-  await supabase.from("usage_logs").insert({
-    user_id: userId,
-    query_text: query,
-    requested_amount: amount,
-    cache_hits: yieldedNames.size,
-    api_calls: apiCallsCount,
-    google_cost: totalGoogleCost,
-    apollo_cost: totalApolloCost,
-    ai_cost: totalAiCost,
-    total_credit_cost: totalCredits // Keep internal cost tracking for profitability stats
-  });
-
   await supabase.from("searches").insert({
     user_id: userId,
     search_query: query,

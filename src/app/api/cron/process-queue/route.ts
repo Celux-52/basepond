@@ -13,10 +13,19 @@ const supabaseAdmin = createClient(
 );
 
 export async function POST(request: Request) {
+  const authHeader = request.headers.get('authorization');
+  // Optional check: only enforce if CRON_SECRET is set in env
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   return handleQueue();
 }
 
 export async function GET(request: Request) {
+  const authHeader = request.headers.get('authorization');
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   return handleQueue();
 }
 
@@ -46,6 +55,18 @@ async function handleQueue() {
         return NextResponse.json({ message: 'No pending jobs or unanalyzed businesses in queue' });
       }
 
+      const { data: lockedAnalysis } = await supabaseAdmin
+        .from('business_analysis')
+        .update({ ai_score: -1 }) // -1 means processing
+        .eq('id', unanalyzed.id)
+        .eq('ai_score', 0)
+        .select('id')
+        .single();
+
+      if (!lockedAnalysis) {
+        return NextResponse.json({ message: 'Conflict: Analysis job already taken by another worker' });
+      }
+
       console.log(`[Queue] Found unanalyzed business: ${(unanalyzed.businesses as any)?.business_name}`);
       
       const bData = unanalyzed.businesses as any;
@@ -66,9 +87,11 @@ async function handleQueue() {
         apolloData
       );
 
+      const isFallback = aiScore.opportunity_reason.includes("SYSTEM_BUSY");
+
       // 3. Update business_analysis
       await supabaseAdmin.from('business_analysis').update({
-        ai_score: aiScore.ai_score,
+        ai_score: isFallback ? 0 : aiScore.ai_score,
         opportunity_reason: aiScore.opportunity_reason,
         website_status: websiteAnalysis.status,
         growth_potential: aiScore.growth_potential,
@@ -86,7 +109,18 @@ async function handleQueue() {
       return NextResponse.json({ success: true, processed_analysis: unanalyzed.business_id });
     }
 
-    await supabaseAdmin.from('crawl_job_items').update({ status: 'processing' }).eq('id', item.id);
+    const { data: lockedItem } = await supabaseAdmin
+      .from('crawl_job_items')
+      .update({ status: 'processing' })
+      .eq('id', item.id)
+      .eq('status', 'pending')
+      .select('id')
+      .single();
+
+    if (!lockedItem) {
+      return NextResponse.json({ message: 'Conflict: Crawl job already taken by another worker' });
+    }
+
     await supabaseAdmin.from('crawl_jobs').update({ status: 'fetching' }).eq('id', item.job_id);
 
     let searchTerm = item.query;

@@ -19,12 +19,13 @@ export class ReEnrichmentAgent extends BaseAgent<void, void> {
     
     // In a real DB, we'd do a query: WHERE next_refresh_at <= NOW() OR missing critical fields
     // Here we will fetch all and filter in-memory for the demo.
-    const allLeads = await this.storage.getAllLeads();
+    const leadGenerator = this.storage.getAllLeads();
     
     let reQueuedCount = 0;
     const now = new Date();
 
-    for (const lead of allLeads) {
+    for await (const chunk of leadGenerator) {
+      for (const lead of chunk) {
       let needsRefresh = false;
 
       // 1. Check time-based refresh
@@ -33,7 +34,7 @@ export class ReEnrichmentAgent extends BaseAgent<void, void> {
       }
       
       // 2. Check missing intelligence
-      if (!lead.website || lead.website === "Yok" || !lead.business_analysis || lead.business_analysis.length === 0) {
+      if (!lead.website || lead.website === "Yok" || !(lead as any).business_analysis || (lead as any).business_analysis.length === 0) {
         needsRefresh = true;
       }
 
@@ -51,7 +52,8 @@ export class ReEnrichmentAgent extends BaseAgent<void, void> {
         });
         reQueuedCount++;
       }
-    }
+      } // End of inner loop
+    } // End of generator loop
 
     this.log(`🏁 Re-Enrichment Scan Completed. Queued ${reQueuedCount} jobs.`);
   }

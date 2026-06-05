@@ -25,8 +25,15 @@ export class ExportAgent extends BaseAgent<void, void> {
     }
 
     // Fetch Data
-    const allLeads = await this.storage.getAllLeads();
-    const premiumLeads = await this.storage.getPremiumLeads();
+    const allLeads: any[] = [];
+    for await (const chunk of this.storage.getAllLeads()) {
+      allLeads.push(...chunk);
+    }
+    
+    const premiumLeads: any[] = [];
+    for await (const chunk of this.storage.getPremiumLeads()) {
+      premiumLeads.push(...chunk);
+    }
 
     this.log(`Fetched ${allLeads.length} total leads, ${premiumLeads.length} premium leads.`);
 

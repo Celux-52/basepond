@@ -29,7 +29,7 @@ export const AiLeadCard = memo(function AiLeadCard({ business, onClick, activeFi
   if (!business) return null;
 
   const score = business.ai_score || 0;
-  const isHot = business.sales_readiness === 'Sıcak';
+  const isHot = (business.sales_readiness as any) === 'Sıcak' || (typeof business.sales_readiness === 'number' && business.sales_readiness >= 80);
   const signals = business.signals || [];
   
   const isClaimed = !!business.claimed_by;
@@ -37,9 +37,10 @@ export const AiLeadCard = memo(function AiLeadCard({ business, onClick, activeFi
     (new Date().getTime() - new Date(business.claimed_at).getTime()) / (1000 * 3600 * 24) <= 7;
   const isVictim = !!business.is_stolen;
   
-  const recServices = typeof business.recommended_services === 'string' 
-    ? business.recommended_services.split(',').map(s => s.trim()).filter(Boolean)
-    : (Array.isArray(business.recommended_services) ? business.recommended_services : []);
+  const rawServices: any = business.recommended_services;
+  const recServices = typeof rawServices === 'string' 
+    ? rawServices.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : (Array.isArray(rawServices) ? rawServices : []);
 
   const isUnlocked = !!business.is_unlocked;
 
@@ -302,7 +303,7 @@ export const AiLeadCard = memo(function AiLeadCard({ business, onClick, activeFi
                   <div>
                     <h4 className="font-bold text-muted-foreground dark:text-zinc-500 text-xs mb-2 uppercase">Önerilen Hizmetler</h4>
                     <div className="flex flex-wrap gap-2">
-                      {recServices.map((srv, idx) => (
+                      {recServices.map((srv: string, idx: number) => (
                         <Badge key={idx} variant="outline" className="border-primary/30 text-primary bg-primary/5">
                           {srv}
                         </Badge>

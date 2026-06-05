@@ -74,6 +74,11 @@ export async function POST(req: Request) {
       apolloData
     );
 
+    // If AI failed and returned fallback, do not charge the user
+    if (aiScore.opportunity_reason.includes("SYSTEM_BUSY")) {
+       return NextResponse.json({ error: 'Yapay zeka ağı şu an çok yoğun. Lütfen 1 dakika sonra tekrar deneyin. Krediniz DÜŞÜLMEDİ.' }, { status: 503 });
+    }
+
     // 4. Update Business and Analysis (Set FOMO Lock)
     await supabaseAdmin.from('businesses').update({
       phone: phone,
@@ -81,6 +86,13 @@ export async function POST(req: Request) {
       claimed_by: user.id,
       claimed_at: new Date().toISOString()
     }).eq('id', business.id);
+
+    // If stealing, revoke access from previous owners to maintain exclusivity
+    if (steal) {
+      await supabaseAdmin.from('user_lead_status').delete()
+        .eq('business_id', business.id)
+        .neq('user_id', user.id);
+    }
 
     // Fetch existing analysis id to update
     const { data: existingAnalysis } = await supabaseAdmin
@@ -102,15 +114,18 @@ export async function POST(req: Request) {
     }
 
     // 5. Deduct credit and unlock
-    const currentCredits = profile.credits;
-    const { error: deductError } = await supabaseAdmin
-      .from('profiles')
-      .update({ credits: currentCredits - requiredCredits })
-      .eq('id', user.id);
+    const { data: deductResult, error: deductError } = await (supabaseAdmin as any).rpc('decrement_credits', {
+      user_id_param: user.id,
+      amount: requiredCredits
+    });
 
     if (deductError) {
       console.error('Kredi düşme hatası:', deductError);
       return NextResponse.json({ error: 'Kredi güncellenirken hata oluştu' }, { status: 500 });
+    }
+
+    if (deductResult === false) {
+       return NextResponse.json({ error: 'Yetersiz kredi' }, { status: 403 });
     }
 
     // Check if user already has a lead status

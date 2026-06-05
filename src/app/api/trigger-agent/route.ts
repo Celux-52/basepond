@@ -8,7 +8,12 @@ export const maxDuration = 300;
 
 export async function POST(req: Request) {
   try {
-    let body = {};
+    const authHeader = req.headers.get('authorization');
+    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    let body: any = {};
     try {
       const text = await req.text();
       if (text) body = JSON.parse(text);

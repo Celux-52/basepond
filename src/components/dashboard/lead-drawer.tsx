@@ -42,7 +42,7 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
       const updatedLead = await unlockLeadPhone(lead.id);
       if (updatedLead && (updatedLead as any).success === false) {
         setError((updatedLead as any).message);
-      } else if (updatedLead && updatedLead.is_unlocked) {
+      } else if (updatedLead && (updatedLead as any).is_unlocked) {
         onUnlocked(updatedLead);
       } else {
         setError('Bakiye yetersiz veya bir hata oluştu.');

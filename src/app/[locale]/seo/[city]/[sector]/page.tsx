@@ -93,7 +93,7 @@ export default async function SectorIntelligencePage({ params }: Props) {
               <div key={business.id} className="bg-[#111] border border-border/20 p-6 rounded-xl hover:border-emerald-500/30 transition-colors">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-lg font-bold text-white truncate pr-4">{business.business_name}</h3>
-                  <Badge variant="outline" className={`font-mono ${business.business_analysis?.ai_score >= 80 ? 'text-emerald-400 border-emerald-500/30' : 'text-zinc-400'}`}>
+                  <Badge variant="outline" className={`font-mono ${(business.business_analysis?.ai_score || 0) >= 80 ? 'text-emerald-400 border-emerald-500/30' : 'text-zinc-400'}`}>
                     {business.business_analysis?.ai_score || 0}
                   </Badge>
                 </div>
@@ -103,7 +103,7 @@ export default async function SectorIntelligencePage({ params }: Props) {
                   <div className="flex items-center gap-2"><Star className="w-4 h-4 text-amber-500" /> {business.rating} ({business.review_count} reviews)</div>
                 </div>
 
-                {business.business_analysis?.urgency_score > 75 && (
+                {(business.business_analysis?.urgency_score || 0) > 75 && (
                   <div className="bg-rose-500/10 text-rose-400 text-xs font-mono p-2 rounded flex items-center gap-2 border border-rose-500/20">
                     <ShieldAlert className="w-3 h-3" /> URGENT ACTION REQUIRED
                   </div>

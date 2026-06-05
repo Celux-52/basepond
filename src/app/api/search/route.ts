@@ -34,6 +34,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
     }
 
+    // Security: Validate limit to prevent API abuse
+    const allowedLimits = [10, 20, 50, 100, 200];
+    const parsedLimit = Number(limit);
+    if (!allowedLimits.includes(parsedLimit)) {
+       return NextResponse.json({ error: 'Geçersiz limit değeri.' }, { status: 400 });
+    }
+
     // 1. Check Quota
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
