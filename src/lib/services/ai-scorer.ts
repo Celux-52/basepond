@@ -74,10 +74,9 @@ export async function generateAIScore(
   const modelsToTry = [
     "google/gemini-2.0-flash:free",
     "meta-llama/llama-3.3-70b-instruct:free",
-    "deepseek/deepseek-chat:free",
     "deepseek/deepseek-r1:free",
-    "deepseek/deepseek-r1",
-    "deepseek/deepseek-chat"
+    "deepseek/deepseek-chat",
+    "deepseek/deepseek-r1"
   ];
 
   try {
