@@ -217,21 +217,21 @@ export function BusinessDiscovery() {
           {selectedBusiness && (
             <div className="flex flex-col h-full font-sans">
               {/* Header */}
-              <div className="p-10 border-b border-gray-200 bg-white">
+              <div className="p-10 border-b border-border bg-card text-card-foreground">
                 <div className="flex justify-between items-start">
                   <div className="space-y-3">
                     <h3 className="text-[11px] uppercase tracking-[0.25em] text-emerald-600 font-black flex items-center gap-2">
                       <ShieldAlert className="w-4 h-4" /> Entity Inspection
                     </h3>
                     <SheetTitle className="text-4xl md:text-5xl font-black tracking-tight text-gray-900">{selectedBusiness.name}</SheetTitle>
-                    <SheetDescription className="flex items-center gap-4 text-sm uppercase tracking-widest text-gray-500 font-semibold mt-4">
+                    <SheetDescription className="flex items-center gap-4 text-sm uppercase tracking-widest text-muted-foreground font-semibold mt-4">
                       <span>{selectedBusiness.city}</span>
                       <span className="opacity-40">•</span>
                       <span>{selectedBusiness.category}</span>
                     </SheetDescription>
                   </div>
-                  <div className="text-right bg-gray-50 p-6 rounded-2xl border border-gray-100 min-w-[140px] flex flex-col items-center justify-center shadow-sm">
-                    <div className="text-xs text-gray-500 uppercase tracking-widest font-black mb-2">AI Score</div>
+                  <div className="text-right bg-muted p-6 rounded-2xl border border-border min-w-[140px] flex flex-col items-center justify-center shadow-sm">
+                    <div className="text-xs text-muted-foreground uppercase tracking-widest font-black mb-2">AI Score</div>
                     <div className={`text-6xl font-black tracking-tighter ${selectedBusiness.ai_score && selectedBusiness.ai_score >= 80 ? 'text-emerald-600' : selectedBusiness.ai_score && selectedBusiness.ai_score >= 50 ? 'text-amber-600' : 'text-rose-600'}`}>
                       {selectedBusiness.ai_score || 0}
                     </div>
@@ -245,46 +245,46 @@ export function BusinessDiscovery() {
                 </div>
               </div>
               
-              <div className="p-10 space-y-12 bg-gray-50/50">
+              <div className="p-10 space-y-12 bg-muted/50">
                 
                 {/* Advanced Metrics Matrix */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
+                  <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
                     <Search className="w-6 h-6 text-gray-400 mb-1" />
-                    <span className="text-xs text-gray-500 uppercase tracking-widest font-black">SEO</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-black">SEO</span>
                     <span className="text-3xl font-black text-gray-900">{selectedBusiness.seo_score || 0}</span>
                   </div>
-                  <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
+                  <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
                     <Smartphone className="w-6 h-6 text-gray-400 mb-1" />
-                    <span className="text-xs text-gray-500 uppercase tracking-widest font-black">Mobil</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-black">Mobil</span>
                     <span className="text-3xl font-black text-gray-900">{selectedBusiness.mobile_score || 0}</span>
                   </div>
-                  <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
+                  <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
                     <Share2 className="w-6 h-6 text-gray-400 mb-1" />
-                    <span className="text-xs text-gray-500 uppercase tracking-widest font-black">Sosyal</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-black">Sosyal</span>
                     <span className="text-3xl font-black text-gray-900">{selectedBusiness.social_score || 0}</span>
                   </div>
-                  <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
+                  <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
                     <Shield className="w-6 h-6 text-emerald-500/70 mb-1" />
-                    <span className="text-xs text-gray-500 uppercase tracking-widest font-black">Güven</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-black">Güven</span>
                     <span className="text-3xl font-black text-emerald-600">{selectedBusiness.trust_score || 0}</span>
                   </div>
-                  <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
+                  <div className="bg-card text-card-foreground p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center gap-2 transition-all hover:shadow-md">
                     <Rocket className="w-6 h-6 text-amber-500/70 mb-1" />
-                    <span className="text-xs text-gray-500 uppercase tracking-widest font-black">Büyüme</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-black">Büyüme</span>
                     <span className="text-3xl font-black text-amber-600">{selectedBusiness.growth_score || 0}</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-16">
                   {/* Summary */}
-                  <div className="space-y-5 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+                  <div className="space-y-5 bg-card text-card-foreground p-8 rounded-2xl border border-border shadow-sm">
                     <h3 className="text-xs font-black uppercase tracking-widest text-rose-600 flex items-center gap-2">
                       <TrendingUp className="w-4 h-4" /> AI Tespit Edilen Zayıflıklar
                     </h3>
                     <ul className="space-y-4">
                       {selectedAiData?.summary?.map((item: string, i: number) => (
-                        <li key={i} className="text-base font-semibold flex items-start gap-3 text-gray-800">
+                        <li key={i} className="text-base font-semibold flex items-start gap-3 text-foreground">
                           <span className="text-rose-500 font-black mt-0.5">•</span> {item}
                         </li>
                       ))}
@@ -307,49 +307,49 @@ export function BusinessDiscovery() {
                 </div>
 
                 {/* Contact Data */}
-                <div className="space-y-5 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+                <div className="space-y-5 bg-card text-card-foreground p-8 rounded-2xl border border-border shadow-sm">
                   <h3 className="text-xs font-black uppercase tracking-widest text-gray-400">İletişim & Sosyal Medya</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {selectedBusiness.website ? (
-                       <a href={selectedBusiness.website} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all text-center">
+                       <a href={selectedBusiness.website} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border hover:border-indigo-300 hover:bg-indigo-50/50 transition-all text-center">
                          <div className="bg-indigo-100 p-3 rounded-full text-indigo-600"><Globe className="w-5 h-5" /></div>
-                         <span className="text-sm font-bold text-gray-700 truncate w-full">{selectedBusiness.website.replace(/^https?:\/\//, '')}</span>
+                         <span className="text-sm font-bold text-foreground truncate w-full">{selectedBusiness.website.replace(/^https?:\/\//, '')}</span>
                        </a>
                     ) : (
-                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-100 bg-gray-50 opacity-50 text-center">
+                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border bg-muted opacity-50 text-center">
                          <div className="bg-gray-200 p-3 rounded-full text-gray-400"><Globe className="w-5 h-5" /></div>
                          <span className="text-sm font-bold text-gray-400">Web Sitesi Yok</span>
                        </div>
                     )}
                     {selectedBusiness.phone ? (
-                       <a href={selectedBusiness.phone ? `tel:${selectedBusiness.phone}` : '#'} className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 transition-all text-center">
+                       <a href={selectedBusiness.phone ? `tel:${selectedBusiness.phone}` : '#'} className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border hover:border-emerald-300 hover:bg-emerald-50/50 transition-all text-center">
                          <div className="bg-emerald-100 p-3 rounded-full text-emerald-600"><Phone className="w-5 h-5" /></div>
-                         <span className="text-sm font-bold text-gray-700">{selectedBusiness.phone}</span>
+                         <span className="text-sm font-bold text-foreground">{selectedBusiness.phone}</span>
                        </a>
                     ) : (
-                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-100 bg-gray-50 opacity-50 text-center">
+                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border bg-muted opacity-50 text-center">
                          <div className="bg-gray-200 p-3 rounded-full text-gray-400"><Phone className="w-5 h-5" /></div>
                          <span className="text-sm font-bold text-gray-400">Telefon Yok</span>
                        </div>
                     )}
                     {selectedBusiness.instagram ? (
-                       <a href={selectedBusiness.instagram} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-200 hover:border-pink-300 hover:bg-pink-50/50 transition-all text-center">
+                       <a href={selectedBusiness.instagram} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border hover:border-pink-300 hover:bg-pink-50/50 transition-all text-center">
                          <div className="bg-pink-100 p-3 rounded-full text-pink-600"><Share2 className="w-5 h-5" /></div>
-                         <span className="text-sm font-bold text-gray-700">Instagram</span>
+                         <span className="text-sm font-bold text-foreground">Instagram</span>
                        </a>
                     ) : (
-                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-100 bg-gray-50 opacity-50 text-center">
+                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border bg-muted opacity-50 text-center">
                          <div className="bg-gray-200 p-3 rounded-full text-gray-400"><Share2 className="w-5 h-5" /></div>
                          <span className="text-sm font-bold text-gray-400">Instagram Yok</span>
                        </div>
                     )}
                     {selectedBusiness.linkedin ? (
-                       <a href={selectedBusiness.linkedin} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all text-center">
+                       <a href={selectedBusiness.linkedin} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border hover:border-blue-300 hover:bg-blue-50/50 transition-all text-center">
                          <div className="bg-blue-100 p-3 rounded-full text-blue-700"><Share2 className="w-5 h-5" /></div>
-                         <span className="text-sm font-bold text-gray-700">LinkedIn</span>
+                         <span className="text-sm font-bold text-foreground">LinkedIn</span>
                        </a>
                     ) : (
-                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-gray-100 bg-gray-50 opacity-50 text-center">
+                       <div className="flex flex-col items-center justify-center gap-3 p-5 rounded-xl border border-border bg-muted opacity-50 text-center">
                          <div className="bg-gray-200 p-3 rounded-full text-gray-400"><Share2 className="w-5 h-5" /></div>
                          <span className="text-sm font-bold text-gray-400">LinkedIn Yok</span>
                        </div>

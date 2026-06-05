@@ -69,7 +69,7 @@ export function LeadCard({ lead, activeFilter, onClick }: LeadCardProps) {
   return (
     <div 
       onClick={onClick}
-      className="bg-white rounded-xl p-5 border border-neutral-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full relative"
+      className="bg-card text-card-foreground rounded-xl p-5 border border-border hover:border-blue-300 hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full relative"
     >
       <div>
         <div className="flex justify-between items-start mb-4">
@@ -77,7 +77,7 @@ export function LeadCard({ lead, activeFilter, onClick }: LeadCardProps) {
             <h3 className="text-base font-bold text-neutral-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight mb-1.5">
               {lead.business_name}
             </h3>
-            <div className="flex items-center gap-2 text-xs text-neutral-500">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="font-semibold text-[10px] uppercase tracking-wider">{lead.category}</span>
               <span>•</span>
               <span className="truncate max-w-[100px]">{lead.city}</span>
@@ -91,7 +91,7 @@ export function LeadCard({ lead, activeFilter, onClick }: LeadCardProps) {
             <h4 className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-2">Neden Fırsat?</h4>
             <ul className="space-y-1.5">
               {reasons.slice(0, 2).map((reason: string, i: number) => (
-                <li key={i} className="flex items-start gap-1.5 text-xs text-neutral-700 leading-snug">
+                <li key={i} className="flex items-start gap-1.5 text-xs text-foreground leading-snug">
                   <span className="text-blue-500 shrink-0 mt-0.5">•</span>
                   <span>{reason}</span>
                 </li>
@@ -104,20 +104,20 @@ export function LeadCard({ lead, activeFilter, onClick }: LeadCardProps) {
         {lead.is_unlocked ? (
           <div className="grid grid-cols-2 gap-2 mb-4">
             <div className="flex items-center gap-2 text-xs font-medium">
-              <div className="w-6 h-6 rounded bg-neutral-50 border border-neutral-100 flex items-center justify-center">
-                <Phone className="w-3 h-3 text-neutral-500" />
+              <div className="w-6 h-6 rounded bg-muted border border-border flex items-center justify-center">
+                <Phone className="w-3 h-3 text-muted-foreground" />
               </div>
-              <span className="text-neutral-800 truncate">{lead.phone || <span className="text-neutral-400 italic">Yok</span>}</span>
+              <span className="text-foreground truncate">{lead.phone || <span className="text-neutral-400 italic">Yok</span>}</span>
             </div>
             <div className="flex items-center gap-2 text-xs font-medium">
-              <div className="w-6 h-6 rounded bg-neutral-50 border border-neutral-100 flex items-center justify-center">
-                <Globe className="w-3 h-3 text-neutral-500" />
+              <div className="w-6 h-6 rounded bg-muted border border-border flex items-center justify-center">
+                <Globe className="w-3 h-3 text-muted-foreground" />
               </div>
               {lead.website ? <span className="text-blue-600 hover:underline truncate" onClick={(e) => { e.stopPropagation(); window.open(lead.website, '_blank'); }}>Siteye Git</span> : <span className="text-neutral-400 italic">Yok</span>}
             </div>
           </div>
         ) : (
-          <div className="mb-4 flex items-center justify-center py-2 bg-neutral-50 border border-dashed border-neutral-200 rounded-lg">
+          <div className="mb-4 flex items-center justify-center py-2 bg-muted border border-dashed border-border rounded-lg">
              <span className="text-xs font-semibold text-neutral-400 flex items-center gap-2">
                <Lock className="w-3.5 h-3.5" /> İletişim bilgileri kilitli
              </span>
@@ -132,7 +132,7 @@ export function LeadCard({ lead, activeFilter, onClick }: LeadCardProps) {
           </div>
         </div>
         
-        <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+        <div className="flex items-center justify-between pt-3 border-t border-border">
           <div className="flex items-center gap-1.5 text-[10px] text-neutral-400 font-semibold uppercase">
             <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
             {verifiedText}
@@ -151,7 +151,7 @@ export function LeadCard({ lead, activeFilter, onClick }: LeadCardProps) {
               <span className="text-[10px] text-neutral-400 font-medium px-2">Detayları Gör →</span>
             )
           ) : (
-            <div className="flex items-center gap-1.5 text-neutral-600 font-bold text-[11px] group-hover:text-blue-600 transition-colors uppercase tracking-wide">
+            <div className="flex items-center gap-1.5 text-foreground font-bold text-[11px] group-hover:text-blue-600 transition-colors uppercase tracking-wide">
               <Lock className="w-3.5 h-3.5" />
               <span>Kilidi Aç</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />

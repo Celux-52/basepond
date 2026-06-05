@@ -19,11 +19,11 @@ const CustomCheckbox = ({ id, label, checked, onChange }: { id: string, label: s
       id={id}
       role="checkbox"
       aria-checked={checked}
-      className={`mt-0.5 w-4 h-4 flex shrink-0 items-center justify-center rounded border transition-colors ${checked ? 'bg-blue-600 border-blue-600 text-white' : 'border-neutral-300 bg-white group-hover:border-blue-400'}`}
+      className={`mt-0.5 w-4 h-4 flex shrink-0 items-center justify-center rounded border transition-colors ${checked ? 'bg-blue-600 border-blue-600 text-white' : 'border-input bg-card text-card-foreground group-hover:border-blue-400'}`}
     >
       {checked && <Check className="w-3 h-3" />}
     </button>
-    <label htmlFor={id} className="text-[13px] font-medium leading-tight cursor-pointer text-neutral-700 group-hover:text-neutral-900 pointer-events-none">
+    <label htmlFor={id} className="text-[13px] font-medium leading-tight cursor-pointer text-foreground group-hover:text-neutral-900 pointer-events-none">
       {label}
     </label>
   </div>
@@ -343,10 +343,10 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
   const activeFiltersCount = smartFilters.size + (filterMode !== 'ALL' ? 1 : 0) + (debouncedCity ? 1 : 0) + (debouncedSector ? 1 : 0) + (debouncedDistrict ? 1 : 0) + (debouncedSearch ? 1 : 0);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-neutral-50/50 overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-muted/50 overflow-hidden">
       
       {/* Header Area */}
-      <div className="bg-white border-b border-neutral-200 shrink-0 z-10 relative">
+      <div className="bg-card text-card-foreground border-b border-border shrink-0 z-10 relative">
         <div className="p-6 max-w-[1600px] mx-auto w-full">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
             <div>
@@ -357,7 +357,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                   AI Algoritmaları Aktif
                 </div>
               </div>
-              <p className="text-neutral-500 text-sm max-w-xl leading-relaxed">
+              <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
                 İşletmeleri analiz edin, filtreleri kullanarak en karlı satış fırsatlarını anında yakalayın.
               </p>
             </div>
@@ -394,29 +394,29 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
           {/* KPI Cards */}
           {stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-neutral-500 mb-1">
+              <div className="bg-card text-card-foreground border border-border rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <Star className="w-4 h-4 text-amber-500" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">Premium Fırsat</span>
                 </div>
                 <div className="text-2xl font-black text-neutral-900">{stats.premium_count.toLocaleString()}</div>
               </div>
-              <div className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-neutral-500 mb-1">
+              <div className="bg-card text-card-foreground border border-border rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <Zap className="w-4 h-4 text-blue-500" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">Yüksek Fırsat</span>
                 </div>
                 <div className="text-2xl font-black text-neutral-900">{stats.high_opportunity_count.toLocaleString()}</div>
               </div>
-              <div className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-neutral-500 mb-1">
+              <div className="bg-card text-card-foreground border border-border rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <Phone className="w-4 h-4 text-indigo-500" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">Açılan Lead</span>
                 </div>
                 <div className="text-2xl font-black text-neutral-900">{stats.opened_leads.toLocaleString()}</div>
               </div>
-              <div className="bg-white border border-neutral-100 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-neutral-500 mb-1">
+              <div className="bg-card text-card-foreground border border-border rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <TrendingUp className="w-4 h-4 text-green-500" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">Dönüşüm Oranı</span>
                 </div>
@@ -431,7 +431,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
       <div className="flex-1 flex flex-col lg:flex-row max-w-[1600px] w-full mx-auto overflow-hidden">
         
         {/* SIDEBAR: Search & Filters */}
-        <div className="w-full lg:w-80 lg:shrink-0 bg-white border-r border-neutral-200 overflow-y-auto hidden lg:flex flex-col custom-scrollbar">
+        <div className="w-full lg:w-80 lg:shrink-0 bg-card text-card-foreground border-r border-border overflow-y-auto hidden lg:flex flex-col custom-scrollbar">
           <div className="p-5 space-y-6">
             
             <div className="flex items-center justify-between">
@@ -453,7 +453,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                     setCityFilter(e.target.value);
                     setDistrictFilter(''); // reset district on city change
                   }} 
-                  className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer"
+                  className="w-full pl-9 pr-3 py-2 bg-muted border border-border rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer"
                 >
                   <option value="">İl Seçiniz</option>
                   {Object.keys(turkeyData).sort().map(c => (
@@ -470,7 +470,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                   value={districtFilter} 
                   onChange={e => setDistrictFilter(e.target.value)} 
                   disabled={!cityFilter}
-                  className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer disabled:opacity-50"
+                  className="w-full pl-9 pr-3 py-2 bg-muted border border-border rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer disabled:opacity-50"
                 >
                   <option value="">İlçe Seçiniz</option>
                   {cityFilter && (turkeyData as Record<string, string[]>)[cityFilter]?.sort().map(d => (
@@ -486,7 +486,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                 <select 
                   value={sectorFilter} 
                   onChange={e => setSectorFilter(e.target.value)} 
-                  className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer"
+                  className="w-full pl-9 pr-3 py-2 bg-muted border border-border rounded-lg text-sm outline-none focus:border-blue-400 transition-all appearance-none cursor-pointer"
                 >
                   <option value="">Tüm Sektörler</option>
                   {sectors.map(s => (
@@ -499,15 +499,15 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
-                <input type="text" placeholder="Firma Adı Ara..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm outline-none focus:border-blue-400 transition-all" />
+                <input type="text" placeholder="Firma Adı Ara..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2 bg-muted border border-border rounded-lg text-sm outline-none focus:border-blue-400 transition-all" />
               </div>
             </div>
 
-            <hr className="border-neutral-100" />
+            <hr className="border-border" />
 
             {/* Ready Filters */}
             <div className="space-y-3">
-               <h4 className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-1.5">
+               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
                  <Flame className="w-3.5 h-3.5 text-orange-500" /> Hazır Filtreler
                </h4>
                <div className="flex flex-wrap gap-1.5">
@@ -526,11 +526,11 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                </div>
             </div>
 
-            <hr className="border-neutral-100" />
+            <hr className="border-border" />
 
             {/* Smart Filters Checkboxes */}
             <div className="space-y-3">
-               <h4 className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest">
+               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                  Detaylı Filtreler
                </h4>
                <div className="space-y-1">
@@ -550,10 +550,10 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
         </div>
 
         {/* RESULTS GRID */}
-        <div className="flex-1 overflow-y-auto p-6 bg-neutral-50/50 custom-scrollbar relative">
+        <div className="flex-1 overflow-y-auto p-6 bg-muted/50 custom-scrollbar relative">
           {isLoading && !isCrawling ? (
-            <div className="absolute inset-0 z-10 bg-neutral-50/50 flex items-center justify-center backdrop-blur-[1px]">
-               <div className="bg-white p-4 rounded-full shadow-lg">
+            <div className="absolute inset-0 z-10 bg-muted/50 flex items-center justify-center backdrop-blur-[1px]">
+               <div className="bg-card text-card-foreground p-4 rounded-full shadow-lg">
                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
                </div>
             </div>
@@ -564,7 +564,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
             {leads.length === 0 && !isLoading && (
               <div className="py-20 flex flex-col items-center justify-center text-center">
                 {isCrawling ? (
-                   <div className="bg-white border border-blue-100 p-8 rounded-2xl shadow-xl max-w-md w-full flex flex-col items-center">
+                   <div className="bg-card text-card-foreground border border-blue-100 p-8 rounded-2xl shadow-xl max-w-md w-full flex flex-col items-center">
                      <div className="relative">
                        <div className="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-75"></div>
                        <Bot className="w-16 h-16 text-blue-600 relative z-10 animate-bounce" />
@@ -573,13 +573,13 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                      <div className="text-sm font-medium text-blue-600 bg-blue-50 px-4 py-1.5 rounded-full mb-4">
                        Durum: {crawlStatus.toUpperCase()}
                      </div>
-                     <p className="text-sm text-neutral-500">Robotlarımız web sitelerini ve haritaları analiz ediyor. Lütfen sayfadan ayrılmayın.</p>
+                     <p className="text-sm text-muted-foreground">Robotlarımız web sitelerini ve haritaları analiz ediyor. Lütfen sayfadan ayrılmayın.</p>
                    </div>
                 ) : (debouncedSearch || debouncedCity || debouncedSector) ? (
-                   <div className="bg-white border border-dashed border-neutral-300 p-10 rounded-2xl max-w-lg w-full shadow-sm">
+                   <div className="bg-card text-card-foreground border border-dashed border-input p-10 rounded-2xl max-w-lg w-full shadow-sm">
                      <SearchX className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
                      <h3 className="text-lg font-bold text-neutral-900 mb-2">Bu Filtrelere Uygun Kayıt Yok</h3>
-                     <p className="text-sm text-neutral-500 mb-6">
+                     <p className="text-sm text-muted-foreground mb-6">
                        Aradığınız kriterlerde havuzumuzda eşleşme bulunamadı. Yapay zeka robotlarımızı şu an bu kelimelerle arama yapmaya gönderebiliriz.
                      </p>
                      <button 
@@ -589,17 +589,17 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                        <Zap className="w-5 h-5" />
                        10 Kredi Harca ve Taramayı Başlat
                      </button>
-                     <button onClick={handleClearFilters} className="mt-4 text-sm text-neutral-500 font-semibold hover:text-neutral-900">
+                     <button onClick={handleClearFilters} className="mt-4 text-sm text-muted-foreground font-semibold hover:text-neutral-900">
                        Veya filtreleri temizle
                      </button>
                    </div>
                 ) : (
                   <>
-                    <div className="w-16 h-16 bg-white border border-neutral-200 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                    <div className="w-16 h-16 bg-card text-card-foreground border border-border rounded-full flex items-center justify-center mb-4 shadow-sm">
                       <Search className="w-8 h-8 text-neutral-400" />
                     </div>
                     <h3 className="text-lg font-medium text-neutral-900">Kayıt Bulunamadı</h3>
-                    <p className="text-neutral-500">Lütfen filtreleri değiştirin.</p>
+                    <p className="text-muted-foreground">Lütfen filtreleri değiştirin.</p>
                   </>
                 )}
               </div>
@@ -627,9 +627,9 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                 <button 
                   onClick={() => loadLeads(false)}
                   disabled={isLoadingMore}
-                  className="px-6 py-3 bg-white border border-neutral-200 text-neutral-700 font-bold rounded-xl hover:bg-neutral-50 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-3 bg-card text-card-foreground border border-border text-foreground font-bold rounded-xl hover:bg-muted transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
                 >
-                  {isLoadingMore ? <Loader2 className="animate-spin w-4 h-4 text-neutral-600" /> : <Activity className="w-4 h-4" />}
+                  {isLoadingMore ? <Loader2 className="animate-spin w-4 h-4 text-foreground" /> : <Activity className="w-4 h-4" />}
                   Daha Fazla Yükle
                 </button>
               </div>
@@ -648,9 +648,9 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
       {/* Onboarding Welcome Modal */}
       {showWelcome && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-zinc-950 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+          <div className="bg-card text-card-foreground dark:bg-zinc-950 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300">
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
+              <div className="w-16 h-16 bg-card text-card-foreground/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-2xl font-black mb-2">Sisteme Hoş Geldiniz!</h2>
@@ -663,7 +663,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                   <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Search className="w-5 h-5 text-blue-500" /> 1. Yeni Fırsatlar Bulun
                   </h3>
-                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
+                  <p className="text-foreground dark:text-neutral-400 text-sm leading-relaxed">
                     Sol üstteki <strong>"Yeni İstihbarat Başlat"</strong> butonuna tıklayarak hedeflediğiniz şehir ve sektörü yazın. Yapay zeka sizin için internetin altını üstüne getirip potansiyel müşterileri bulsun.
                   </p>
                 </div>
@@ -673,7 +673,7 @@ export function DashboardClient({ initialLeads, initialBalance, isAdmin = false 
                   <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Zap className="w-5 h-5 text-amber-500" /> 2. Sihirli Satış Mesajları
                   </h3>
-                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
+                  <p className="text-foreground dark:text-neutral-400 text-sm leading-relaxed">
                     İşletme kartlarında yer alan <strong>"Sihirli Satış Mesajı Üret"</strong> butonuna basarak, o firmanın web sitesindeki eksiklere özel vurucu bir WhatsApp mesajı veya E-posta şablonu oluşturun.
                   </p>
                 </div>

@@ -35,11 +35,11 @@ const CustomCheckbox = ({ id, label, checked, onChange }: { id: string, label: s
       id={id}
       role="checkbox"
       aria-checked={checked}
-      className={`mt-0.5 w-4 h-4 flex shrink-0 items-center justify-center rounded border transition-colors ${checked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-gray-300 bg-white group-hover:border-emerald-400'}`}
+      className={`mt-0.5 w-4 h-4 flex shrink-0 items-center justify-center rounded border transition-colors ${checked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-input bg-card text-card-foreground group-hover:border-emerald-400'}`}
     >
       {checked && <Check className="w-3 h-3" />}
     </button>
-    <Label htmlFor={id} className="text-[13px] font-medium leading-tight cursor-pointer text-gray-700 group-hover:text-gray-900">
+    <Label htmlFor={id} className="text-[13px] font-medium leading-tight cursor-pointer text-foreground group-hover:text-gray-900">
       {label}
     </Label>
   </div>
@@ -225,7 +225,7 @@ export function DataPool() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-24 min-h-[50vh] bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col items-center justify-center p-24 min-h-[50vh] bg-card text-card-foreground rounded-xl border border-border shadow-sm">
         <Activity className="w-12 h-12 animate-pulse text-emerald-600 mb-6" />
         <p className="text-emerald-700 font-mono text-sm tracking-widest uppercase font-semibold">İstihbarat Havuzu Yükleniyor...</p>
       </div>
@@ -236,21 +236,21 @@ export function DataPool() {
     <div className="space-y-6 animate-in fade-in duration-500">
       
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-gray-200 pb-4 gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-4 gap-4">
         <div>
           <h2 className="text-2xl font-black tracking-tight text-gray-900 flex items-center gap-3">
             <Sparkles className="w-6 h-6 text-emerald-600" />
             <span className="tracking-tight">Akıllı Arama ve Satış Fırsatı</span>
           </h2>
-          <p className="text-sm text-gray-500 font-medium mt-1">
+          <p className="text-sm text-muted-foreground font-medium mt-1">
             İşletmeleri analiz edin, en karlı satış fırsatlarını anında yakalayın.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchPool} disabled={loading} className="h-9 font-medium text-xs border-gray-300 hover:bg-gray-50 shadow-sm">
+          <Button variant="outline" size="sm" onClick={fetchPool} disabled={loading} className="h-9 font-medium text-xs border-input hover:bg-muted shadow-sm">
             <RefreshCcw className={`mr-2 h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} /> Yenile
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExport} className="h-9 font-medium text-xs border-gray-300 hover:bg-gray-50 shadow-sm">
+          <Button variant="outline" size="sm" onClick={handleExport} className="h-9 font-medium text-xs border-input hover:bg-muted shadow-sm">
             <Download className="mr-2 h-3.5 w-3.5" /> CSV İndir
           </Button>
         </div>
@@ -258,8 +258,8 @@ export function DataPool() {
 
       {/* TOP DASHBOARD SUMMARIES */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
-          <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Toplam Bulunan</span>
+        <div className="bg-card text-card-foreground border border-border p-4 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
+          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Toplam Bulunan</span>
           <span className="text-2xl font-black text-gray-900 mt-1">{stats.total.toLocaleString()}</span>
         </div>
         <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
@@ -289,7 +289,7 @@ export function DataPool() {
         <div className="lg:col-span-1 space-y-6">
           
           {/* 1. Temel Arama */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
+          <div className="bg-card text-card-foreground border border-border rounded-xl shadow-sm p-5 space-y-4">
             <h3 className="font-bold text-sm uppercase tracking-wider text-gray-900 flex items-center gap-2">
               <Search className="w-4 h-4 text-emerald-600" /> Temel Arama
             </h3>
@@ -302,7 +302,7 @@ export function DataPool() {
                     setCityFilter(e.target.value);
                     setDistrictFilter(''); // reset district
                   }} 
-                  className="flex h-10 w-full rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-9 bg-gray-50 border-gray-200 appearance-none cursor-pointer border"
+                  className="flex h-10 w-full rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-9 bg-muted border-border appearance-none cursor-pointer border"
                 >
                   <option value="">İl Seçiniz</option>
                   {Object.keys(turkeyData).sort().map(c => (
@@ -319,7 +319,7 @@ export function DataPool() {
                   value={districtFilter} 
                   onChange={e => setDistrictFilter(e.target.value)} 
                   disabled={!cityFilter}
-                  className="flex h-10 w-full rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-9 bg-gray-50 border-gray-200 appearance-none cursor-pointer border"
+                  className="flex h-10 w-full rounded-md px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-9 bg-muted border-border appearance-none cursor-pointer border"
                 >
                   <option value="">İlçe Seçiniz</option>
                   {cityFilter && (turkeyData as Record<string, string[]>)[cityFilter]?.sort().map(d => (
@@ -332,11 +332,11 @@ export function DataPool() {
               </div>
               <div className="relative">
                 <Briefcase className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <Input placeholder="Sektör (Örn: Kuaför)" value={sectorFilter} onChange={e => setSectorFilter(e.target.value)} className="pl-9 bg-gray-50 border-gray-200" />
+                <Input placeholder="Sektör (Örn: Kuaför)" value={sectorFilter} onChange={e => setSectorFilter(e.target.value)} className="pl-9 bg-muted border-border" />
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                <Input placeholder="Firma Adı Ara..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 bg-gray-50 border-gray-200" />
+                <Input placeholder="Firma Adı Ara..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 bg-muted border-border" />
               </div>
             </div>
           </div>
@@ -354,7 +354,7 @@ export function DataPool() {
                     key={rf.id}
                     onClick={() => handleReadyFilterClick(rf.id)}
                     className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5
-                      ${isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' : 'bg-white border-indigo-200 text-indigo-700 hover:bg-indigo-100'}`}
+                      ${isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' : 'bg-card text-card-foreground border-indigo-200 text-indigo-700 hover:bg-indigo-100'}`}
                   >
                     🔥 {rf.label}
                   </button>
@@ -364,7 +364,7 @@ export function DataPool() {
           </div>
 
           {/* 3. Akıllı Filtreler */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
+          <div className="bg-card text-card-foreground border border-border rounded-xl shadow-sm p-5 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-sm uppercase tracking-wider text-gray-900 flex items-center gap-2">
                 <Filter className="w-4 h-4 text-emerald-600" /> Akıllı Filtreler
@@ -393,10 +393,10 @@ export function DataPool() {
         {/* MAIN: RESULT CARDS */}
         <div className="lg:col-span-3">
           {filteredBusinesses.length === 0 ? (
-            <div className="text-center p-16 border border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center">
+            <div className="text-center p-16 border border-dashed border-input rounded-xl bg-muted flex flex-col items-center justify-center">
               <Search className="w-10 h-10 text-gray-300 mb-4" />
               <h3 className="text-lg font-bold text-gray-900 mb-2">Sonuç Bulunamadı</h3>
-              <p className="text-gray-500 text-sm">Filtrelerinizi esnetmeyi veya farklı anahtar kelimeler denemeyi unutmayın.</p>
+              <p className="text-muted-foreground text-sm">Filtrelerinizi esnetmeyi veya farklı anahtar kelimeler denemeyi unutmayın.</p>
               <Button variant="outline" className="mt-6" onClick={() => {
                 setActiveReadyFilter(null);
                 setActiveSmartFilters(new Set());
@@ -431,7 +431,7 @@ export function DataPool() {
                 }
 
                 return (
-                  <div key={b.id} className="bg-white border border-gray-200 hover:border-emerald-300 hover:shadow-lg transition-all rounded-xl p-5 flex flex-col group cursor-pointer" onClick={() => setSelectedBusiness(b)}>
+                  <div key={b.id} className="bg-card text-card-foreground border border-border hover:border-emerald-300 hover:shadow-lg transition-all rounded-xl p-5 flex flex-col group cursor-pointer" onClick={() => setSelectedBusiness(b)}>
                     {/* Header: Score & Trust */}
                     <div className="flex justify-between items-start mb-3">
                       <div className={`px-2.5 py-1 rounded-md flex items-center gap-1.5 border font-bold text-xs shadow-sm
@@ -441,7 +441,7 @@ export function DataPool() {
                         <TrendingUp className="w-3.5 h-3.5" />
                         Satış Potansiyeli: {aiScore}/100
                       </div>
-                      <Badge variant="secondary" className="bg-gray-100 text-gray-600 font-mono text-[10px] uppercase">
+                      <Badge variant="secondary" className="bg-gray-100 text-foreground font-mono text-[10px] uppercase">
                         Güven: %{b.trust_score || 50}
                       </Badge>
                     </div>
@@ -450,7 +450,7 @@ export function DataPool() {
                     <h3 className="font-bold text-base text-gray-900 leading-tight mb-1 line-clamp-2 group-hover:text-emerald-700 transition-colors">
                       {b.business_name}
                     </h3>
-                    <p className="text-xs text-gray-500 font-medium mb-4 flex items-center gap-2">
+                    <p className="text-xs text-muted-foreground font-medium mb-4 flex items-center gap-2">
                       <span className="truncate max-w-[120px]">{b.category}</span>
                       <span>•</span>
                       <span className="truncate max-w-[120px]">{b.city}</span>
@@ -461,7 +461,7 @@ export function DataPool() {
                       <span className="text-[10px] uppercase font-bold text-blue-600 tracking-wider mb-2 block">Neden Fırsat?</span>
                       <ul className="space-y-1.5">
                         {reasons.slice(0,2).map((r, i) => (
-                          <li key={i} className="text-xs text-gray-700 flex items-start gap-1.5 leading-snug">
+                          <li key={i} className="text-xs text-foreground flex items-start gap-1.5 leading-snug">
                             <span className="text-blue-500 mt-0.5">•</span> <span>{r}</span>
                           </li>
                         ))}
@@ -472,24 +472,24 @@ export function DataPool() {
                     <div className="grid grid-cols-2 gap-2 mt-auto">
                       {/* Phone */}
                       <div className="flex items-center gap-2 text-xs font-medium">
-                        <div className="w-6 h-6 rounded bg-gray-50 border border-gray-100 flex items-center justify-center">
-                          <Phone className="w-3 h-3 text-gray-500" />
+                        <div className="w-6 h-6 rounded bg-muted border border-border flex items-center justify-center">
+                          <Phone className="w-3 h-3 text-muted-foreground" />
                         </div>
-                        {b.phone ? <span className="text-gray-800 truncate">{b.phone}</span> : <span className="text-gray-400 italic">Yok</span>}
+                        {b.phone ? <span className="text-foreground truncate">{b.phone}</span> : <span className="text-gray-400 italic">Yok</span>}
                       </div>
                       
                       {/* Email */}
                       <div className="flex items-center gap-2 text-xs font-medium">
-                        <div className="w-6 h-6 rounded bg-gray-50 border border-gray-100 flex items-center justify-center">
-                          <Mail className="w-3 h-3 text-gray-500" />
+                        <div className="w-6 h-6 rounded bg-muted border border-border flex items-center justify-center">
+                          <Mail className="w-3 h-3 text-muted-foreground" />
                         </div>
-                        {b.email ? <span className="text-gray-800 truncate">{b.email}</span> : <span className="text-gray-400 italic">Yok</span>}
+                        {b.email ? <span className="text-foreground truncate">{b.email}</span> : <span className="text-gray-400 italic">Yok</span>}
                       </div>
 
                       {/* Website */}
                       <div className="flex items-center gap-2 text-xs font-medium">
-                        <div className="w-6 h-6 rounded bg-gray-50 border border-gray-100 flex items-center justify-center">
-                          <Globe className="w-3 h-3 text-gray-500" />
+                        <div className="w-6 h-6 rounded bg-muted border border-border flex items-center justify-center">
+                          <Globe className="w-3 h-3 text-muted-foreground" />
                         </div>
                         {b.website ? <span className="text-blue-600 truncate hover:underline" onClick={(e)=>{e.stopPropagation(); window.open(b.website, '_blank')}}>Siteye Git</span> : <span className="text-gray-400 italic">Yok</span>}
                       </div>
@@ -499,12 +499,12 @@ export function DataPool() {
                         <div className="w-6 h-6 rounded bg-amber-50 border border-amber-100 flex items-center justify-center">
                           <StarIcon className="w-3 h-3 text-amber-500" />
                         </div>
-                        {b.rating ? <span className="text-gray-800">{b.rating} ({b.review_count})</span> : <span className="text-gray-400 italic">Yok</span>}
+                        {b.rating ? <span className="text-foreground">{b.rating} ({b.review_count})</span> : <span className="text-gray-400 italic">Yok</span>}
                       </div>
                     </div>
 
                     {/* Actions Bottom Bar */}
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                    <div className="mt-4 pt-4 border-t border-border flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         {b.instagram && <Badge variant="outline" className="bg-pink-50 border-pink-100 text-pink-600 px-1.5 py-0">IG</Badge>}
                         {b.facebook && <Badge variant="outline" className="bg-blue-50 border-blue-100 text-blue-600 px-1.5 py-0">FB</Badge>}
@@ -538,19 +538,19 @@ export function DataPool() {
       }}>
         <SheetContent 
           side="right" 
-          className="overflow-y-auto overflow-x-hidden bg-gray-50 border-l border-gray-200 p-0 shadow-2xl"
+          className="overflow-y-auto overflow-x-hidden bg-muted border-l border-border p-0 shadow-2xl"
           style={{ width: '95vw', maxWidth: '1200px' }}
         >
           {selectedBusiness && (
             <div className="flex flex-col h-full font-sans">
-              <div className="p-10 border-b border-gray-200 bg-white">
+              <div className="p-10 border-b border-border bg-card text-card-foreground">
                 <div className="flex justify-between items-start">
                   <div className="space-y-3">
                     <h3 className="text-[11px] uppercase tracking-[0.25em] text-emerald-600 font-black flex items-center gap-2">
                       <ShieldAlert className="w-4 h-4" /> Satış Fırsatı Detayı
                     </h3>
                     <SheetTitle className="text-4xl md:text-5xl font-black tracking-tight text-gray-900">{selectedBusiness.business_name}</SheetTitle>
-                    <SheetDescription className="flex items-center gap-4 text-sm uppercase tracking-widest text-gray-500 font-semibold mt-4">
+                    <SheetDescription className="flex items-center gap-4 text-sm uppercase tracking-widest text-muted-foreground font-semibold mt-4">
                       <span>UUID: {selectedBusiness.id.split('-')[0]}</span>
                       <span className="opacity-40">•</span>
                       <span>{selectedBusiness.city}</span>
@@ -558,8 +558,8 @@ export function DataPool() {
                       <span>{selectedBusiness.category}</span>
                     </SheetDescription>
                   </div>
-                  <div className="text-right bg-gray-50 p-6 rounded-2xl border border-gray-100 min-w-[140px] flex flex-col items-center justify-center shadow-sm">
-                    <div className="text-xs text-gray-500 uppercase tracking-widest font-black mb-2">Satış Potansiyeli</div>
+                  <div className="text-right bg-muted p-6 rounded-2xl border border-border min-w-[140px] flex flex-col items-center justify-center shadow-sm">
+                    <div className="text-xs text-muted-foreground uppercase tracking-widest font-black mb-2">Satış Potansiyeli</div>
                     <div className={`text-6xl font-black tracking-tighter ${selectedBusiness.business_analysis?.ai_score >= 80 ? 'text-emerald-600' : selectedBusiness.business_analysis?.ai_score >= 50 ? 'text-amber-600' : 'text-rose-600'}`}>
                       {selectedBusiness.business_analysis?.ai_score || 0}
                     </div>
@@ -567,15 +567,15 @@ export function DataPool() {
                 </div>
               </div>
               
-              <div className="p-10 space-y-12 bg-gray-50/50 flex-1">
+              <div className="p-10 space-y-12 bg-muted/50 flex-1">
                  {/* Reusing existing sheet content but it can be customized further */}
-                 <div className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm space-y-6">
+                 <div className="bg-card text-card-foreground border border-border p-8 rounded-2xl shadow-sm space-y-6">
                   <h3 className="text-sm font-black uppercase tracking-widest text-gray-900 flex items-center gap-3">
                     <Phone className="w-5 h-5 text-blue-600" /> İletişim Bilgileri
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <div className="flex items-center gap-3 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                      <div className="flex items-center gap-3 bg-muted/50 p-4 rounded-xl border border-border">
                         <Phone className="w-5 h-5 text-blue-500 shrink-0" />
                         <div className="flex flex-col min-w-0">
                           <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Telefon Numarası</span>
@@ -586,7 +586,7 @@ export function DataPool() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                      <div className="flex items-center gap-3 bg-muted/50 p-4 rounded-xl border border-border">
                         <Mail className="w-5 h-5 text-emerald-500 shrink-0" />
                         <div className="flex flex-col min-w-0">
                           <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">E-posta Adresi</span>
@@ -599,7 +599,7 @@ export function DataPool() {
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <div className="flex items-center gap-3 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                      <div className="flex items-center gap-3 bg-muted/50 p-4 rounded-xl border border-border">
                         <Globe className="w-5 h-5 text-indigo-500 shrink-0" />
                         <div className="flex flex-col min-w-0">
                           <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Web Sitesi</span>
@@ -610,7 +610,7 @@ export function DataPool() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                      <div className="flex items-center gap-3 bg-muted/50 p-4 rounded-xl border border-border">
                         <MapPin className="w-5 h-5 text-rose-500 shrink-0" />
                         <div className="flex flex-col min-w-0">
                           <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Google Haritalar</span>
@@ -633,7 +633,7 @@ export function DataPool() {
                     </h3>
                     <ul className="space-y-4">
                       {selectedBusiness.business_analysis.why_now_signals.map((signal: string, i: number) => (
-                        <li key={i} className="text-base font-medium flex items-start gap-4 text-gray-800 leading-relaxed">
+                        <li key={i} className="text-base font-medium flex items-start gap-4 text-foreground leading-relaxed">
                           <span className="text-rose-500 mt-1">►</span> {signal}
                         </li>
                       ))}

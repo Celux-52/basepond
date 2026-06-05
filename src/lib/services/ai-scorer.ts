@@ -24,45 +24,50 @@ export async function generateAIScore(
   }
 
   const prompt = `
-    Sen Basepound içinde çalışan elit bir iş analisti, satış stratejisti ve dijital büyüme danışmanısın.
-    Görevin sıradan, jenerik veya yüzeysel analizler üretmek DEĞİLDİR.
-    Gerçek bir ticari zekayla derinlemesine düşünerek aşağıdaki işletmeyi analiz etmelisin.
+    Sen uzman bir B2B Müşteri Analiz (Lead Scoring) ve Dijital Dönüşüm Stratejistisin.
+    Görevin, aşağıdaki işletme verilerini incelemek ve her bir işletmeyi belirli stratejik kategorilere göre analiz edip puanlamaktır.
 
     İşletme Bilgileri:
     İşletme Adı: ${business.name}
     Kategori: ${business.category}
     Google Puanı: ${business.rating || "Yok"} (${business.review_count || 0} yorum)
     Web Sitesi Durumu: ${analysis.status}
-    Mobil Uyumluluk: ${analysis.mobile_responsive ? "Evet" : "Hayır (Acil düzeltilmeli)"}
-    Site Hızı: ${analysis.is_slow ? "Çok Yavaş (>2.5s)" : "Normal"}
-    SSL Güvenliği: ${analysis.has_ssl ? "Var" : "Yok (Tehlikeli)"}
+    Mobil Uyumluluk: ${analysis.mobile_responsive ? "Evet" : "Hayır"}
+    Site Hızı: ${analysis.is_slow ? "Yavaş" : "Normal"}
+    SSL Güvenliği: ${analysis.has_ssl ? "Var" : "Yok"}
     Sosyal Medya Linkleri Var Mı: ${analysis.has_social_links ? "Evet" : "Hayır"}
     E-posta Bulundu Mu: ${enrichment.primary_email ? "Evet" : "Hayır"}
 
-    ÖNEMLİ KURALLAR:
-    - Sadece teknik değil, TİCARİ ve PREDICTIVE (Öngörüsel) bir analiz yap.
-    - "Neden ŞİMDİ aranmalı?" sorusuna net cevap veren sinyaller (Why Now Signals) bul.
-    - Satışa Hazırlık (Sales Readiness) ve Aciliyet (Urgency) skorlarını 0-100 arası belirle.
-    
-    SADECE AŞAĞIDAKİ JSON FORMATINDA CEVAP VER:
+    GÖREVLER VE KURALLAR:
+    1. İşletme için aşağıdaki listeden GEÇERLİ OLAN tüm etiketleri (tagleri) belirle. (En az 2, en fazla 5 etiket seç):
+       [Performans ve Pazarlama]: Reklam Bütçesi Boşa Gidenler, Yeniden Pazarlama (Retargeting) Eksikliği, Dönüşüm Oranı (CRO) Düşük Siteler, Hedef Kitlesi Yanlış Olanlar, E-posta Otomasyonu Olmayanlar, İçerik Stratejisi Zayıf Olanlar
+       [Sistem ve Altyapı]: Yavaş Açılan Siteler, E-Ticaret Altyapısı Eskiler, Güvenlik Açığı Olanlar (Siber Riskli), Ödeme Altyapısı Sorunlular, Veri Takibi / Analytics Kurulmamışlar
+       [Otomasyon ve Yapay Zeka]: Manuel Süreçleri Çok Olanlar, Chatbot/Asistan İhtiyacı Olanlar, CRM (Müşteri Yönetimi) Kullanmayanlar, Sistemleri Birbirine Bağlı Olmayanlar (Entegrasyon Eksikliği), Yapay Zeka Fırsatı
+       [Marka ve İtibar]: Kurumsal Kimliği Zayıf / Eskimiş Olanlar, Sosyal Kanıtı (Social Proof) Olmayanlar, Müşteri Şikayeti Çok Olanlar, İşveren Markası Zayıf Olanlar (Personel Bulamayanlar), Rakip Gerisinde Kalanlar
+       [Temel Dijital Varlık]: Web Sitesi Olmayanlar, Web Sitesi Çalışmayanlar, Mobil Uyumsuz Siteler, SSL Olmayan Siteler, SEO Sorunlu Siteler, Dijital Varlığı Zayıf, Google Puanı Düşük, Web Site Yenileme, Sosyal Medya Fırsatı, Google Ads Fırsatı, Yüksek Potansiyelliler, Hemen Aranabilecekler
+
+    2. İşletmeye 0 ile 100 arasında bir "Satış Fırsatı Skoru" (ai_score) ver.
+       KURAL: İşletmenin dijital durumu ne kadar KÖTÜYSE ve düzeltilmesi ne kadar KOLAYSA, satış fırsatı skoru o kadar YÜKSEK olmalıdır. (Örn: SSL yok, mobil uyumsuz, web sitesi kötü -> Skor: 90+)
+
+    3. Çıktıyı SADECE aşağıdaki JSON formatında, sistemin okuyabileceği şekilde ver:
     {
-      "ai_score": [0-100 arası genel fırsat puanı],
-      "urgency_score": [0-100 arası işletmenin acil dijital yatırıma ihtiyacı],
+      "ai_score": [0-100 arası yüksek fırsat puanı],
+      "urgency_score": [0-100 arası aciliyet skoru, kötü durum=yüksek skor],
       "sales_readiness": [0-100 arası satışı kapatma ihtimali],
-      "buy_intent": "High" | "Medium" | "Low",
+      "buy_intent": "High",
       "why_now_signals": [
-        "İşletmenin NEDEN ŞİMDİ aranması gerektiğini gösteren 2-3 acil tetikleyici. Örn: 'Rakipleri büyürken web sitesi çökmüş', 'Çok fazla olumsuz yorum birikiyor acil itibar yönetimi şart'"
+        "İşletmenin NEDEN ŞİMDİ aranması gerektiğini gösteren 1-2 acil tetikleyici."
       ],
       "opportunity_summary": [
-        "Sadece 3-5 kelimelik, 3 veya 4 adet net tespit."
+        "İşletmenin mevcut durumunun 2-3 cümlelik çok net tespiti (Analiz Özeti)."
       ],
       "suggested_services": [
-        "İşletmeye satılabilecek 3 net hizmet."
+        "Telefonda veya mailde ilk sunulması gereken hizmet / vurucu teklif (Satış Senaryosu)."
       ],
       "ai_tags": [
-        "Kısa 2 veya 3 tag. Örn: 'URGENT REBRANDING', 'WEAK SEO'"
+        "Yukarıdaki etiket havuzundan seçilmiş geçerli etiketler."
       ],
-      "growth_potential": "Yüksek" | "Orta" | "Düşük"
+      "growth_potential": "Yüksek"
     }
   `;
 

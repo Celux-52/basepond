@@ -59,7 +59,7 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       
       {/* Drawer */}
-      <div className="relative w-full max-w-md bg-white dark:bg-zinc-950 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+      <div className="relative w-full max-w-md bg-card text-card-foreground dark:bg-zinc-950 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800">
           <h2 className="text-lg font-bold text-zinc-900 dark:text-white truncate pr-4">{lead.business_name}</h2>
@@ -77,7 +77,7 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
             
             {!lead.is_unlocked ? (
               <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-card text-card-foreground/10 rounded-full flex items-center justify-center mb-4">
                   <Lock className="w-8 h-8 text-white/80" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Telefon Numarası Gizli</h3>
@@ -104,7 +104,7 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
                 </div>
                 <h3 className="text-3xl font-black text-green-400 tracking-wider mb-6">{lead.phone}</h3>
                 <div className="flex gap-3 w-full">
-                   <a href={lead.phone ? `tel:${lead.phone}` : '#'} className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                   <a href={lead.phone ? `tel:${lead.phone}` : '#'} className="flex-1 bg-card text-card-foreground/10 hover:bg-card text-card-foreground/20 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
                      <Phone className="w-4 h-4" /> Ara
                    </a>
                    <a href={`https://wa.me/${lead.phone?.replace(/[^0-9]/g, '')}`} target="_blank" className="flex-1 bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
@@ -131,11 +131,11 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
             <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4">Neden Aramalıyım?</h4>
             <div className="space-y-3">
               {reasons.map((reason: string, i: number) => (
-                <div key={i} className="flex gap-3 bg-neutral-50 p-3 rounded-xl">
+                <div key={i} className="flex gap-3 bg-muted p-3 rounded-xl">
                   <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
                     <span className="text-green-700 text-xs font-bold">{i + 1}</span>
                   </div>
-                  <p className="text-sm text-neutral-700 leading-relaxed mt-0.5">{reason}</p>
+                  <p className="text-sm text-foreground leading-relaxed mt-0.5">{reason}</p>
                 </div>
               ))}
             </div>
@@ -158,24 +158,24 @@ export function LeadDrawer({ lead, isOpen, onClose, onUnlocked }: LeadDrawerProp
           {/* Details */}
           <div>
             <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4">İşletme Detayları</h4>
-            <div className="bg-neutral-50 rounded-xl p-4 space-y-3 border border-neutral-100">
+            <div className="bg-muted rounded-xl p-4 space-y-3 border border-border">
               <div className="flex justify-between text-sm">
-                <span className="text-neutral-500">Kategori</span>
+                <span className="text-muted-foreground">Kategori</span>
                 <span className="font-medium text-neutral-900">{lead.category}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-neutral-500">Konum</span>
+                <span className="text-muted-foreground">Konum</span>
                 <span className="font-medium text-neutral-900">{lead.city}, {lead.district}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-neutral-500">Google Puanı</span>
+                <span className="text-muted-foreground">Google Puanı</span>
                 <div className="flex items-center gap-1 font-medium text-amber-600">
                   <Star className="w-4 h-4 fill-amber-500" />
                   {lead.google_rating || lead.rating || '-'} ({lead.review_count || 0})
                 </div>
               </div>
-              <div className="flex justify-between text-sm pt-3 border-t border-neutral-200">
-                <span className="text-neutral-500">Web Sitesi</span>
+              <div className="flex justify-between text-sm pt-3 border-t border-border">
+                <span className="text-muted-foreground">Web Sitesi</span>
                 {lead.website ? (
                   <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" className="font-medium text-blue-600 flex items-center gap-1 hover:underline">
                     <Globe className="w-4 h-4" /> Ziyaret Et

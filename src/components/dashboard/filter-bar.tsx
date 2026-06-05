@@ -27,7 +27,7 @@ export function FilterBar({
   const [showSectors, setShowSectors] = useState(false);
 
   return (
-    <div className="flex flex-col border-b border-neutral-100 bg-white sticky top-0 z-10">
+    <div className="flex flex-col border-b border-border bg-card text-card-foreground sticky top-0 z-10">
       <div className="flex gap-4 p-4 overflow-x-auto scrollbar-hide">
         {FILTERS.map((filter) => {
           const Icon = filter.icon;
@@ -40,7 +40,7 @@ export function FilterBar({
                 setShowSectors(false);
               }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 border whitespace-nowrap
-                ${isActive ? filter.activeColor : 'text-neutral-500 bg-white border-neutral-200 hover:bg-neutral-50'}
+                ${isActive ? filter.activeColor : 'text-muted-foreground bg-card text-card-foreground border-border hover:bg-muted'}
               `}
             >
               <Icon className="w-4 h-4" />
@@ -55,7 +55,7 @@ export function FilterBar({
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 border whitespace-nowrap
             ${activeFilter.startsWith('SECTOR_') || showSectors 
               ? 'text-purple-600 bg-purple-50 border-purple-200' 
-              : 'text-neutral-500 bg-white border-neutral-200 hover:bg-neutral-50'}
+              : 'text-muted-foreground bg-card text-card-foreground border-border hover:bg-muted'}
           `}
         >
           🎯 Sektörler
@@ -77,7 +77,7 @@ export function FilterBar({
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors border whitespace-nowrap
                   ${isActive 
                     ? 'bg-purple-600 text-white border-purple-600 shadow-sm' 
-                    : 'bg-white text-neutral-600 border-neutral-200 hover:border-purple-300 hover:bg-purple-50'}
+                    : 'bg-card text-card-foreground text-foreground border-border hover:border-purple-300 hover:bg-purple-50'}
                 `}
               >
                 {sector.name}
