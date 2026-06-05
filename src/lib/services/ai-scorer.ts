@@ -72,9 +72,9 @@ export async function generateAIScore(
   `;
 
   const modelsToTry = [
-    "google/gemini-2.0-flash-lite-preview-02-05:free",
+    "openrouter/free",
     "meta-llama/llama-3.3-70b-instruct:free",
-    "deepseek/deepseek-r1:free"
+    "deepseek/deepseek-r1"
   ];
 
   try {
@@ -110,6 +110,13 @@ export async function generateAIScore(
     if (!content) {
       console.error("OpenRouter returned no content:", data);
       throw new Error("No content from AI");
+    }
+
+    // Extract strictly JSON part
+    const firstBrace = content.indexOf('{');
+    const lastBrace = content.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
+      content = content.substring(firstBrace, lastBrace + 1);
     }
 
     // Temizleme: Eğer yapay zeka ```json ve ``` ile sarmaladıysa bunları sil
