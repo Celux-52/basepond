@@ -72,9 +72,12 @@ export async function generateAIScore(
   `;
 
   const modelsToTry = [
-    "google/gemini-2.5-flash:free",
+    "google/gemini-2.0-flash:free",
     "meta-llama/llama-3.3-70b-instruct:free",
-    "openai/gpt-4o-mini"
+    "deepseek/deepseek-chat:free",
+    "deepseek/deepseek-r1:free",
+    "deepseek/deepseek-r1",
+    "deepseek/deepseek-chat"
   ];
 
   try {
